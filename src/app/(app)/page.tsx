@@ -1,0 +1,437 @@
+"use client";
+
+import Link from "next/link";
+import { DollarSign, TrendingUp, Zap, ShieldAlert, ArrowRight, CheckCircle2, Clock } from "lucide-react";
+import { useAuditData } from "@/lib/use-audit-data";
+import { useFindingStatuses, findingId } from "@/lib/use-finding-statuses";
+import { daysUntil, deadlineLabel, deadlineColor, deadlineBg } from "@/lib/deadlines";
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  Cell,
+} from "recharts";
+
+// ── helpers ──────────────────────────────────────────────────────────────────
+function fmt(n: number) {
+  if (n >= 1000000) return `$${(n / 1000000).toFixed(1)}M`;
+  if (n >= 1000) return `$${Math.round(n / 1000)}K`;
+  return `$${n.toLocaleString()}`;
+}
+
+const CARD_STYLE: React.CSSProperties = {
+  background: "#fff",
+  border: "1px solid rgba(11,39,52,0.10)",
+  borderRadius: 16,
+  boxShadow: "0 1px 2px rgba(11,39,52,0.05), 0 10px 26px -14px rgba(11,39,52,0.22)",
+};
+
+// ── KPI Card ─────────────────────────────────────────────────────────────────
+function KpiCard({
+  label, value, sub, accent, icon: Icon, grade,
+}: {
+  label: string;
+  value: string;
+  sub: React.ReactNode;
+  accent: string;
+  icon: React.ElementType;
+  grade?: string;
+}) {
+  const iconBg = accent === "#0b2734" ? "#e9eded"
+    : accent === "#c2553d" ? "#f8e8e3"
+    : accent === "#0c8174" ? "#e4f4f1"
+    : "#f8efdd";
+  return (
+    <div style={{ ...CARD_STYLE, padding: "20px 22px 18px", position: "relative", overflow: "hidden" }}>
+      {/* Left rail */}
+      <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, background: accent, opacity: 0.9 }} />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, letterSpacing: "0.13em", textTransform: "uppercase", color: "#8aa0a8", whiteSpace: "nowrap" }}>
+          {label}
+        </span>
+        <div style={{ width: 26, height: 26, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", background: iconBg, color: accent, flexShrink: 0 }}>
+          <Icon style={{ width: 15, height: 15 }} />
+        </div>
+      </div>
+      <div style={{ display: "flex", alignItems: "flex-end", gap: 10, marginTop: 14 }}>
+        <div style={{ fontSize: 38, fontWeight: 800, letterSpacing: "-0.035em", lineHeight: 1, color: accent === "#0b2734" ? "#0b2734" : accent, fontVariantNumeric: "tabular-nums" }}>
+          {value}
+        </div>
+        {grade && (
+          <GradeChip grade={grade} size="sm" />
+        )}
+      </div>
+      <div style={{ fontSize: 12.5, color: "#5c747e", marginTop: 7 }}>{sub}</div>
+    </div>
+  );
+}
+
+function GradeChip({ grade, size = "md" }: { grade: string; size?: "sm" | "md" }) {
+  const color = ["A", "B"].includes(grade) ? "#0c8174" : grade === "C" ? "#9a6a1e" : "#c2553d";
+  const bg = ["A", "B"].includes(grade) ? "#e4f4f1" : grade === "C" ? "#f8efdd" : "#f8e8e3";
+  const border = ["A", "B"].includes(grade) ? "rgba(12,129,116,0.25)" : grade === "C" ? "rgba(189,133,47,0.25)" : "rgba(194,85,61,0.25)";
+  const sz = size === "sm" ? { width: 30, height: 30, borderRadius: 8, fontSize: 15 } : { width: 54, height: 54, borderRadius: 14, fontSize: 30 };
+  return (
+    <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", background: bg, color, border: `1px solid ${border}`, fontWeight: 800, letterSpacing: "-0.02em", ...sz }}>
+      {grade}
+    </div>
+  );
+}
+
+// ── Custom tooltip ────────────────────────────────────────────────────────────
+function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: { name: string; value: number; color: string }[]; label?: string }) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{ background: "#fff", border: "1px solid rgba(11,39,52,0.10)", borderRadius: 10, padding: "10px 14px", boxShadow: "0 4px 16px rgba(11,39,52,0.12)", fontSize: 13 }}>
+      <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.1em", color: "#8aa0a8", textTransform: "uppercase", marginBottom: 6 }}>{label}</p>
+      {payload.map((p) => (
+        <p key={p.name} style={{ color: p.color, fontWeight: 700 }}>{p.name}: {fmt(p.value)}</p>
+      ))}
+    </div>
+  );
+}
+
+export default function HomePage() {
+  const { metrics, findings, payerScorecard, revenueByMonth, risks } = useAuditData();
+  const { getStatus } = useFindingStatuses();
+
+  const recoveredAmount = findings.reduce((sum, f) => {
+    return getStatus(findingId(f.label, f.payer)) === "resolved" ? sum + (f.expectedRecovery ?? 0) : sum;
+  }, 0);
+
+  const topOpps = findings.filter((f) => f.expectedRecovery > 0).slice(0, 4);
+  const topRisks = risks.slice(0, 3);
+
+  const chartData = revenueByMonth.map((m) => ({ month: m.month, Paid: m.paid, Leakage: m.leakage }));
+
+  const gradeColor = (g: string) => ["A", "B"].includes(g) ? "#0c8174" : g === "C" ? "#9a6a1e" : "#c2553d";
+
+  const denialRateColor = (r: number) => r > 15 ? "#c2553d" : r > 10 ? "#bd852f" : "#0c8174";
+
+  // ── Deadline data ─────────────────────────────────────────────────────────
+  const upcomingDeadlines = risks
+    .filter((r) => {
+      if (!r.deadline) return false;
+      const d = daysUntil(r.deadline);
+      return d !== null && d <= 14;
+    })
+    .map((r) => ({ ...r, days: daysUntil(r.deadline) as number }))
+    .sort((a, b) => a.days - b.days);
+
+  const earliestDeadline = upcomingDeadlines[0]
+    ? new Date(upcomingDeadlines[0].deadline!).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    : null;
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+
+      {/* KPI row */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 18 }}>
+        <KpiCard
+          label="Revenue Analyzed"
+          value={fmt(metrics.revenueAnalyzed)}
+          sub={<>Jan – May 2026</>}
+          accent="#0b2734"
+          icon={DollarSign}
+        />
+        <KpiCard
+          label="Total Leakage"
+          value={fmt(metrics.totalLeakage)}
+          sub={<>{metrics.leakageRatePct.toFixed(1)}% of revenue</>}
+          accent="#c2553d"
+          icon={TrendingUp}
+        />
+        <KpiCard
+          label="Expected Recovery"
+          value={fmt(metrics.expectedRecovery)}
+          sub="Probability-weighted"
+          accent="#0c8174"
+          icon={Zap}
+        />
+        <KpiCard
+          label="Denial Rate"
+          value={`${metrics.denialRate.toFixed(1)}%`}
+          sub={<>Median {metrics.benchmarkMedian}% · Best {metrics.benchmarkBest}%</>}
+          accent="#bd852f"
+          icon={ShieldAlert}
+          grade={metrics.denialGrade}
+        />
+        <KpiCard
+          label="Recovered"
+          value={fmt(recoveredAmount)}
+          sub={recoveredAmount === 0
+            ? <span style={{ color: "#aabec5" }}>No findings resolved yet</span>
+            : "Marked resolved"
+          }
+          accent="#0c8174"
+          icon={CheckCircle2}
+        />
+      </div>
+
+      {/* Row 2: chart + opportunities */}
+      <div style={{ display: "grid", gridTemplateColumns: "1.55fr 1fr", gap: 18 }}>
+        {/* Revenue vs Leakage chart */}
+        <div style={{ ...CARD_STYLE, padding: "22px 24px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
+            <div>
+              <h2 style={{ fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em", color: "#0b2734", margin: 0 }}>Revenue vs. Leakage</h2>
+              <p style={{ fontSize: 12.5, color: "#5c747e", marginTop: 3 }}>Monthly paid revenue vs. leakage</p>
+            </div>
+            <div style={{ display: "flex", gap: 18 }}>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 12, color: "#5c747e", fontWeight: 500 }}>
+                <span style={{ width: 10, height: 10, borderRadius: 3, background: "#14b8a6", display: "inline-block" }} />
+                Paid
+              </span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 12, color: "#5c747e", fontWeight: 500 }}>
+                <span style={{ width: 10, height: 10, borderRadius: 3, background: "#c2553d", display: "inline-block" }} />
+                Leakage
+              </span>
+            </div>
+          </div>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={chartData} barSize={26} barGap={4}>
+              <defs>
+                <linearGradient id="gradPaid" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#1aa595" />
+                  <stop offset="100%" stopColor="#0c8174" />
+                </linearGradient>
+                <linearGradient id="gradLeak" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#d2674f" />
+                  <stop offset="100%" stopColor="#c2553d" />
+                </linearGradient>
+              </defs>
+              <CartesianGrid vertical={false} stroke="rgba(11,39,52,0.06)" />
+              <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fill: "#8aa0a8", letterSpacing: "0.04em" }} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fill: "#8aa0a8" }} tickFormatter={(v) => `$${v / 1000}K`} />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar dataKey="Paid" fill="url(#gradPaid)" radius={[5, 5, 0, 0]} name="Paid" />
+              <Bar dataKey="Leakage" fill="url(#gradLeak)" radius={[5, 5, 0, 0]} name="Leakage" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Top Opportunities */}
+        <div style={{ ...CARD_STYLE, padding: "22px 24px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
+            <h2 style={{ fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em", color: "#0b2734", margin: 0 }}>Top Opportunities</h2>
+            <Link href="/revenue" style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 13, fontWeight: 600, color: "#0c8174", textDecoration: "none" }}>
+              See all <ArrowRight style={{ width: 14, height: 14 }} />
+            </Link>
+          </div>
+          <div>
+            {topOpps.map((f, i) => (
+              <div key={f.label} style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 0", borderBottom: i < topOpps.length - 1 ? "1px solid rgba(11,39,52,0.06)" : "none" }}>
+                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, fontWeight: 600, color: "#8aa0a8", width: 16, flexShrink: 0 }}>
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 14.5, fontWeight: 600, color: "#0b2734", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{f.label}</p>
+                  <p style={{ fontSize: 12, color: "#5c747e", marginTop: 1 }}>{f.payer} · {f.difficulty}</p>
+                </div>
+                <div style={{ textAlign: "right", flexShrink: 0 }}>
+                  <p style={{ fontSize: 16, fontWeight: 800, color: "#0c8174", letterSpacing: "-0.02em", fontVariantNumeric: "tabular-nums" }}>+{fmt(f.expectedRecovery)}</p>
+                  <p style={{ fontSize: 11, color: "#8aa0a8", marginTop: 1, textTransform: "capitalize" }}>{f.difficulty}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Row 3: active risks + payer scorecard */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1.55fr", gap: 18 }}>
+        {/* Active Risks */}
+        <div style={{ ...CARD_STYLE, padding: "22px 24px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
+            <h2 style={{ fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em", color: "#0b2734", margin: 0 }}>Active Risks</h2>
+            <Link href="/risks" style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 13, fontWeight: 600, color: "#0c8174", textDecoration: "none" }}>
+              All risks <ArrowRight style={{ width: 14, height: 14 }} />
+            </Link>
+          </div>
+          <div>
+            {topRisks.map((r, i) => {
+              const dot = r.severity === "critical" ? "#c2553d" : r.severity === "high" ? "#bd852f" : "#d8a93f";
+              return (
+                <div key={r.id} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "12px 0", borderBottom: i < topRisks.length - 1 ? "1px solid rgba(11,39,52,0.06)" : "none" }}>
+                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: dot, flexShrink: 0, marginTop: 5 }} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: 14, fontWeight: 600, color: "#0b2734", lineHeight: 1.3 }}>{r.title}</p>
+                    <p style={{ fontSize: 12, color: "#5c747e", marginTop: 3 }}>
+                      <b style={{ color: "#0b2734", fontVariantNumeric: "tabular-nums" }}>{fmt(r.dollarAmount)}</b>
+                      {r.deadline && <> · Due {new Date(r.deadline).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</>}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Payer Scorecard */}
+        <div style={{ ...CARD_STYLE, padding: "22px 24px" }}>
+          <div style={{ marginBottom: 18 }}>
+            <h2 style={{ fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em", color: "#0b2734", margin: 0 }}>Payer Scorecard</h2>
+          </div>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>
+                {["Payer", "Denial Rate", "Grade", "At Risk"].map((h, i) => (
+                  <th key={h} style={{ textAlign: i === 0 ? "left" : "right", fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8", fontWeight: 500, padding: "0 0 12px", borderBottom: "1px solid rgba(11,39,52,0.10)" }}>
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {payerScorecard.slice(0, 5).map((p, i) => (
+                <tr key={p.payer}>
+                  <td style={{ fontSize: 14, fontWeight: 600, color: "#0b2734", padding: "14px 0", borderBottom: i < 4 ? "1px solid rgba(11,39,52,0.06)" : "none" }}>
+                    {p.payer}
+                  </td>
+                  <td style={{ textAlign: "right", fontSize: 14, fontVariantNumeric: "tabular-nums", color: denialRateColor(p.denialRate), fontWeight: 600, padding: "14px 0", borderBottom: i < 4 ? "1px solid rgba(11,39,52,0.06)" : "none" }}>
+                    {p.denialRate.toFixed(1)}%
+                  </td>
+                  <td style={{ textAlign: "right", padding: "14px 0", borderBottom: i < 4 ? "1px solid rgba(11,39,52,0.06)" : "none" }}>
+                    <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 30, height: 30, borderRadius: 8, background: ["A","B"].includes(p.grade) ? "#e4f4f1" : p.grade === "C" ? "#f8efdd" : "#f8e8e3", color: gradeColor(p.grade), fontWeight: 800, fontSize: 15, border: `1px solid ${["A","B"].includes(p.grade) ? "rgba(12,129,116,0.25)" : p.grade === "C" ? "rgba(189,133,47,0.25)" : "rgba(194,85,61,0.25)"}` }}>
+                      {p.grade}
+                    </span>
+                  </td>
+                  <td style={{ textAlign: "right", fontSize: 14, fontWeight: 700, fontVariantNumeric: "tabular-nums", color: "#c2553d", padding: "14px 0", borderBottom: i < 4 ? "1px solid rgba(11,39,52,0.06)" : "none" }}>
+                    {fmt(p.atRisk)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Row 4: Due This Week */}
+      {upcomingDeadlines.length > 0 && (
+        <div>
+          {/* Section header */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <Clock style={{ width: 18, height: 18, color: "#bd852f" }} />
+              <h2 style={{ fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em", color: "#0b2734", margin: 0 }}>
+                Due This Week
+              </h2>
+            </div>
+            <span style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 11,
+              fontWeight: 700,
+              padding: "3px 9px",
+              borderRadius: 999,
+              background: "#f8efdd",
+              color: "#9a6a1e",
+              border: "1px solid rgba(189,133,47,0.25)",
+            }}>
+              {upcomingDeadlines.length}
+            </span>
+          </div>
+
+          {/* Horizontal scrollable row of deadline cards */}
+          <div style={{ display: "flex", gap: 14, overflowX: "auto", paddingBottom: 4 }}>
+            {upcomingDeadlines.map((risk) => {
+              const days = risk.days;
+              const isUrgent = days <= 3;
+              const railColor = deadlineColor(days);
+              const labelText = deadlineLabel(days);
+              const labelColor = deadlineColor(days);
+              const labelBg = deadlineBg(days);
+
+              return (
+                <div
+                  key={risk.id}
+                  style={{
+                    ...CARD_STYLE,
+                    width: 220,
+                    minWidth: 220,
+                    padding: 16,
+                    borderRadius: 14,
+                    position: "relative",
+                    overflow: "hidden",
+                    flexShrink: 0,
+                  }}
+                >
+                  {/* Left rail colored by urgency */}
+                  <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 4, background: railColor }} />
+
+                  {/* URGENT badge */}
+                  {isUrgent && (
+                    <div style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      fontFamily: "'IBM Plex Mono', monospace",
+                      fontSize: 10,
+                      fontWeight: 700,
+                      letterSpacing: "0.1em",
+                      padding: "3px 8px",
+                      borderRadius: 999,
+                      background: "#f8e8e3",
+                      color: "#c2553d",
+                      border: "1px solid rgba(194,85,61,0.25)",
+                      marginBottom: 8,
+                    }}>
+                      URGENT
+                    </div>
+                  )}
+
+                  {/* Title */}
+                  <p style={{
+                    fontSize: 13.5,
+                    fontWeight: 700,
+                    color: "#0b2734",
+                    lineHeight: 1.3,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    marginTop: isUrgent ? 0 : 4,
+                    marginBottom: 6,
+                  }}>
+                    {risk.title}
+                  </p>
+
+                  {/* Dollar amount */}
+                  <p style={{ fontSize: 13, fontWeight: 700, color: "#c2553d", fontVariantNumeric: "tabular-nums", marginBottom: 8 }}>
+                    {fmt(risk.dollarAmount)} at risk
+                  </p>
+
+                  {/* Deadline label */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 12 }}>
+                    <Clock style={{ width: 12, height: 12, color: labelColor, flexShrink: 0 }} />
+                    <span style={{
+                      fontSize: 12,
+                      fontWeight: 600,
+                      color: labelColor,
+                      background: labelBg,
+                      padding: "2px 8px",
+                      borderRadius: 999,
+                    }}>
+                      {labelText}
+                    </span>
+                  </div>
+
+                  {/* Take action link */}
+                  <Link
+                    href="/risks"
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 4,
+                      fontSize: 12.5,
+                      fontWeight: 600,
+                      color: "#0c8174",
+                      textDecoration: "none",
+                    }}
+                  >
+                    Take action <ArrowRight style={{ width: 12, height: 12 }} />
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

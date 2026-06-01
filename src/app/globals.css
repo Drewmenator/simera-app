@@ -1,26 +1,211 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --font-sans: var(--font-hanken);
+  --font-mono: var(--font-ibm-plex-mono);
+  --font-heading: var(--font-hanken);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --animate-indeterminate: indeterminate 1.6s ease-in-out infinite;
+  @keyframes indeterminate {
+    0%   { transform: translateX(-100%); }
+    50%  { transform: translateX(100%); }
+    100% { transform: translateX(300%); }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ─── Simera Design Tokens ─────────────────────────────────────────────────
+   Clinical Teal-Navy · Light primary · Premium data UI
+──────────────────────────────────────────────────────────────────────────── */
+:root {
+  /* Surfaces */
+  --canvas: #e9eded;
+  --card: #ffffff;
+  --card-2: #f6f8f8;
+  --ink: #0b2734;
+  --ink-2: #07202b;
+  --ink-soft: #11313f;
+
+  /* Text */
+  --fg: #0b2734;
+  --fg-mut: #5c747e;
+  --fg-faint: #8aa0a8;
+  --on-dark: #eaf2f3;
+  --on-dark-mut: #8fabb5;
+  --on-dark-faint: #5d7c86;
+
+  /* Brand */
+  --teal: #14b8a6;
+  --teal-deep: #0c8174;
+  --teal-wash: #e4f4f1;
+
+  /* Semantic */
+  --good: #0c8174;
+  --good-soft: #e4f4f1;
+  --bad: #c2553d;
+  --bad-soft: #f8e8e3;
+  --warn: #bd852f;
+  --warn-soft: #f8efdd;
+  --info: #2a6f97;
+
+  /* Lines & shadow */
+  --line: rgba(11,39,52,0.10);
+  --line-soft: rgba(11,39,52,0.06);
+  --line-dark: rgba(255,255,255,0.10);
+  --shadow-sm: 0 1px 2px rgba(11,39,52,0.05);
+  --shadow: 0 1px 2px rgba(11,39,52,0.05), 0 10px 26px -14px rgba(11,39,52,0.22);
+  --shadow-lg: 0 1px 2px rgba(11,39,52,0.05), 0 24px 48px -20px rgba(11,39,52,0.30);
+
+  /* Tailwind theme mapping */
+  --background: #e9eded;
+  --foreground: #0b2734;
+
+  --card-foreground: #0b2734;
+
+  --popover: #ffffff;
+  --popover-foreground: #0b2734;
+
+  --primary: #14b8a6;
+  --primary-foreground: #ffffff;
+
+  --secondary: #f6f8f8;
+  --secondary-foreground: #0b2734;
+
+  --muted: #f6f8f8;
+  --muted-foreground: #5c747e;
+
+  --accent: #e4f4f1;
+  --accent-foreground: #0c8174;
+
+  --destructive: #c2553d;
+  --destructive-foreground: #ffffff;
+
+  --border: rgba(11,39,52,0.10);
+  --input: rgba(11,39,52,0.10);
+  --ring: rgba(20,184,166,0.40);
+
+  --chart-1: #14b8a6;
+  --chart-2: #0c8174;
+  --chart-3: #c2553d;
+  --chart-4: #bd852f;
+  --chart-5: #2a6f97;
+
+  --radius: 1rem;
+
+  /* Sidebar */
+  --sidebar: #0b2734;
+  --sidebar-foreground: #eaf2f3;
+  --sidebar-primary: #14b8a6;
+  --sidebar-primary-foreground: #0b2734;
+  --sidebar-accent: rgba(20,184,166,0.14);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(255,255,255,0.10);
+  --sidebar-ring: rgba(20,184,166,0.40);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Hanken Grotesk', system-ui, sans-serif;
+    background: var(--canvas);
+    color: var(--fg);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  html {
+    color-scheme: light;
+  }
+}
+
+/* Utility classes */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.mono {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+  white-space: nowrap;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(11,39,52,0.16); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(11,39,52,0.28); }
+
+/* Status dot animation */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(224,138,115,0.4); }
+  50% { opacity: 0.8; box-shadow: 0 0 0 4px rgba(224,138,115,0); }
+}
+.pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* Card base style */
+.simera-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+/* Selection color */
+::selection {
+  background: rgba(20,184,166,0.25);
 }
