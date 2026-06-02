@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutGrid,
   TrendingUp,
   Shield,
+  ShieldCheck,
   BarChart2,
   Sparkles,
   Calculator,
@@ -20,6 +21,7 @@ const navItems = [
   { href: "/", label: "Home", icon: LayoutGrid },
   { href: "/revenue", label: "Revenue", icon: TrendingUp },
   { href: "/risks", label: "Risks", icon: Shield, badge: 2 },
+  { href: "/compliance", label: "Compliance", icon: ShieldCheck },
   { href: "/benchmarks", label: "Benchmarks", icon: BarChart2 },
   { href: "/ask", label: "Ask Simera", icon: Sparkles },
   { href: "/roi", label: "ROI Calculator", icon: Calculator },
@@ -31,6 +33,7 @@ interface SidebarProps {
 
 export function Sidebar({ onUploadClick }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const { practiceName, metrics } = useAuditData();
   const { user } = useUser();
 
@@ -104,6 +107,8 @@ export function Sidebar({ onUploadClick }: SidebarProps) {
 
       {/* Practice selector */}
       <div
+        onClick={() => router.push("/settings")}
+        title="Practice settings"
         style={{
           margin: "6px 4px 18px",
           padding: "12px 14px",
@@ -111,6 +116,15 @@ export function Sidebar({ onUploadClick }: SidebarProps) {
           background: "rgba(255,255,255,0.04)",
           border: "1px solid rgba(255,255,255,0.10)",
           cursor: "pointer",
+          transition: "background 0.14s, border-color 0.14s",
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLDivElement).style.background = "rgba(255,255,255,0.08)";
+          (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(255,255,255,0.18)";
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLDivElement).style.background = "rgba(255,255,255,0.04)";
+          (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(255,255,255,0.10)";
         }}
       >
         <div
@@ -345,6 +359,8 @@ export function Sidebar({ onUploadClick }: SidebarProps) {
       <div style={{ display: "flex", gap: 12, padding: "8px 16px 14px", borderTop: "1px solid rgba(255,255,255,0.07)", marginTop: 4 }}>
         <Link href="/legal/terms" style={{ fontSize: 11, color: "rgba(234,242,243,0.35)", textDecoration: "none" }}>Terms</Link>
         <Link href="/legal/privacy" style={{ fontSize: 11, color: "rgba(234,242,243,0.35)", textDecoration: "none" }}>Privacy</Link>
+        <Link href="/legal/hipaa" style={{ fontSize: 11, color: "rgba(234,242,243,0.35)", textDecoration: "none" }}>HIPAA</Link>
+        <Link href="/legal/baa" style={{ fontSize: 11, color: "rgba(234,242,243,0.35)", textDecoration: "none" }}>BAA</Link>
       </div>
     </aside>
   );

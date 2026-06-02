@@ -9,8 +9,10 @@ import { DemoBanner } from "@/components/shell/demo-banner";
 import { WelcomeOverlay } from "@/components/onboarding/welcome-overlay";
 import { BaaModal } from "@/components/onboarding/baa-modal";
 import { AuditProvider, useAuditContext } from "@/lib/audit-context";
+import { useAuditData } from "@/lib/use-audit-data";
 import { PageTransition } from "@/components/shell/page-transition";
 import { useBaa } from "@/lib/use-baa";
+import { useIdleTimeout } from "@/hooks/use-idle-timeout";
 import { AuditHistoryPanel } from "@/components/history/audit-history-panel";
 import type { AuditResult } from "@/lib/api";
 
@@ -21,6 +23,8 @@ function AppShell({ children }: { children: React.ReactNode }) {
   const [historyOpen, setHistoryOpen] = useState(false);
   const { setResult } = useAuditContext();
   const { baaAccepted, acceptBaa } = useBaa();
+  const auditData = useAuditData();
+  useIdleTimeout();
 
   const handleAuditComplete = (result: AuditResult) => {
     setResult(result);
@@ -42,9 +46,10 @@ function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div
+      className="md:grid md:grid-cols-[268px_1fr]"
       style={{
-        display: "grid",
-        gridTemplateColumns: "268px 1fr",
+        display: "flex",
+        flexDirection: "column",
         height: "100vh",
         overflow: "hidden",
         background: "#e9eded",
@@ -63,10 +68,10 @@ function AppShell({ children }: { children: React.ReactNode }) {
       />
 
       {/* Main column */}
-      <div style={{ display: "flex", flexDirection: "column", overflow: "hidden", background: "#e9eded" }}>
+      <div style={{ display: "flex", flexDirection: "column", overflow: "hidden", background: "#e9eded", minWidth: 0 }}>
         <Topbar onMenuClick={() => setMobileNavOpen(true)} onHistoryClick={() => setHistoryOpen(true)} />
-        <DemoBanner />
-        <main style={{ flex: 1, overflowY: "auto", padding: "26px 34px 60px" }}>
+        {!auditData.isLive && <DemoBanner onUploadClick={handleUploadClick} />}
+        <main style={{ flex: 1, overflowY: "auto" }} className="px-4 py-5 pb-16 md:px-[34px] md:py-[26px] md:pb-[60px]">
           <div style={{ maxWidth: 1340, margin: "0 auto" }}>
             <PageTransition key={typeof window !== "undefined" ? window.location.pathname : ""}>{children}</PageTransition>
           </div>
@@ -77,6 +82,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
         open={baaOpen}
         onAccept={handleBaaAccept}
         onClose={() => setBaaOpen(false)}
+        organization={auditData.practiceName}
       />
       <UploadModal
         open={uploadOpen}

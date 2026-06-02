@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Shield, X, CheckCircle2, Download } from "lucide-react";
+import { Shield, X, CheckCircle2, Download, Loader2 } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
+import { acceptBaa } from "@/lib/api";
 
 interface BaaModalProps {
   open: boolean;
   onAccept: () => void;
   onClose: () => void;
+  organization?: string;
 }
 
 const BAA_POINTS = [
@@ -17,8 +20,29 @@ const BAA_POINTS = [
   "Compliant with 45 CFR Parts 160 and 164",
 ];
 
-export function BaaModal({ open, onAccept, onClose }: BaaModalProps) {
+export function BaaModal({ open, onAccept, onClose, organization }: BaaModalProps) {
   const [checked, setChecked] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { user } = useUser();
+
+  const handleAccept = async () => {
+    if (!checked) return;
+    setSaving(true);
+    setError(null);
+    try {
+      await acceptBaa({
+        userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
+        userName: user?.fullName ?? undefined,
+        organization: organization,
+      });
+      onAccept();
+    } catch {
+      setError("Failed to record your acceptance. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   if (!open) return null;
 
@@ -273,10 +297,8 @@ export function BaaModal({ open, onAccept, onClose }: BaaModalProps) {
             </a>
 
             <button
-              onClick={() => {
-                if (checked) onAccept();
-              }}
-              disabled={!checked}
+              onClick={handleAccept}
+              disabled={!checked || saving}
               style={{
                 flex: 1,
                 padding: "9px 16px",
@@ -284,17 +306,27 @@ export function BaaModal({ open, onAccept, onClose }: BaaModalProps) {
                 borderRadius: 7,
                 fontSize: 13,
                 fontWeight: 600,
-                color: checked ? "#ffffff" : "#94a3b8",
-                background: checked ? "#14b8a6" : "#f1f5f9",
-                cursor: checked ? "pointer" : "not-allowed",
+                color: checked && !saving ? "#ffffff" : "#94a3b8",
+                background: checked && !saving ? "#14b8a6" : "#f1f5f9",
+                cursor: checked && !saving ? "pointer" : "not-allowed",
                 fontFamily: "inherit",
                 transition: "background 0.15s, color 0.15s",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 6,
               }}
             >
-              Accept &amp; Continue
+              {saving && <Loader2 size={13} style={{ animation: "spin 1s linear infinite" }} />}
+              {saving ? "Saving…" : "Accept & Continue"}
             </button>
           </div>
 
+          {error && (
+            <p style={{ margin: "0 0 12px", fontSize: 12, color: "#ef4444", textAlign: "center" }}>
+              {error}
+            </p>
+          )}
           {/* Legal footnote */}
           <p
             style={{

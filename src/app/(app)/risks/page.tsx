@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle, ArrowRight, Clock } from "lucide-react";
+import { AlertTriangle, ArrowRight, Clock, TrendingUp } from "lucide-react";
 import { useAuditData } from "@/lib/use-audit-data";
 import { useFindingStatuses, findingId, STATUS_CONFIG, FindingStatus } from "@/lib/use-finding-statuses";
 import { daysUntil, deadlineLabel, deadlineColor, deadlineBg } from "@/lib/deadlines";
+import { denialTaxonomy, appealOverturnRates } from "@/lib/mock-data";
+import DenialRiskWidget, { DenialRiskPrediction } from "@/components/ai/denial-risk-widget";
 
 const CARD: React.CSSProperties = {
   background: "#fff",
@@ -82,12 +84,165 @@ export default function RisksPage() {
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
 
       {/* KPI row */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 18 }}>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-[14px] md:gap-[18px]">
         <KpiCard label="Total at Risk" value={fmt(totalAtRisk)} accent="#c2553d" />
         <KpiCard label="Critical" value={critCount} accent="#c2553d" />
         <KpiCard label="High" value={highCount} accent="#bd852f" />
         <KpiCard label="Medium" value={medCount} accent="#d8a93f" />
       </div>
+
+      {/* Denial Taxonomy + Appeal Overturn Rates */}
+      <div className="grid grid-cols-1 md:grid-cols-[1.6fr_1fr] gap-[14px] md:gap-[18px]">
+
+        {/* Denial taxonomy */}
+        <div style={{ ...CARD, padding: "22px 24px" }}>
+          <div style={{ marginBottom: 16 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em", color: "#0b2734", margin: "0 0 3px" }}>Denial Taxonomy</h2>
+            <p style={{ fontSize: 12.5, color: "#5c747e" }}>Industry-wide breakdown — what&apos;s driving denials and recovery rates · MGMA / HFMA 2024</p>
+          </div>
+          {denialTaxonomy.map((row) => (
+            <div key={row.category} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "11px 0", borderBottom: "1px solid rgba(11,39,52,0.06)" }}>
+              {/* Bar + label */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5 }}>
+                  <span style={{ fontSize: 13.5, fontWeight: 700, color: "#0b2734" }}>{row.category}</span>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, fontWeight: 700, padding: "2px 8px", borderRadius: 999, background: `${row.color}14`, color: row.color }}>
+                    {row.pctOfDenials}% of denials
+                  </span>
+                </div>
+                <div style={{ height: 5, borderRadius: 4, background: "rgba(11,39,52,0.07)", overflow: "hidden", marginBottom: 6 }}>
+                  <div style={{ height: "100%", width: `${row.pctOfDenials * 3.3}%`, background: row.color, borderRadius: 4, opacity: 0.75 }} />
+                </div>
+                <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+                  <span style={{ fontSize: 11.5, color: "#5c747e" }}>
+                    <span style={{ color: "#8aa0a8" }}>CARCs: </span>
+                    {row.topCARCs.map((c) => (
+                      <span key={c} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 600, background: "#f6f8f8", padding: "1px 5px", borderRadius: 4, marginRight: 4 }}>{c}</span>
+                    ))}
+                  </span>
+                  <span style={{ fontSize: 11.5, color: "#5c747e" }}>
+                    <span style={{ color: "#8aa0a8" }}>Prevention: </span>{row.prevention}
+                  </span>
+                </div>
+              </div>
+              {/* Recovery rate */}
+              <div style={{ textAlign: "right", flexShrink: 0 }}>
+                <div style={{ fontSize: 19, fontWeight: 800, color: row.recoveryRate > 60 ? "#0c8174" : row.recoveryRate < 15 ? "#c2553d" : "#bd852f", fontVariantNumeric: "tabular-nums" }}>
+                  {row.recoveryRate}%
+                </div>
+                <div style={{ fontSize: 10.5, color: "#8aa0a8", whiteSpace: "nowrap" }}>recovery</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Appeal overturn rates */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+          <div style={{ ...CARD, padding: "20px 22px" }}>
+            <div style={{ marginBottom: 14 }}>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: "#0b2734", margin: "0 0 3px" }}>Appeal Overturn Rates</h3>
+              <p style={{ fontSize: 12, color: "#5c747e" }}>Most denials are never appealed — but most win when they are</p>
+            </div>
+            {appealOverturnRates.map((row) => (
+              <div key={row.payer} style={{ padding: "10px 0", borderBottom: "1px solid rgba(11,39,52,0.06)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
+                  <div>
+                    <div style={{ fontSize: 13.5, fontWeight: 700, color: "#0b2734" }}>{row.payer}</div>
+                    {row.note && <div style={{ fontSize: 11.5, color: "#c2553d", fontWeight: 600, marginTop: 2 }}>{row.note}</div>}
+                    <div style={{ fontSize: 11.5, color: "#8aa0a8", marginTop: 1 }}>Appeal rate: {row.appealRate}</div>
+                  </div>
+                  <div style={{ textAlign: "right", flexShrink: 0 }}>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: row.overturnRate >= 70 ? "#0c8174" : "#bd852f", fontVariantNumeric: "tabular-nums" }}>
+                      {row.overturnRate}%
+                    </div>
+                    <div style={{ fontSize: 10.5, color: "#8aa0a8" }}>overturned</div>
+                  </div>
+                </div>
+                <div style={{ height: 4, borderRadius: 4, background: "rgba(11,39,52,0.07)", marginTop: 7, overflow: "hidden" }}>
+                  <div style={{ height: "100%", width: `${row.overturnRate}%`, background: row.overturnRate >= 70 ? "#0c8174" : "#bd852f", borderRadius: 4 }} />
+                </div>
+              </div>
+            ))}
+            <div style={{ marginTop: 14, padding: "12px 14px", borderRadius: 10, background: "#e4f4f1", border: "1px solid rgba(12,129,116,0.2)" }}>
+              <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+                <TrendingUp style={{ width: 15, height: 15, color: "#0c8174", flexShrink: 0, marginTop: 1 }} />
+                <p style={{ fontSize: 12.5, color: "#0c8174", lineHeight: 1.45 }}>
+                  <b>Key paradox:</b> appeal success rates are high, but 35–60% of denials are never resubmitted. Every appealed MA denial wins 4 out of 5 times.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Cost to rework card */}
+          <div style={{ ...CARD, padding: "20px 22px" }}>
+            <h3 style={{ fontSize: 15, fontWeight: 700, color: "#0b2734", margin: "0 0 14px" }}>Denial Cost Intelligence</h3>
+            {[
+              { label: "Avg cost to rework one claim", value: "$57.23", sub: "Up 30% from $43.84 in 2022", accent: "#c2553d" },
+              { label: "Denials never resubmitted", value: "35–60%", sub: "Pure revenue abandoned", accent: "#bd852f" },
+              { label: "Annual denial losses (industry)", value: "$262B", sub: "$25.7B spent contesting them", accent: "#0b2734" },
+            ].map((item) => (
+              <div key={item.label} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid rgba(11,39,52,0.06)", gap: 12 }}>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "#0b2734" }}>{item.label}</div>
+                  <div style={{ fontSize: 11.5, color: "#8aa0a8", marginTop: 2 }}>{item.sub}</div>
+                </div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: item.accent, fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>{item.value}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* AI Denial Risk Widget — highest-risk claim from current audit */}
+      {(() => {
+        const topRisk = risks.find((r) => r.severity === "critical") ?? risks[0];
+        if (!topRisk) return null;
+
+        const prediction: DenialRiskPrediction = {
+          claimId: topRisk.id ?? "DEMO-001",
+          denialRiskScore: topRisk.severity === "critical" ? 0.87 :
+                           topRisk.severity === "high" ? 0.62 :
+                           topRisk.severity === "medium" ? 0.38 : 0.15,
+          riskLevel: topRisk.severity as "critical" | "high" | "medium" | "low",
+          confidenceTier: topRisk.severity === "critical" ? "review_required" :
+                          topRisk.severity === "high" ? "review_recommended" : "auto",
+          topReasons: (topRisk.description ? [{
+            code: topRisk.category?.toLowerCase().replace(/\s+/g, "_") ?? "unknown",
+            description: topRisk.description,
+            category: topRisk.category ?? "General",
+            probabilityContribution: topRisk.severity === "critical" ? 0.45 : 0.28,
+          }] : []),
+          shapFactors: [
+            { factor: "base_rate", label: "Industry Baseline", contribution: 0.08 },
+            { factor: topRisk.category?.toLowerCase().replace(/\s+/g, "_") ?? "claim_issue",
+              label: topRisk.category ?? "Claim Issue",
+              contribution: topRisk.severity === "critical" ? 0.45 :
+                            topRisk.severity === "high" ? 0.30 : 0.15 },
+            { factor: "payer_pattern", label: "Payer Pattern", contribution: 0.07 },
+          ],
+          recommendedActions: topRisk.action ? [topRisk.action] : ["Review claim before submission."],
+          modelVersion: "heuristic-v1.2.0",
+        };
+
+        return (
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+              <h2 style={{ fontSize: 15, fontWeight: 700, color: "#0b2734", margin: 0 }}>AI Risk Assessment</h2>
+              <span style={{ fontSize: 11, fontWeight: 600, color: "#0c8174", background: "#e4f4f1", borderRadius: 999, padding: "2px 8px" }}>
+                Highest-Priority Claim
+              </span>
+            </div>
+            <div style={{
+              background: "#0a1628",
+              borderRadius: 16,
+              padding: 2,
+              boxShadow: "0 2px 12px rgba(11,39,52,0.15)",
+            }}>
+              <DenialRiskWidget prediction={prediction} />
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Severity filter chips */}
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDown, TrendingUp, Zap, ShieldAlert, DollarSign, FileText } from "lucide-react";
+import { useState, useRef } from "react";
+import { ChevronDown, TrendingUp, Zap, ShieldAlert, DollarSign, FileText, CheckCircle2 } from "lucide-react";
 import { useAuditData } from "@/lib/use-audit-data";
 import { useFindingStatuses, findingId, STATUS_CONFIG, type FindingStatus } from "@/lib/use-finding-statuses";
 import { AppealLetterModal } from "@/components/appeal/appeal-letter-modal";
@@ -60,11 +60,12 @@ const STATUS_FILTERS: { id: FindingStatus | "all"; label: string }[] = [
 ];
 
 export default function RevenuePage() {
-  const { metrics, findings, payerScorecard, revenueByMonth, practiceName } = useAuditData();
+  const { metrics, findings, payerScorecard, revenueByMonth, practiceName, isLoading, hasData } = useAuditData();
   const [activeTab, setActiveTab] = useState("leakage");
   const [openFinding, setOpenFinding] = useState<number | null>(0);
   const [statusFilter, setStatusFilter] = useState<FindingStatus | "all">("all");
-  const { getStatus, setStatus } = useFindingStatuses();
+  const { getStatus, setStatus, getRecoveredAmount } = useFindingStatuses();
+  const [recoveryInputs, setRecoveryInputs] = useState<Record<string, string>>({});
   const [appealFinding, setAppealFinding] = useState<{
     label: string;
     payer: string;
@@ -103,11 +104,54 @@ export default function RevenuePage() {
     return acc;
   }, {} as Record<FindingStatus, number>);
 
+  if (isLoading) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-[14px] md:gap-[18px]">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} style={{ background: "#fff", border: "1px solid rgba(11,39,52,0.10)", borderRadius: 16, padding: "20px 22px", height: 100 }}>
+              <div style={{ height: 10, width: "55%", background: "#e9eded", borderRadius: 6, marginBottom: 14 }} />
+              <div style={{ height: 32, width: "75%", background: "#f0f4f4", borderRadius: 8 }} />
+            </div>
+          ))}
+        </div>
+        <div style={{ background: "#fff", border: "1px solid rgba(11,39,52,0.10)", borderRadius: 16, height: 240, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: "#8aa0a8" }}>Loading findings…</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasData) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 480, gap: 20, textAlign: "center" }}>
+        <div style={{ width: 64, height: 64, borderRadius: 18, background: "#f8e8e3", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <TrendingUp style={{ width: 30, height: 30, color: "#c2553d" }} />
+        </div>
+        <div>
+          <h2 style={{ fontSize: 22, fontWeight: 800, color: "#0b2734", letterSpacing: "-0.03em", marginBottom: 8 }}>
+            No findings yet
+          </h2>
+          <p style={{ fontSize: 14, color: "#5c747e", maxWidth: 360, lineHeight: 1.6 }}>
+            Upload an 835 ERA file to analyze your revenue leakage and denial patterns.
+          </p>
+        </div>
+        <a
+          href="/onboarding"
+          style={{ display: "inline-flex", alignItems: "center", gap: 8, height: 44, padding: "0 24px", borderRadius: 12, background: "#0b2734", color: "#fff", fontSize: 14, fontWeight: 700, textDecoration: "none" }}
+        >
+          Upload 835 File
+          <FileText style={{ width: 15, height: 15 }} />
+        </a>
+      </div>
+    );
+  }
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
 
       {/* KPI row */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 18 }}>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-[14px] md:gap-[18px]">
         <KpiCard label="Total Leakage" value={fmt(metrics.totalLeakage)} sub={`${metrics.leakageRatePct.toFixed(1)}% of revenue`} accent="#c2553d" icon={TrendingUp} />
         <KpiCard label="Expected Recovery" value={fmt(metrics.expectedRecovery)} sub="Probability-weighted" accent="#0c8174" icon={Zap} />
         <KpiCard label="Denial Rate" value={`${metrics.denialRate.toFixed(1)}%`} sub={`Median ${metrics.benchmarkMedian}%`} accent="#bd852f" icon={ShieldAlert} />
@@ -115,7 +159,7 @@ export default function RevenuePage() {
       </div>
 
       {/* Charts row */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-[14px] md:gap-[18px]">
         {/* Leakage Trend */}
         <div style={{ ...CARD, padding: "22px 24px" }}>
           <h2 style={{ fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em", color: "#0b2734", margin: "0 0 4px" }}>Leakage Trend</h2>
@@ -158,6 +202,42 @@ export default function RevenuePage() {
           </ResponsiveContainer>
         </div>
       </div>
+
+      {/* Underpayment Detection Banner */}
+      {(() => {
+        const annualClaims = Math.round((metrics.totalLeakage * 12) / 0.171 / 1000000 * 3125);
+        const lineItems = annualClaims * 2.4;
+        const underpaidCount = Math.round(lineItems * 0.027);
+        const underpaymentExposure = Math.round(underpaidCount * 38);
+        return (
+          <div style={{ background: "linear-gradient(160deg, rgba(12,129,116,0.06), rgba(20,184,166,0.04))", border: "1px solid rgba(12,129,116,0.20)", borderRadius: 16, padding: "18px 24px", display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
+            <div style={{ width: 38, height: 38, borderRadius: 11, background: "#e4f4f1", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <DollarSign style={{ width: 18, height: 18, color: "#0c8174" }} />
+            </div>
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <div style={{ fontSize: 14.5, fontWeight: 700, color: "#0b2734", marginBottom: 3 }}>
+                Underpayment Detection — estimated <b style={{ color: "#0c8174" }}>${underpaymentExposure.toLocaleString()}</b> in payer shortfalls
+              </div>
+              <div style={{ fontSize: 12.5, color: "#5c747e", lineHeight: 1.5 }}>
+                Industry data: 2.5–3% of line items are underpaid at avg $38 shortfall · ~{underpaidCount.toLocaleString()} line items affected · Upload payer contracts to verify against your contracted rates
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 20, flexShrink: 0 }}>
+              {[
+                { label: "Industry Rate", value: "2.7%", sub: "of line items underpaid" },
+                { label: "Avg Shortfall", value: "$38", sub: "per underpaid line item" },
+                { label: "Your Exposure", value: `$${Math.round(underpaymentExposure / 1000)}K`, sub: "estimated annual" },
+              ].map((s) => (
+                <div key={s.label} style={{ textAlign: "center" }}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9.5, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{s.label}</div>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: "#0c8174", fontVariantNumeric: "tabular-nums", lineHeight: 1.2, marginTop: 3 }}>{s.value}</div>
+                  <div style={{ fontSize: 11, color: "#8aa0a8" }}>{s.sub}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Findings card */}
       <div style={{ ...CARD, padding: "22px 24px" }}>
@@ -309,7 +389,7 @@ export default function RevenuePage() {
                 {isOpen && (
                   <div style={{ padding: "0 20px 20px 52px" }}>
                     {/* Status row */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: currentStatus === "resolved" ? 10 : 20, flexWrap: "wrap" }}>
                       <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>
                         Status
                       </span>
@@ -335,6 +415,40 @@ export default function RevenuePage() {
                         );
                       })}
                     </div>
+
+                    {/* Recovery amount input — shown when status is resolved */}
+                    {currentStatus === "resolved" && (() => {
+                      const fid = findingId(f.label, f.payer);
+                      const existing = getRecoveredAmount(fid);
+                      const inputVal = recoveryInputs[fid] ?? (existing > 0 ? String(existing) : "");
+                      return (
+                        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20, padding: "10px 14px", borderRadius: 8, background: "#e4f4f1", border: "1px solid rgba(12,129,116,0.2)" }}>
+                          <CheckCircle2 size={15} color="#0c8174" style={{ flexShrink: 0 }} />
+                          <span style={{ fontSize: 13, color: "#0c8174", fontWeight: 600, whiteSpace: "nowrap" }}>Actual recovered:</span>
+                          <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
+                            <span style={{ fontSize: 13, color: "#5c747e" }}>$</span>
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              placeholder={String(Math.round(f.expectedRecovery))}
+                              value={inputVal}
+                              onChange={(e) => setRecoveryInputs((prev) => ({ ...prev, [fid]: e.target.value }))}
+                              style={{ width: 110, height: 28, padding: "0 8px", border: "1px solid rgba(12,129,116,0.35)", borderRadius: 6, fontSize: 13, fontVariantNumeric: "tabular-nums", background: "#fff", color: "#0b2734", outline: "none" }}
+                            />
+                          </div>
+                          <button
+                            onClick={() => { const amt = parseFloat(inputVal); if (!isNaN(amt) && amt >= 0) setStatus(fid, "resolved", amt); }}
+                            style={{ height: 28, padding: "0 12px", borderRadius: 6, border: "none", background: "#0c8174", color: "#fff", fontSize: 12.5, fontWeight: 600, cursor: "pointer" }}
+                          >
+                            Save
+                          </button>
+                          {existing > 0 && (
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "#0c8174" }}>Saved: ${existing.toLocaleString()}</span>
+                          )}
+                        </div>
+                      );
+                    })()}
 
                     <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8", marginBottom: 8 }}>
                       Recommended Action

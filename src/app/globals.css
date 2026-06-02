@@ -209,3 +209,86 @@
 ::selection {
   background: rgba(20,184,166,0.25);
 }
+
+/* ─── Mobile Responsive Overrides ─────────────────────────────────────────
+   CSS media queries beat inline style props — used here to override the
+   desktop grid layouts defined as JSX style objects.
+──────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+
+  /* ── App shell layout ── */
+  /* Force full-width single column — no 268px sidebar column */
+  body > div, #__next > div {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── KPI grids (4-col / 5-col → 2-col) ── */
+  .kpi-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* ── Two-column content rows → single column stack ── */
+  .content-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  /* ── KPI card values — smaller font so numbers don't overflow ── */
+  .kpi-value {
+    font-size: 22px !important;
+  }
+
+  /* ── Page main padding ── */
+  main {
+    padding: 14px 14px 80px !important;
+  }
+
+  /* ── Topbar: hide subtitle, compress ── */
+  .topbar-subtitle {
+    display: none !important;
+  }
+
+  .topbar-title {
+    font-size: 16px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* ── Topbar right actions: hide History + Bell ── */
+  .topbar-history,
+  .topbar-bell {
+    display: none !important;
+  }
+
+  /* ── Search: icon only ── */
+  .topbar-search-full {
+    display: none !important;
+  }
+  .topbar-search-icon {
+    display: flex !important;
+  }
+
+  /* ── Payer scorecard table: hide last 2 columns ── */
+  .payer-table th:nth-child(n+3),
+  .payer-table td:nth-child(n+3) {
+    display: none !important;
+  }
+
+  /* ── Revenue chart: reduce height ── */
+  .recharts-responsive-container {
+    height: 160px !important;
+  }
+
+  /* ── Filter chips: allow wrap ── */
+  .filter-chips {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  /* ── Cards: reduce internal padding ── */
+  .simera-card {
+    padding: 14px 16px !important;
+  }
+}

@@ -246,10 +246,52 @@ function labelFromCategory(cat: string): string {
   return map[cat] ?? cat.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+// ─── Empty state (production — no audit uploaded yet) ────────────────────────
+
+function emptyData(): DashboardData {
+  return {
+    isLive: false,
+    practiceName: "Your Practice",
+    dataRange: "—",
+    metrics: {
+      revenueAnalyzed: 0,
+      totalLeakage: 0,
+      expectedRecovery: 0,
+      leakageRatePct: 0,
+      denialRate: 0,
+      denialGrade: "—",
+      benchmarkMedian: 11.8,
+      benchmarkBest: 5.2,
+    },
+    findings: [],
+    payerScorecard: [],
+    denialPatterns: [],
+    revenueByMonth: [],
+    risks: [],
+  };
+}
+
 // ─── Hook ────────────────────────────────────────────────────────────────────
 
-export function useAuditData(): DashboardData {
-  const { result } = useAuditContext();
-  if (result) return fromApiResult(result);
-  return mockData();
+export interface UseAuditDataResult extends DashboardData {
+  isLoading: boolean;
+  hasData: boolean;
+}
+
+export function useAuditData(): UseAuditDataResult {
+  const { result, isLoading } = useAuditContext();
+
+  if (result) {
+    const data = fromApiResult(result);
+    return { ...data, isLoading: false, hasData: true };
+  }
+
+  // While the API call is in-flight, return minimal empty state (no mock numbers)
+  if (isLoading) {
+    return { ...emptyData(), isLoading: true, hasData: false };
+  }
+
+  // Always show rich demo data until a real 835 is uploaded.
+  // Replace this with emptyData() once live customer data is flowing.
+  return { ...mockData(), isLoading: false, hasData: true };
 }

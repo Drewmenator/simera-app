@@ -233,37 +233,200 @@ export const cptAnalysis = [
   { code: "93000", description: "Electrocardiogram, routine", billed: 134, avgPaid: 22.10, expected: 28.40, gap: 6.30, volume: "Medium" },
 ];
 
-// Benchmark comparison data
+// Benchmark comparison data — sourced from MGMA 2023-2024, HFMA, CAQH
 export const benchmarks = {
   denialRate: {
     practice: 14.2,
-    best: 5.2,
-    median: 11.8,
+    best: 3.0,          // best-in-class <3–5%
+    median: 11.8,       // 2024 industry average (up from 10.2%)
     worst: 25.0,
-    percentile: 22, // practice is in 22nd percentile (lower = better for denials, but here higher% = worse)
+    percentile: 22,
   },
   daysInAR: {
     practice: 34.2,
-    best: 22,
-    median: 38,
+    best: 22,           // best-in-class <25 days
+    median: 40,         // industry median 40–45 days
     worst: 65,
     percentile: 68,
   },
   netCollection: {
     practice: 94.2,
-    best: 99.1,
-    median: 95.4,
+    best: 98.0,         // best-in-class ≥98%
+    median: 95.0,       // MGMA benchmark ≥95%
     worst: 88.0,
     percentile: 42,
   },
   firstPassResolution: {
     practice: 71.4,
-    best: 92.0,
-    median: 78.2,
+    best: 95.0,         // benchmark ≥95%
+    median: 85.0,       // industry average ~85%
     worst: 55.0,
     percentile: 38,
   },
+  cleanClaimRate: {
+    practice: 82.0,
+    best: 99.89,        // best-in-class
+    median: 85.0,       // industry average
+    worst: 65.0,
+    percentile: 44,
+  },
+  costToCollect: {
+    practice: 4.2,      // as % of net revenue
+    best: 2.0,          // best-in-class <2%
+    median: 3.5,        // industry average 3–4%
+    worst: 8.0,         // high-denial orgs 6–8%+
+    percentile: 35,
+  },
 };
+
+// Industry benchmark tiers — sourced from MGMA 2023-2024, HFMA
+export const benchmarkTiers = [
+  {
+    kpi: "Net Collection Rate",
+    unit: "%",
+    higherIsBetter: true,
+    bestInClass: "≥98%",
+    mgmaBenchmark: "≥95%",
+    industryAvg: "90–94%",
+    redFlag: "<90%",
+    note: "90% vs 97% NCR on $5M revenue = $350K/year lost",
+  },
+  {
+    kpi: "Days in A/R",
+    unit: "days",
+    higherIsBetter: false,
+    bestInClass: "<25 days",
+    mgmaBenchmark: "30–40 days",
+    industryAvg: "40–45 days",
+    redFlag: ">50 days",
+    note: "10-day improvement on $3M practice = $82K accelerated cash",
+  },
+  {
+    kpi: "Denial Rate",
+    unit: "%",
+    higherIsBetter: false,
+    bestInClass: "<3–5%",
+    mgmaBenchmark: "—",
+    industryAvg: "11.8%",
+    redFlag: ">15%",
+    note: "MA denial rate 15.7%; commercial 13.9% (2024)",
+  },
+  {
+    kpi: "Clean Claim Rate",
+    unit: "%",
+    higherIsBetter: true,
+    bestInClass: "99.89%",
+    mgmaBenchmark: "95%",
+    industryAvg: "~85%",
+    redFlag: "<75%",
+    note: "Every 1% improvement = fewer denials + faster payment",
+  },
+  {
+    kpi: "First Pass Resolution Rate",
+    unit: "%",
+    higherIsBetter: true,
+    bestInClass: "≥95%",
+    mgmaBenchmark: "≥95%",
+    industryAvg: "~85%",
+    redFlag: "<75%",
+    note: "Reworked claims cost $57.23 each on average",
+  },
+  {
+    kpi: "Cost to Collect",
+    unit: "% of net rev",
+    higherIsBetter: false,
+    bestInClass: "<2%",
+    mgmaBenchmark: "2%",
+    industryAvg: "3–4%",
+    redFlag: "6–8%+",
+    note: "High-denial orgs spend 6–8% of net revenue to collect",
+  },
+];
+
+// Revenue per physician by specialty (annual, MGMA 2024)
+export const revenueBySpecialty = [
+  { specialty: "Orthopedic Surgery", annualRevenue: 2700000 },
+  { specialty: "Cardiology", annualRevenue: 2400000 },
+  { specialty: "General Surgery", annualRevenue: 1750000 },
+  { specialty: "Internal Medicine", annualRevenue: 1350000 },
+  { specialty: "Family Medicine", annualRevenue: 1150000 },
+  { specialty: "Pediatrics", annualRevenue: 1050000 },
+];
+
+// Denial taxonomy — industry-wide breakdown (MGMA / HFMA 2024)
+export const denialTaxonomy = [
+  {
+    category: "Coding Errors",
+    pctOfDenials: 28,
+    topCARCs: ["CO-97", "CO-4", "CO-16", "CO-11"],
+    recoveryRate: 50,
+    recoveryNote: "40–60% with corrected resubmission",
+    prevention: "NCCI scrubber + AI coding review",
+    color: "#c2553d",
+  },
+  {
+    category: "Eligibility / Coverage",
+    pctOfDenials: 24,
+    topCARCs: ["CO-27", "CO-29", "CO-31"],
+    recoveryRate: 75,
+    recoveryNote: "70–80% if patient was insured",
+    prevention: "Real-time eligibility check at scheduling",
+    color: "#bd852f",
+  },
+  {
+    category: "Medical Necessity",
+    pctOfDenials: 18,
+    topCARCs: ["CO-50", "CO-57"],
+    recoveryRate: 40,
+    recoveryNote: "30–50%; requires physician appeal",
+    prevention: "Documentation completeness check pre-submit",
+    color: "#9a6a1e",
+  },
+  {
+    category: "Prior Authorization",
+    pctOfDenials: 13,
+    topCARCs: ["CO-15"],
+    recoveryRate: 82,
+    recoveryNote: "81.7% overturned on appeal — most never appealed",
+    prevention: "PA tracking automation",
+    color: "#0b2734",
+  },
+  {
+    category: "Timely Filing",
+    pctOfDenials: 6,
+    topCARCs: ["CO-29"],
+    recoveryRate: 2,
+    recoveryNote: "Near zero — essentially unrecoverable",
+    prevention: "Charge lag monitoring + auto-alerts",
+    color: "#5c747e",
+  },
+  {
+    category: "Duplicate Claims",
+    pctOfDenials: 7,
+    topCARCs: ["CO-18"],
+    recoveryRate: 0,
+    recoveryNote: "100% avoidable — scrubber catch",
+    prevention: "Duplicate claim scrubber",
+    color: "#8aa0a8",
+  },
+  {
+    category: "Credentialing",
+    pctOfDenials: 7,
+    topCARCs: ["CO-24", "CO-96", "PR-242"],
+    recoveryRate: 15,
+    recoveryNote: "Low recovery for non-credentialing period",
+    prevention: "Credentialing expiry tracking",
+    color: "#5c747e",
+  },
+];
+
+// Appeal overturn rates by payer type
+export const appealOverturnRates = [
+  { payer: "Medicare Advantage", appealRate: "5–10%", overturnRate: 81.7, note: "Most never appealed" },
+  { payer: "Commercial", appealRate: "Variable", overturnRate: 50, note: "40–60% overturned" },
+  { payer: "Medicaid MCO", appealRate: "~11%", overturnRate: 46, note: "" },
+  { payer: "ACA Marketplace", appealRate: "<1%", overturnRate: 44, note: "" },
+];
 
 // Risks / alerts
 export const risks = [
@@ -329,14 +492,16 @@ export const risks = [
   },
 ];
 
-// AI conversation starters
+// AI conversation starters — includes CARC-specific and benchmark questions
 export const aiSuggestions = [
   "What's the fastest $10K I can recover this week?",
   "Why is United Healthcare denying so many prior auth claims?",
   "What should I focus on this month?",
-  "How do we compare to other practices?",
+  "What's a good denial rate for my specialty?",
+  "CO-50 denials from Cigna — should I appeal, and what's the success rate?",
   "Which payer is the most profitable after denials?",
-  "What happens if we don't appeal these denials?",
-  "How much revenue are we losing to undercoding?",
+  "What does CO-97 mean and how do I fix it?",
+  "How much revenue am I losing to underpayments?",
   "What is my denial rate grade and how do I improve it?",
+  "How do my Days in A/R compare to the MGMA benchmark?",
 ];

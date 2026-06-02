@@ -502,6 +502,7 @@ const PLAN_LABELS: Record<string, string> = {
   free: "Free",
   starter: "Starter",
   growth: "Growth",
+  enterprise: "Enterprise",
 };
 
 const STATUS_BADGE: Record<
@@ -529,7 +530,7 @@ const PLANS = [
   {
     id: "growth" as const,
     name: "Growth",
-    price: "$299",
+    price: "$399",
     features: [
       "Up to 5 providers",
       "Unlimited uploads",
@@ -537,6 +538,18 @@ const PLANS = [
       "Team members",
     ],
     highlighted: true,
+  },
+  {
+    id: "enterprise" as const,
+    name: "Enterprise",
+    price: "Custom",
+    features: [
+      "Unlimited providers",
+      "Unlimited uploads",
+      "Dedicated support",
+      "Custom integrations",
+      "SSO & advanced security",
+    ],
   },
 ];
 
@@ -554,7 +567,7 @@ function BillingTab() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleSubscribe = async (plan: "starter" | "growth") => {
+  const handleSubscribe = async (plan: "starter" | "growth" | "enterprise") => {
     setCheckoutLoading(plan);
     setError(null);
     try {
@@ -632,7 +645,7 @@ function BillingTab() {
                 <p className="text-sm text-muted-foreground">1 provider · 3 uploads/month · $149/month</p>
               )}
               {plan === "growth" && (
-                <p className="text-sm text-muted-foreground">Up to 5 providers · Unlimited uploads · $299/month</p>
+                <p className="text-sm text-muted-foreground">Up to 5 providers · Unlimited uploads · $399/month</p>
               )}
               {plan === "free" && (
                 <p className="text-sm text-muted-foreground">Limited access — subscribe to unlock full analysis</p>
@@ -669,7 +682,7 @@ function BillingTab() {
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
             {plan === "free" ? "Choose a plan" : "Reactivate subscription"}
           </p>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             {PLANS.map((p) => (
               <div
                 key={p.id}
@@ -689,7 +702,7 @@ function BillingTab() {
                   <p className="text-sm font-semibold text-foreground">{p.name}</p>
                   <div className="flex items-baseline gap-1 mt-1">
                     <span className="text-2xl font-bold text-foreground">{p.price}</span>
-                    <span className="text-xs text-muted-foreground">/mo</span>
+                    {p.price !== "Custom" && <span className="text-xs text-muted-foreground">/mo</span>}
                   </div>
                 </div>
 
@@ -702,20 +715,29 @@ function BillingTab() {
                   ))}
                 </ul>
 
-                <button
-                  onClick={() => handleSubscribe(p.id)}
-                  disabled={!!checkoutLoading}
-                  className={`w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
-                    p.highlighted
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                      : "bg-secondary text-foreground border border-border hover:bg-secondary/80"
-                  }`}
-                >
-                  {checkoutLoading === p.id && (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  )}
-                  Subscribe
-                </button>
+                {p.id === "enterprise" ? (
+                  <a
+                    href="mailto:sales@simera.health?subject=Enterprise%20Plan%20Inquiry"
+                    className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium bg-secondary text-foreground border border-border hover:bg-secondary/80 transition-colors"
+                  >
+                    Contact sales
+                  </a>
+                ) : (
+                  <button
+                    onClick={() => handleSubscribe(p.id)}
+                    disabled={!!checkoutLoading}
+                    className={`w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
+                      p.highlighted
+                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                        : "bg-secondary text-foreground border border-border hover:bg-secondary/80"
+                    }`}
+                  >
+                    {checkoutLoading === p.id && (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    )}
+                    Subscribe
+                  </button>
+                )}
               </div>
             ))}
           </div>

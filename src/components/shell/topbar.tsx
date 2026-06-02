@@ -126,14 +126,14 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 20,
-          padding: "18px 34px 16px",
+          gap: 10,
           background: "rgba(233,237,237,0.85)",
           backdropFilter: "blur(10px)",
           borderBottom: "1px solid rgba(11,39,52,0.10)",
           flexShrink: 0,
           zIndex: 5,
         }}
+        className="px-4 py-3 md:px-[34px] md:py-[18px] md:gap-5"
       >
         {/* Mobile menu button */}
         <button
@@ -156,29 +156,37 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
         </button>
 
         {/* Page title */}
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ flex: 1, minWidth: 0, overflow: "hidden" }}>
           <h1
             style={{
-              fontSize: 23,
               fontWeight: 800,
               letterSpacing: "-0.025em",
               lineHeight: 1.1,
               color: "#0b2734",
               margin: 0,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
             }}
+            className="text-[17px] md:text-[23px]"
           >
             {page.title}
           </h1>
-          <p style={{ fontSize: 13.5, color: "#5c747e", marginTop: 2 }}>{page.subtitle}</p>
+          <p
+            className="hidden md:block"
+            style={{ fontSize: 13.5, color: "#5c747e", marginTop: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+          >
+            {page.subtitle}
+          </p>
         </div>
 
         {/* Right actions */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          {/* Search button */}
+        <div style={{ display: "flex", alignItems: "center", flexShrink: 0 }} className="gap-2 md:gap-[10px]">
+          {/* Search button — full on desktop, icon-only on mobile */}
           <button
             onClick={() => setSearchOpen(true)}
+            className="hidden md:flex"
             style={{
-              display: "flex",
               alignItems: "center",
               gap: 8,
               height: 38,
@@ -211,18 +219,37 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
               ⌘K
             </kbd>
           </button>
+          {/* Search icon-only on mobile */}
+          <button
+            onClick={() => setSearchOpen(true)}
+            className="flex md:hidden"
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 9,
+              border: "1px solid rgba(11,39,52,0.10)",
+              background: "#fff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              flexShrink: 0,
+            }}
+          >
+            <Search style={{ width: 16, height: 16, color: "#5c747e" }} />
+          </button>
 
-          {/* History button */}
+          {/* History button — hidden on mobile */}
           <button
             onClick={onHistoryClick}
             title="Audit history"
+            className="hidden md:flex"
             style={{
-              display: "flex",
               alignItems: "center",
               gap: 8,
-              height: 38,
-              padding: "0 15px",
-              borderRadius: 10,
+              height: 36,
+              padding: "0 12px",
+              borderRadius: 9,
               border: "1px solid rgba(11,39,52,0.10)",
               background: "#fff",
               fontSize: 13.5,
@@ -230,13 +257,14 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
               color: "#0b2734",
               cursor: "pointer",
               boxShadow: "0 1px 2px rgba(11,39,52,0.05)",
+              flexShrink: 0,
             }}
           >
             <History style={{ width: 16, height: 16 }} />
             History
           </button>
 
-          {/* Export button */}
+          {/* Export button — icon-only on mobile */}
           <div style={{ position: "relative" }}>
             <button
               onClick={() => setExportMenuOpen((v) => !v)}
@@ -245,9 +273,9 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
-                height: 38,
-                padding: "0 15px",
-                borderRadius: 10,
+                height: 36,
+                padding: "0 12px",
+                borderRadius: 9,
                 border: "1px solid rgba(11,39,52,0.10)",
                 background: "#fff",
                 fontSize: 13.5,
@@ -255,10 +283,11 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
                 color: "#0b2734",
                 cursor: "pointer",
                 boxShadow: "0 1px 2px rgba(11,39,52,0.05)",
+                flexShrink: 0,
               }}
             >
               {downloading ? <Loader2 style={{ width: 16, height: 16, animation: "spin 1s linear infinite" }} /> : <Download style={{ width: 16, height: 16 }} />}
-              Export
+              <span className="hidden md:inline">Export</span>
             </button>
             <AnimatePresence>
               {exportMenuOpen && (
@@ -303,8 +332,8 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
             </AnimatePresence>
           </div>
 
-          {/* Bell */}
-          <div style={{ position: "relative" }}>
+          {/* Bell — hidden on mobile */}
+          <div className="hidden md:block" style={{ position: "relative" }}>
             <button
               onClick={() => { setBellOpen((v) => !v); setUserMenuOpen(false); }}
               style={{

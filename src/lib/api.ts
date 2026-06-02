@@ -385,7 +385,7 @@ export async function getBillingStatus(): Promise<BillingStatus | null> {
  * Create a Stripe Checkout session for the given plan.
  * Returns the hosted Checkout URL to redirect the user to.
  */
-export async function createCheckoutSession(plan: "starter" | "growth"): Promise<string> {
+export async function createCheckoutSession(plan: "starter" | "growth" | "enterprise"): Promise<string> {
   const res = await fetch(`${API_URL}/billing/checkout`, {
     method: "POST",
     headers: { ...await getAuthHeaders(), "Content-Type": "application/json" },
@@ -463,4 +463,77 @@ export async function removeTeamMember(email: string): Promise<void> {
     const err = await res.json().catch(() => ({ detail: "Unknown error" }));
     throw new Error(err.detail ?? `API error ${res.status}`);
   }
+}
+
+// ── BAA ───────────────────────────────────────────────────────────────────────
+
+export async function acceptBaa(data: {
+  userEmail: string;
+  userName?: string;
+  organization?: string;
+}): Promise<void> {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${API_URL}/baa/accept`, {
+    method: "POST",
+    headers: { ...headers, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      user_email: data.userEmail,
+      user_name: data.userName,
+      organization: data.organization,
+    }),
+  });
+  if (!res.ok) throw new Error("Failed to record BAA acceptance.");
+}
+
+export async function getBaaStatus(): Promise<{ has_baa: boolean; accepted_at?: string }> {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${API_URL}/baa/status`, { headers });
+  if (!res.ok) return { has_baa: false };
+  return res.json();
+}
+
+// ── Onboarding ────────────────────────────────────────────────────────────────
+
+export interface PracticeSetupPayload {
+  practice_name: string;
+  specialty: string;
+  state: string;
+  provider_count: string;
+  billing_npi: string;
+}
+
+export interface PracticeSetupResponse {
+  practice_id: string;
+  practice_name: string;
+}
+
+export async function setupPractice(data: PracticeSetupPayload): Promise<PracticeSetupResponse> {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${API_URL}/onboarding/practice`, {
+    method: "POST",
+    headers: { ...headers, "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: "Unknown error" }));
+    throw new Error(err.detail ?? `API error ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function getAthenaConnectUrl(): Promise<{ auth_url: string; message: string }> {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${API_URL}/adapters/athenahealth/connect`, { headers });
+  if (!res.ok) throw new Error(`API error ${res.status}`);
+  return res.json();
+}
+
+export async function linkTeamMember(practiceOwnerEmail: string): Promise<void> {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${API_URL}/team/link`, {
+    method: "POST",
+    headers: { ...headers, "Content-Type": "application/json" },
+    body: JSON.stringify({ practice_owner_email: practiceOwnerEmail }),
+  });
+  if (!res.ok) throw new Error("Failed to link team member.");
 }

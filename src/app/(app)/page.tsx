@@ -40,26 +40,26 @@ function KpiCard({
     : accent === "#0c8174" ? "#e4f4f1"
     : "#f8efdd";
   return (
-    <div style={{ ...CARD_STYLE, padding: "20px 22px 18px", position: "relative", overflow: "hidden" }}>
+    <div style={{ ...CARD_STYLE, padding: "14px 14px 12px", position: "relative", overflow: "hidden" }}>
       {/* Left rail */}
       <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, background: accent, opacity: 0.9 }} />
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
-        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, letterSpacing: "0.13em", textTransform: "uppercase", color: "#8aa0a8", whiteSpace: "nowrap" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6 }}>
+        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9.5, letterSpacing: "0.08em", textTransform: "uppercase", color: "#8aa0a8", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
           {label}
         </span>
-        <div style={{ width: 26, height: 26, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", background: iconBg, color: accent, flexShrink: 0 }}>
-          <Icon style={{ width: 15, height: 15 }} />
+        <div style={{ width: 22, height: 22, borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center", background: iconBg, color: accent, flexShrink: 0 }}>
+          <Icon style={{ width: 12, height: 12 }} />
         </div>
       </div>
-      <div style={{ display: "flex", alignItems: "flex-end", gap: 10, marginTop: 14 }}>
-        <div style={{ fontSize: 38, fontWeight: 800, letterSpacing: "-0.035em", lineHeight: 1, color: accent === "#0b2734" ? "#0b2734" : accent, fontVariantNumeric: "tabular-nums" }}>
+      <div style={{ display: "flex", alignItems: "flex-end", gap: 6, marginTop: 8 }}>
+        <div className="kpi-value" style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1, color: accent === "#0b2734" ? "#0b2734" : accent, fontVariantNumeric: "tabular-nums" }}>
           {value}
         </div>
         {grade && (
           <GradeChip grade={grade} size="sm" />
         )}
       </div>
-      <div style={{ fontSize: 12.5, color: "#5c747e", marginTop: 7 }}>{sub}</div>
+      <div style={{ fontSize: 11, color: "#5c747e", marginTop: 5, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sub}</div>
     </div>
   );
 }
@@ -90,11 +90,15 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
 }
 
 export default function HomePage() {
-  const { metrics, findings, payerScorecard, revenueByMonth, risks } = useAuditData();
-  const { getStatus } = useFindingStatuses();
+  const { metrics, findings, payerScorecard, revenueByMonth, risks, isLoading, hasData } = useAuditData();
+  const { getStatus, getRecoveredAmount } = useFindingStatuses();
 
+  // Sum actual recovered amounts; fall back to expected recovery if not recorded
   const recoveredAmount = findings.reduce((sum, f) => {
-    return getStatus(findingId(f.label, f.payer)) === "resolved" ? sum + (f.expectedRecovery ?? 0) : sum;
+    const fid = findingId(f.label, f.payer);
+    if (getStatus(fid) !== "resolved") return sum;
+    const actual = getRecoveredAmount(fid);
+    return sum + (actual > 0 ? actual : f.expectedRecovery ?? 0);
   }, 0);
 
   const topOpps = findings.filter((f) => f.expectedRecovery > 0).slice(0, 4);
@@ -120,11 +124,70 @@ export default function HomePage() {
     ? new Date(upcomingDeadlines[0].deadline!).toLocaleDateString("en-US", { month: "short", day: "numeric" })
     : null;
 
+  if (isLoading) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+        {/* Skeleton KPI row */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-[14px] md:gap-[18px]">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} style={{ ...CARD_STYLE, padding: "20px 22px 18px", height: 104 }}>
+              <div style={{ height: 10, width: "60%", background: "#e9eded", borderRadius: 6, marginBottom: 14 }} />
+              <div style={{ height: 36, width: "80%", background: "#f0f4f4", borderRadius: 8 }} />
+            </div>
+          ))}
+        </div>
+        <div style={{ ...CARD_STYLE, height: 260, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: "#8aa0a8", letterSpacing: "0.08em" }}>
+            Loading your audit data…
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasData) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 480, gap: 20, textAlign: "center" }}>
+        <div style={{ width: 64, height: 64, borderRadius: 18, background: "#e4f4f1", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <Zap style={{ width: 30, height: 30, color: "#0c8174" }} />
+        </div>
+        <div>
+          <h2 style={{ fontSize: 22, fontWeight: 800, color: "#0b2734", letterSpacing: "-0.03em", marginBottom: 8 }}>
+            No audit data yet
+          </h2>
+          <p style={{ fontSize: 14, color: "#5c747e", maxWidth: 360, lineHeight: 1.6 }}>
+            Upload your first 835 ERA file to see your revenue leakage, denial patterns, and recovery opportunities.
+          </p>
+        </div>
+        <Link
+          href="/onboarding"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            height: 44,
+            padding: "0 24px",
+            borderRadius: 12,
+            background: "#0b2734",
+            color: "#fff",
+            fontSize: 14,
+            fontWeight: 700,
+            textDecoration: "none",
+            letterSpacing: "-0.01em",
+          }}
+        >
+          Upload 835 File
+          <ArrowRight style={{ width: 16, height: 16 }} />
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
 
       {/* KPI row */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 18 }}>
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-[14px] md:gap-[18px]">
         <KpiCard
           label="Revenue Analyzed"
           value={fmt(metrics.revenueAnalyzed)}
@@ -167,7 +230,7 @@ export default function HomePage() {
       </div>
 
       {/* Row 2: chart + opportunities */}
-      <div style={{ display: "grid", gridTemplateColumns: "1.55fr 1fr", gap: 18 }}>
+      <div className="grid grid-cols-1 md:grid-cols-[1.55fr_1fr] gap-[14px] md:gap-[18px]">
         {/* Revenue vs Leakage chart */}
         <div style={{ ...CARD_STYLE, padding: "22px 24px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
@@ -237,7 +300,7 @@ export default function HomePage() {
       </div>
 
       {/* Row 3: active risks + payer scorecard */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1.55fr", gap: 18 }}>
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_1.55fr] gap-[14px] md:gap-[18px]">
         {/* Active Risks */}
         <div style={{ ...CARD_STYLE, padding: "22px 24px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>

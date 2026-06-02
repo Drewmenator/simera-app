@@ -5,48 +5,71 @@ import { getAuthHeaders } from "@/lib/api";
 
 export type FindingStatus = "open" | "in_progress" | "appealed" | "resolved" | "ignored";
 
-const STORAGE_KEY = "simera_finding_statuses";
+const STATUS_KEY = "simera_finding_statuses_v2";
+const RECOVERY_KEY = "simera_finding_recoveries";
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
-function loadLocal(): Record<string, FindingStatus> {
+function loadLocal<T>(key: string, fallback: T): T {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
   } catch {
-    return {};
+    return fallback;
   }
 }
 
-function saveLocal(data: Record<string, FindingStatus>) {
+function saveLocal<T>(key: string, data: T) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    localStorage.setItem(key, JSON.stringify(data));
   } catch {}
 }
 
 export function useFindingStatuses() {
   const [statuses, setStatuses] = useState<Record<string, FindingStatus>>({});
+  const [recoveries, setRecoveries] = useState<Record<string, number>>({});
 
   useEffect(() => {
     // Load localStorage immediately for instant UI
-    const local = loadLocal();
-    setStatuses(local);
+    setStatuses(loadLocal<Record<string, FindingStatus>>(STATUS_KEY, {}));
+    setRecoveries(loadLocal<Record<string, number>>(RECOVERY_KEY, {}));
 
-    // Then fetch from API and merge (API takes precedence)
+    // Then fetch from API (API takes precedence)
     (async () => {
       try {
         const headers = await getAuthHeaders();
         const res = await fetch(`${API_URL}/findings/statuses`, { headers });
         if (res.ok) {
           const data = await res.json();
-          const apiStatuses: Record<string, FindingStatus> = data.statuses ?? {};
+          // API returns {finding_key: {status, recovered_amount}} or legacy {finding_key: status}
+          const apiData: Record<string, { status: FindingStatus; recovered_amount: number | null } | FindingStatus> = data.statuses ?? {};
+
+          const apiStatuses: Record<string, FindingStatus> = {};
+          const apiRecoveries: Record<string, number> = {};
+
+          for (const [key, val] of Object.entries(apiData)) {
+            if (typeof val === "string") {
+              apiStatuses[key] = val as FindingStatus;
+            } else {
+              apiStatuses[key] = val.status;
+              if (val.recovered_amount != null) {
+                apiRecoveries[key] = val.recovered_amount;
+              }
+            }
+          }
+
           setStatuses((prev) => {
             const merged = { ...prev, ...apiStatuses };
-            saveLocal(merged);
+            saveLocal(STATUS_KEY, merged);
+            return merged;
+          });
+          setRecoveries((prev) => {
+            const merged = { ...prev, ...apiRecoveries };
+            saveLocal(RECOVERY_KEY, merged);
             return merged;
           });
         }
       } catch {
-        // Network failure — local cache already shown, silently continue
+        // Network failure — local cache already shown
       }
     })();
   }, []);
@@ -56,30 +79,50 @@ export function useFindingStatuses() {
     [statuses]
   );
 
-  const setStatus = useCallback((id: string, newStatus: FindingStatus) => {
-    // Optimistic local update
-    setStatuses((prev) => {
-      const next = { ...prev, [id]: newStatus };
-      saveLocal(next);
-      return next;
-    });
+  const getRecoveredAmount = useCallback(
+    (id: string): number => recoveries[id] ?? 0,
+    [recoveries]
+  );
 
-    // Persist to API in the background
-    (async () => {
-      try {
-        const headers = await getAuthHeaders();
-        await fetch(`${API_URL}/findings/status`, {
-          method: "POST",
-          headers: { ...headers, "Content-Type": "application/json" },
-          body: JSON.stringify({ finding_key: id, status: newStatus }),
+  const setStatus = useCallback(
+    (id: string, newStatus: FindingStatus, recoveredAmount?: number) => {
+      // Optimistic local update
+      setStatuses((prev) => {
+        const next = { ...prev, [id]: newStatus };
+        saveLocal(STATUS_KEY, next);
+        return next;
+      });
+
+      if (recoveredAmount !== undefined) {
+        setRecoveries((prev) => {
+          const next = { ...prev, [id]: recoveredAmount };
+          saveLocal(RECOVERY_KEY, next);
+          return next;
         });
-      } catch {
-        // Silently fail — localStorage already updated
       }
-    })();
-  }, []);
 
-  return { getStatus, setStatus };
+      // Persist to API in the background
+      (async () => {
+        try {
+          const headers = await getAuthHeaders();
+          await fetch(`${API_URL}/findings/status`, {
+            method: "POST",
+            headers: { ...headers, "Content-Type": "application/json" },
+            body: JSON.stringify({
+              finding_key: id,
+              status: newStatus,
+              recovered_amount: recoveredAmount ?? null,
+            }),
+          });
+        } catch {
+          // Silently fail — localStorage already updated
+        }
+      })();
+    },
+    []
+  );
+
+  return { getStatus, setStatus, getRecoveredAmount };
 }
 
 export function findingId(label: string, payer: string): string {

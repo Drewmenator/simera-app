@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function SignInPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background">
-      <SignIn />
+      <SignIn forceRedirectUrl="/" />
       <p className="mt-4 text-xs text-muted-foreground">
         By signing in you agree to our{" "}
         <Link href="/legal/terms" className="underline hover:text-foreground">

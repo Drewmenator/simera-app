@@ -1,81 +1,58 @@
 "use client";
 
-import { useState } from "react";
-import { FlaskConical, X, CheckCircle2 } from "lucide-react";
-import { useAuditContext } from "@/lib/audit-context";
+import { FlaskConical, Upload } from "lucide-react";
 
-export function DemoBanner() {
-  const [dismissed, setDismissed] = useState(false);
-  const { result } = useAuditContext();
+interface DemoBannerProps {
+  onUploadClick: () => void;
+}
 
-  // Live mode
-  if (result) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          margin: "18px 34px 0",
-          padding: "11px 16px",
-          borderRadius: 12,
-          background: "#e4f4f1",
-          border: "1px solid rgba(12,129,116,0.3)",
-          color: "#0a5c52",
-          fontSize: 13.5,
-          flexShrink: 0,
-        }}
-      >
-        <CheckCircle2 style={{ flexShrink: 0, width: 18, height: 18, color: "#0c8174" }} />
-        <p>
-          <b style={{ color: "#064a42", fontWeight: 700 }}>Live data</b>
-          {" — showing your actual 835 results for "}
-          <b style={{ color: "#064a42", fontWeight: 700 }}>{result.practice_name}</b>
-          {". Dashboard updated with your real numbers."}
-        </p>
-      </div>
-    );
-  }
-
-  if (dismissed) return null;
-
+export function DemoBanner({ onUploadClick }: DemoBannerProps) {
   return (
     <div
       style={{
+        width: "100%",
+        background: "linear-gradient(90deg, rgba(20,184,166,0.12) 0%, rgba(8,145,178,0.08) 100%)",
+        borderBottom: "1px solid rgba(20,184,166,0.25)",
+        padding: "8px 16px",
         display: "flex",
         alignItems: "center",
-        gap: 12,
-        margin: "18px 34px 0",
-        padding: "11px 16px",
-        borderRadius: 12,
-        background: "#f8efdd",
-        border: "1px solid rgba(189,133,47,0.3)",
-        color: "#7a5414",
-        fontSize: 13.5,
+        justifyContent: "space-between",
+        gap: 10,
         flexShrink: 0,
       }}
     >
-      <FlaskConical style={{ flexShrink: 0, width: 18, height: 18, color: "#bd852f" }} />
-      <p style={{ flex: 1 }}>
-        <b style={{ color: "#5e3f0c", fontWeight: 700 }}>Demo mode</b>
-        {" — showing sample data for Riverview Family Medicine (4-physician family practice, Jan–May 2026). Upload your own 835 files to see your real numbers."}
-      </p>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+        <FlaskConical size={14} color="#14b8a6" style={{ flexShrink: 0 }} />
+        <div style={{ minWidth: 0 }}>
+          <p style={{ margin: 0, fontSize: 12.5, fontWeight: 600, color: "#0b2734", lineHeight: 1.3 }}>
+            Demo mode — sample practice data
+          </p>
+          <p className="hidden md:block" style={{ margin: 0, fontSize: 11.5, color: "#5c747e", lineHeight: 1.3 }}>
+            Riverview Family Medicine · fictional practice · Upload your 835 ERA for real numbers.
+          </p>
+        </div>
+      </div>
       <button
-        onClick={() => setDismissed(true)}
+        onClick={onUploadClick}
         style={{
-          marginLeft: "auto",
-          color: "#a07a2e",
-          fontSize: 18,
-          lineHeight: 1,
-          padding: "2px 6px",
-          borderRadius: 6,
-          background: "none",
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 5,
+          padding: "6px 12px",
+          background: "#14b8a6",
+          color: "#ffffff",
           border: "none",
+          borderRadius: 6,
+          fontSize: 11.5,
+          fontWeight: 600,
           cursor: "pointer",
+          flexShrink: 0,
+          fontFamily: "inherit",
+          whiteSpace: "nowrap",
         }}
-        aria-label="Dismiss"
       >
-        <X style={{ width: 16, height: 16 }} />
+        <Upload size={12} />
+        Upload 835
       </button>
     </div>
   );

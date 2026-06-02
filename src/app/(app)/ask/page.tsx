@@ -302,7 +302,7 @@ function AskPageInner() {
             <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "#8aa0a8", margin: "30px 0 14px", textAlign: "center" }}>
               Suggested Questions
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {aiSuggestions.slice(0, 6).map((s, i) => {
                 const Icon = SUGG_ICONS[i % SUGG_ICONS.length];
                 return (
