@@ -46,17 +46,15 @@ function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div
-      className="md:grid md:grid-cols-[268px_1fr]"
+      className="flex flex-col md:grid md:grid-cols-[268px_1fr]"
       style={{
-        display: "flex",
-        flexDirection: "column",
         height: "100vh",
         overflow: "hidden",
         background: "#e9eded",
       }}
     >
       {/* Desktop sidebar */}
-      <div className="hidden md:flex" style={{ flexShrink: 0 }}>
+      <div className="hidden md:flex" style={{ overflow: "hidden" }}>
         <Sidebar onUploadClick={handleUploadClick} />
       </div>
 
