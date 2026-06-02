@@ -60,7 +60,8 @@ const STATUS_FILTERS: { id: FindingStatus | "all"; label: string }[] = [
 ];
 
 export default function RevenuePage() {
-  const { metrics, findings, payerScorecard, revenueByMonth, practiceName, isLoading, hasData } = useAuditData();
+  const data = useAuditData();
+  const { metrics, findings, payerScorecard, revenueByMonth, practiceName, isLoading, hasData } = data;
   const [activeTab, setActiveTab] = useState("leakage");
   const [openFinding, setOpenFinding] = useState<number | null>(0);
   const [statusFilter, setStatusFilter] = useState<FindingStatus | "all">("all");
@@ -296,8 +297,105 @@ export default function RevenuePage() {
           </div>
         </div>
 
-        {/* Findings accordions */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {/* ── Denial Patterns tab ── */}
+        {activeTab === "denial" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", gap: "0 16px", padding: "8px 16px 10px", borderBottom: "1px solid rgba(11,39,52,0.08)" }}>
+              {["Pattern / Code", "Payer", "Claims", "At Risk", "Priority"].map((h) => (
+                <span key={h} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{h}</span>
+              ))}
+            </div>
+            {data.denialPatterns.map((d, i) => {
+              const priorityColor = d.priority === "critical" ? "#c2553d" : d.priority === "high" ? "#bd852f" : "#14b8a6";
+              const priorityBg = d.priority === "critical" ? "#f8e8e3" : d.priority === "high" ? "#f8efdd" : "#e4f4f1";
+              return (
+                <div key={i} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", gap: "0 16px", padding: "14px 16px", borderBottom: "1px solid rgba(11,39,52,0.06)", alignItems: "center" }}>
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, fontWeight: 700, color: "#0b2734" }}>{d.code}</span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: "#0b2734" }}>{d.description}</span>
+                    </div>
+                    <span style={{ fontSize: 11.5, color: "#8aa0a8" }}>{d.category}</span>
+                  </div>
+                  <span style={{ fontSize: 13, color: "#5c747e" }}>{d.payer}</span>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: "#0b2734", fontWeight: 600 }}>{d.claims}</span>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: "#c2553d", fontWeight: 700 }}>{fmt(d.atRisk)}</span>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 999, background: priorityBg, color: priorityColor, textTransform: "capitalize", display: "inline-block" }}>{d.priority}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* ── Payer Scorecard tab ── */}
+        {activeTab === "payer" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", gap: "0 16px", padding: "8px 16px 10px", borderBottom: "1px solid rgba(11,39,52,0.08)" }}>
+              {["Payer", "Claims", "Denial Rate", "Grade", "Net Collection"].map((h) => (
+                <span key={h} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{h}</span>
+              ))}
+            </div>
+            {data.payerScorecard.map((p, i) => {
+              const gradeColor = ["A", "B"].includes(p.grade) ? "#0c8174" : p.grade === "C" ? "#bd852f" : "#c2553d";
+              const gradeBg = ["A", "B"].includes(p.grade) ? "#e4f4f1" : p.grade === "C" ? "#f8efdd" : "#f8e8e3";
+              return (
+                <div key={i} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", gap: "0 16px", padding: "14px 16px", borderBottom: "1px solid rgba(11,39,52,0.06)", alignItems: "center" }}>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: "#0b2734" }}>{p.payer}</span>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: "#5c747e" }}>{p.claims.toLocaleString()}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ flex: 1, height: 6, background: "#f0f4f4", borderRadius: 3, maxWidth: 80 }}>
+                      <div style={{ height: "100%", width: `${Math.min((p.denialRate / 30) * 100, 100)}%`, background: gradeColor, borderRadius: 3 }} />
+                    </div>
+                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, fontWeight: 700, color: gradeColor }}>{p.denialRate.toFixed(1)}%</span>
+                  </div>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 14, fontWeight: 800, padding: "4px 12px", borderRadius: 8, background: gradeBg, color: gradeColor, display: "inline-block", textAlign: "center", maxWidth: 44 }}>{p.grade}</span>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: "#0b2734", fontWeight: 600 }}>{p.netCollection.toFixed(1)}%</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* ── CPT Analysis tab ── */}
+        {activeTab === "cpt" && (() => {
+          const cptMap: Record<string, { code: string; count: number; atRisk: number; payers: Set<string> }> = {};
+          data.findings.forEach((f) => {
+            f.cptCodes.forEach((c) => {
+              if (!cptMap[c]) cptMap[c] = { code: c, count: 0, atRisk: 0, payers: new Set() };
+              cptMap[c].count += 1;
+              cptMap[c].atRisk += f.dollarAmount / Math.max(f.cptCodes.length, 1);
+              cptMap[c].payers.add(f.payer);
+            });
+          });
+          const rows = Object.values(cptMap).sort((a, b) => b.atRisk - a.atRisk);
+          const cptDesc: Record<string, string> = {
+            "99213": "Office visit — low complexity", "99214": "Office visit — moderate complexity",
+            "99215": "Office visit — high complexity", "93000": "ECG with interpretation",
+            "93042": "Rhythm ECG", "94010": "Spirometry", "90834": "Psychotherapy 45 min",
+            "G0439": "Annual wellness visit (est.)",
+          };
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr 1fr 1fr 1fr", gap: "0 16px", padding: "8px 16px 10px", borderBottom: "1px solid rgba(11,39,52,0.08)" }}>
+                {["CPT Code", "Description", "Findings", "At Risk", "Payers Affected"].map((h) => (
+                  <span key={h} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{h}</span>
+                ))}
+              </div>
+              {rows.map((r, i) => (
+                <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 2fr 1fr 1fr 1fr", gap: "0 16px", padding: "14px 16px", borderBottom: "1px solid rgba(11,39,52,0.06)", alignItems: "center" }}>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, fontWeight: 700, color: "#0b2734" }}>{r.code}</span>
+                  <span style={{ fontSize: 13, color: "#5c747e" }}>{cptDesc[r.code] ?? "—"}</span>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: "#5c747e" }}>{r.count}</span>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, fontWeight: 700, color: "#c2553d" }}>{fmt(r.atRisk)}</span>
+                  <span style={{ fontSize: 12.5, color: "#5c747e" }}>{[...r.payers].join(", ")}</span>
+                </div>
+              ))}
+            </div>
+          );
+        })()}
+
+        {/* ── Leakage Findings tab ── */}
+        {activeTab === "leakage" && <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {displayFindings.map((f, i) => {
             const isOpen = openFinding === i;
             const fid = findingId(f.label, f.payer);
@@ -528,7 +626,8 @@ export default function RevenuePage() {
               </div>
             );
           })}
-        </div>
+        </div>}
+
       </div>
 
       <AppealLetterModal
