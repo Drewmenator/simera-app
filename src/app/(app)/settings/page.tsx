@@ -24,6 +24,8 @@ import {
   getBillingStatus,
   createCheckoutSession,
   createPortalSession,
+  getPracticeSettings,
+  savePracticeSettings,
   type TeamMember,
   type BillingStatus,
 } from "@/lib/api";
@@ -86,6 +88,9 @@ function PracticeTab() {
   const auditData = useAuditData();
   const { user } = useUser();
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saveError, setSaveError] = useState("");
   const [name, setName] = useState(auditData.practiceName);
   const [specialty, setSpecialty] = useState("Family Medicine");
   const [npi, setNpi] = useState("1234567890");
@@ -94,9 +99,42 @@ function PracticeTab() {
   const [providers, setProviders] = useState("3");
   const contactEmail = user?.emailAddresses?.[0]?.emailAddress ?? "";
 
-  const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  // Load saved settings from backend on mount
+  useEffect(() => {
+    let cancelled = false;
+    getPracticeSettings()
+      .then((p) => {
+        if (cancelled || !p) return;
+        if (p.name) setName(p.name);
+        if (p.specialty) setSpecialty(p.specialty);
+        if (p.npi) setNpi(p.npi);
+        if (p.tax_id) setTaxId(p.tax_id);
+        if (p.timezone) setTimezone(p.timezone);
+        if (p.provider_count) setProviders(p.provider_count);
+      })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, []);
+
+  const handleSave = async () => {
+    setSaving(true);
+    setSaveError("");
+    try {
+      await savePracticeSettings({
+        name,
+        specialty,
+        npi,
+        tax_id: taxId,
+        timezone,
+        provider_count: providers,
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (e) {
+      setSaveError(e instanceof Error ? e.message : "Failed to save");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -151,16 +189,21 @@ function PracticeTab() {
       </div>
 
       <div className="flex items-center justify-between pt-6 mt-6 border-t border-border">
-        <div />
+        <div>
+          {saveError && <span className="text-xs text-destructive">{saveError}</span>}
+        </div>
         <button
           onClick={handleSave}
-          className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+          disabled={saving || loading}
+          className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed ${
             saved
               ? "bg-emerald-500 text-white"
               : "bg-primary text-primary-foreground hover:bg-primary/90"
           }`}
         >
-          {saved ? <><Check className="w-3.5 h-3.5" /> Saved</> : "Save changes"}
+          {saved ? <><Check className="w-3.5 h-3.5" /> Saved</>
+            : saving ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Saving…</>
+            : "Save changes"}
         </button>
       </div>
     </div>

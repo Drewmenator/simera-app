@@ -540,6 +540,47 @@ export async function setupPractice(data: PracticeSetupPayload): Promise<Practic
   return res.json();
 }
 
+// ── Practice settings (Settings → Practice tab) ──────────────────────────────
+
+export interface PracticeSettings {
+  id?: string;
+  name?: string;
+  specialty?: string;
+  npi?: string;
+  state?: string;
+  provider_count?: string;
+  tax_id?: string;
+  timezone?: string;
+}
+
+export async function getPracticeSettings(): Promise<PracticeSettings | null> {
+  const headers = await getAuthHeaders();
+  if (!("Authorization" in headers)) return null;
+  try {
+    const res = await fetch(`${apiUrl()}/practice`, { headers, cache: "no-store" });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.practice ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export async function savePracticeSettings(settings: PracticeSettings): Promise<PracticeSettings> {
+  const headers = await getAuthHeaders();
+  const res = await fetch(`${apiUrl()}/practice`, {
+    method: "PATCH",
+    headers: { ...headers, "Content-Type": "application/json" },
+    body: JSON.stringify(settings),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: "Unknown error" }));
+    throw new Error(err.detail ?? `API error ${res.status}`);
+  }
+  const data = await res.json();
+  return data.practice ?? settings;
+}
+
 export async function getAthenaConnectUrl(): Promise<{ auth_url: string; message: string }> {
   const headers = await getAuthHeaders();
   const res = await fetch(`${apiUrl()}/adapters/athenahealth/connect`, { headers });
