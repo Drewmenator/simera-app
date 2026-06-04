@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { Upload, FileText, X, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
 import { uploadAuditAsync, pollAuditJob, type AuditResult } from "@/lib/api";
 
 interface UploadModalProps {
@@ -13,6 +14,7 @@ interface UploadModalProps {
 type Step = "drop" | "uploading" | "processing" | "done" | "error";
 
 export function UploadModal({ open, onClose, onComplete }: UploadModalProps) {
+  const { getToken } = useAuth();
   const [files, setFiles] = useState<File[]>([]);
   const [practiceName, setPracticeName] = useState("");
   const [step, setStep] = useState<Step>("drop");
@@ -59,7 +61,7 @@ export function UploadModal({ open, onClose, onComplete }: UploadModalProps) {
 
     let jobId: string;
     try {
-      jobId = await uploadAuditAsync(files, practiceName || "Your Practice");
+      jobId = await uploadAuditAsync(files, practiceName || "Your Practice", "primary_care", getToken);
     } catch (err: any) {
       setStep("error");
       setErrorMsg(err.message ?? "Upload failed");
@@ -70,7 +72,7 @@ export function UploadModal({ open, onClose, onComplete }: UploadModalProps) {
 
     pollRef.current = setInterval(async () => {
       try {
-        const job = await pollAuditJob(jobId);
+        const job = await pollAuditJob(jobId, getToken);
         if (job.status === "complete" && job.result) {
           clearPoll();
           setStep("done");

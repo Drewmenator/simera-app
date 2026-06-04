@@ -89,16 +89,36 @@ export interface AuditRunSummary {
   created_at: string;
 }
 
-export async function getAuthHeaders(): Promise<HeadersInit> {
+/**
+ * Optional token getter from Clerk's useAuth() hook.
+ * Components should pass their getToken() in for reliable auth — the
+ * window.Clerk global fallback is unreliable (session can be null mid-load).
+ */
+export type TokenGetter = () => Promise<string | null>;
+
+export async function getAuthHeaders(getToken?: TokenGetter): Promise<HeadersInit> {
+  // Preferred: token from the Clerk useAuth() hook passed by the caller
+  if (getToken) {
+    try {
+      const token = await getToken();
+      if (token) return { Authorization: `Bearer ${token}` };
+    } catch {
+      // fall through to window.Clerk fallback
+    }
+  }
+  // Fallback: window.Clerk global (less reliable)
   try {
-    // @clerk/nextjs exports useAuth for components; for fetch calls we use the
-    // window.__clerk session token if available (client-side only).
     if (typeof window !== "undefined" && (window as any).Clerk) {
-      const token = await (window as any).Clerk.session?.getToken();
+      const w = (window as any).Clerk;
+      // Ensure Clerk is loaded before reading session
+      if (w.loaded === false && typeof w.load === "function") {
+        await w.load();
+      }
+      const token = await w.session?.getToken();
       if (token) return { Authorization: `Bearer ${token}` };
     }
   } catch {
-    // not signed in or Clerk not loaded — fall through
+    // not signed in or Clerk not loaded
   }
   return {};
 }
@@ -212,7 +232,8 @@ export interface AuditJob {
 export async function uploadAuditAsync(
   files: File[],
   practiceName: string = "Your Practice",
-  specialty: string = "primary_care"
+  specialty: string = "primary_care",
+  getToken?: TokenGetter
 ): Promise<string> {
   const form = new FormData();
   for (const file of files) {
@@ -221,9 +242,14 @@ export async function uploadAuditAsync(
   form.append("practice_name", practiceName);
   form.append("specialty", specialty);
 
+  const headers = await getAuthHeaders(getToken);
+  if (!("Authorization" in headers)) {
+    throw new Error("Not signed in — please refresh the page and try again.");
+  }
+
   const res = await fetch(`${apiUrl()}/audit/835/async`, {
     method: "POST",
-    headers: await getAuthHeaders(),
+    headers,
     body: form,
   });
 
@@ -239,10 +265,10 @@ export async function uploadAuditAsync(
 /**
  * Poll the status of an async audit job.
  */
-export async function pollAuditJob(jobId: string): Promise<AuditJob> {
+export async function pollAuditJob(jobId: string, getToken?: TokenGetter): Promise<AuditJob> {
   const res = await fetch(`${apiUrl()}/audit/jobs/${jobId}`, {
     method: "GET",
-    headers: await getAuthHeaders(),
+    headers: await getAuthHeaders(getToken),
     cache: "no-store",
   });
 
@@ -553,8 +579,8 @@ export interface PracticeSettings {
   timezone?: string;
 }
 
-export async function getPracticeSettings(): Promise<PracticeSettings | null> {
-  const headers = await getAuthHeaders();
+export async function getPracticeSettings(getToken?: TokenGetter): Promise<PracticeSettings | null> {
+  const headers = await getAuthHeaders(getToken);
   if (!("Authorization" in headers)) return null;
   try {
     const res = await fetch(`${apiUrl()}/practice`, { headers, cache: "no-store" });
@@ -566,8 +592,8 @@ export async function getPracticeSettings(): Promise<PracticeSettings | null> {
   }
 }
 
-export async function savePracticeSettings(settings: PracticeSettings): Promise<PracticeSettings> {
-  const headers = await getAuthHeaders();
+export async function savePracticeSettings(settings: PracticeSettings, getToken?: TokenGetter): Promise<PracticeSettings> {
+  const headers = await getAuthHeaders(getToken);
   const res = await fetch(`${apiUrl()}/practice`, {
     method: "PATCH",
     headers: { ...headers, "Content-Type": "application/json" },

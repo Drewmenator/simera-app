@@ -15,7 +15,7 @@ import {
   X,
   Loader2,
 } from "lucide-react";
-import { useUser } from "@clerk/nextjs";
+import { useUser, useAuth } from "@clerk/nextjs";
 import { useAuditData } from "@/lib/use-audit-data";
 import {
   getTeamMembers,
@@ -87,6 +87,7 @@ function Field({ label, sub, children }: { label: string; sub?: string; children
 function PracticeTab() {
   const auditData = useAuditData();
   const { user } = useUser();
+  const { getToken } = useAuth();
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -102,7 +103,7 @@ function PracticeTab() {
   // Load saved settings from backend on mount
   useEffect(() => {
     let cancelled = false;
-    getPracticeSettings()
+    getPracticeSettings(getToken)
       .then((p) => {
         if (cancelled || !p) return;
         if (p.name) setName(p.name);
@@ -127,7 +128,7 @@ function PracticeTab() {
         tax_id: taxId,
         timezone,
         provider_count: providers,
-      });
+      }, getToken);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (e) {
