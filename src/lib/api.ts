@@ -382,10 +382,10 @@ export interface AppealLetterResponse {
   subject_line: string;
 }
 
-export async function generateAppealLetter(req: AppealLetterRequest): Promise<AppealLetterResponse> {
+export async function generateAppealLetter(req: AppealLetterRequest, getToken?: TokenGetter): Promise<AppealLetterResponse> {
   const res = await fetch(`${apiUrl()}/appeal-letter`, {
     method: "POST",
-    headers: { ...await getAuthHeaders(), "Content-Type": "application/json" },
+    headers: { ...await getAuthHeaders(getToken), "Content-Type": "application/json" },
     body: JSON.stringify(req),
   });
   if (!res.ok) {

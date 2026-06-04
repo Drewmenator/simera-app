@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { FileText, X, Copy, Download, RefreshCw } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
 import { generateAppealLetter } from "@/lib/api";
 
 interface AppealLetterModalProps {
@@ -23,6 +24,7 @@ interface AppealLetterModalProps {
 type ModalState = "generating" | "ready" | "error";
 
 export function AppealLetterModal({ open, onClose, finding, practiceName }: AppealLetterModalProps) {
+  const { getToken } = useAuth();
   const [state, setState] = useState<ModalState>("generating");
   const [letter, setLetter] = useState("");
   const [subjectLine, setSubjectLine] = useState("");
@@ -44,7 +46,7 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
         recommended_action: finding.action,
         practice_name: practiceName,
         cpt_codes: finding.cptCodes,
-      });
+      }, getToken);
       setLetter(result.letter);
       setSubjectLine(result.subject_line);
       setState("ready");
@@ -52,7 +54,7 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
       setError(err instanceof Error ? err.message : "Unknown error");
       setState("error");
     }
-  }, [finding, practiceName]);
+  }, [finding, practiceName, getToken]);
 
   useEffect(() => {
     if (open && finding) {
