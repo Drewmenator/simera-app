@@ -105,7 +105,7 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
     setDownloading(true);
     try {
       const { downloadAuditPDF } = await import("@/components/pdf/audit-pdf");
-      await downloadAuditPDF();
+      await downloadAuditPDF(auditData);
     } catch (e) {
       console.error("PDF generation failed:", e);
     } finally {

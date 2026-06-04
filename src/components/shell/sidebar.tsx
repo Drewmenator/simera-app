@@ -13,6 +13,7 @@ import {
   Upload,
   Settings,
   ChevronDown,
+  FileText,
 } from "lucide-react";
 import { useAuditData } from "@/lib/use-audit-data";
 import { useUser } from "@clerk/nextjs";
@@ -25,6 +26,7 @@ const navItems = [
   { href: "/benchmarks", label: "Benchmarks", icon: BarChart2 },
   { href: "/ask", label: "Ask Simera", icon: Sparkles },
   { href: "/roi", label: "ROI Calculator", icon: Calculator },
+  { href: "/contracts", label: "Contracts", icon: FileText },
 ];
 
 interface SidebarProps {

@@ -6,7 +6,29 @@
  * Falls back to mock data when API is unavailable (for demos).
  */
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const CLOUD_API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const SPARK_URL = "http://localhost:8000";
+
+/**
+ * Returns the active API base URL.
+ * If a Spark Agent is detected on localhost:8000, routes there instead of
+ * the cloud backend — PHI stays on-prem.
+ * Spark detection result is stored in sessionStorage by use-spark.ts.
+ */
+function getApiUrl(): string {
+  if (typeof window !== "undefined") {
+    try {
+      const cached = sessionStorage.getItem("simera_spark_detected");
+      if (cached) {
+        const { detected } = JSON.parse(cached);
+        if (detected) return SPARK_URL;
+      }
+    } catch { /* ignore */ }
+  }
+  return CLOUD_API_URL;
+}
+
+const API_URL = getApiUrl();
 
 export interface AuditHeadline {
   total_revenue_analyzed: number;

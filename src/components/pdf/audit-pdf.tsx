@@ -16,6 +16,7 @@ import {
   payerScorecard,
   practiceStats,
 } from "@/lib/mock-data";
+import type { DashboardData } from "@/lib/use-audit-data";
 
 // ── Styles ──────────────────────────────────────────────────────────────────
 
@@ -411,10 +412,11 @@ function GradeBadge({ grade }: { grade: string }) {
 
 // ── The document ─────────────────────────────────────────────────────────────
 
-export function AuditPDFDocument() {
-  const practice = practiceStats.name;
-  const m = headlineMetrics;
-  const actionable = leakageFindings.filter((f) => f.expectedRecovery > 0);
+export function AuditPDFDocument({ data }: { data?: Partial<DashboardData> }) {
+  const practice = data?.practiceName ?? practiceStats.name;
+  const m = data?.metrics ?? headlineMetrics;
+  const findings = data?.findings ?? leakageFindings;
+  const actionable = findings.filter((f) => f.expectedRecovery > 0);
 
   return (
     <Document
@@ -540,7 +542,7 @@ export function AuditPDFDocument() {
             <View style={s.metricCard}>
               <Text style={s.metricLabel}>Net Collection Rate</Text>
               <Text style={[s.metricValue, s.amber]}>
-                {(m.netCollectionRate * 100).toFixed(1)}%
+                {((m as typeof headlineMetrics).netCollectionRate ? ((m as typeof headlineMetrics).netCollectionRate * 100).toFixed(1) : (m as unknown as { netCollection: number }).netCollection?.toFixed(1) ?? "94.2")}%
               </Text>
               <Text style={s.metricSub}>Industry best: 99.1%</Text>
             </View>
@@ -584,7 +586,7 @@ export function AuditPDFDocument() {
             <Text style={[s.tableHeaderText, s.colDifficulty]}>Effort</Text>
           </View>
 
-          {leakageFindings.map((f, i) => (
+          {findings.map((f, i) => (
             <View key={i} style={[s.tableRow, i % 2 === 1 ? s.tableRowAlt : {}]}>
               <Text style={[s.tableCell, s.colRank, { color: GRAY }]}>{i + 1}</Text>
               <View style={s.colCategory}>
@@ -657,7 +659,7 @@ export function AuditPDFDocument() {
             <Text style={[s.tableHeaderText, s.colCollection]}>Net Collection</Text>
           </View>
 
-          {payerScorecard.map((p, i) => (
+          {(data?.payerScorecard ?? payerScorecard).map((p, i) => (
             <View key={i} style={[s.tableRow, i % 2 === 1 ? s.tableRowAlt : {}]}>
               <Text style={[s.tableCell, s.colPayer, { fontFamily: "Helvetica-Bold" }]}>
                 {p.payer}
@@ -686,7 +688,7 @@ export function AuditPDFDocument() {
             <Text style={[s.tableHeaderText, { width: 64, textAlign: "right" }]}>At Risk</Text>
             <Text style={[s.tableHeaderText, { width: 48, textAlign: "right" }]}>Priority</Text>
           </View>
-          {denialPatterns.slice(0, 6).map((p, i) => (
+          {(data?.denialPatterns ?? denialPatterns).slice(0, 6).map((p, i) => (
             <View key={i} style={[s.tableRow, i % 2 === 1 ? s.tableRowAlt : {}]}>
               <Text style={[s.tableCell, { width: 100 }]}>{p.payer}</Text>
               <Text style={[s.tableCell, { width: 40, fontFamily: "Helvetica-Bold" }]}>{p.code}</Text>
@@ -733,9 +735,10 @@ export function AuditPDFDocument() {
 
 // ── Download trigger ─────────────────────────────────────────────────────────
 
-export async function downloadAuditPDF(practiceName?: string) {
+export async function downloadAuditPDF(data?: Partial<DashboardData>) {
   const { default: saveAs } = await import("file-saver");
-  const blob = await pdf(<AuditPDFDocument />).toBlob();
-  const filename = `Simera_Audit_${(practiceName ?? practiceStats.name).replace(/\s+/g, "_")}_${new Date().toISOString().slice(0, 10)}.pdf`;
+  const blob = await pdf(<AuditPDFDocument data={data} />).toBlob();
+  const name = data?.practiceName ?? practiceStats.name;
+  const filename = `Simera_Audit_${name.replace(/\s+/g, "_")}_${new Date().toISOString().slice(0, 10)}.pdf`;
   saveAs(blob, filename);
 }
