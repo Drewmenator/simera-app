@@ -41,7 +41,7 @@ const nextConfig: NextConfig = {
               // Images
               "img-src 'self' data: blob: https://img.clerk.com",
               // API calls — ONLY backend + Clerk. PHI cannot go to Vercel or anywhere else.
-              `connect-src 'self' ${API_ORIGIN} https://clerk.simerahealth.org https://*.clerk.accounts.dev https://api.clerk.dev wss://*.clerk.accounts.dev`,
+              `connect-src 'self' ${API_ORIGIN} http://localhost:8000 http://127.0.0.1:8000 https://clerk.simerahealth.org https://*.clerk.accounts.dev https://api.clerk.dev wss://*.clerk.accounts.dev`,
               // Frames: Clerk hosted pages only
               "frame-src 'self' https://clerk.simerahealth.org https://*.clerk.accounts.dev",
               // Workers
