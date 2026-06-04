@@ -70,9 +70,22 @@ export function UploadModal({ open, onClose, onComplete }: UploadModalProps) {
 
     setStep("processing");
 
+    let pollErrors = 0;
+    const MAX_POLL_ERRORS = 5;          // tolerate 5 transient errors before giving up
+    const MAX_POLL_DURATION_MS = 5 * 60 * 1000; // 5 minute max wait
+    const pollStart = Date.now();
+
     pollRef.current = setInterval(async () => {
+      // Absolute timeout — stop polling after 5 minutes
+      if (Date.now() - pollStart > MAX_POLL_DURATION_MS) {
+        clearPoll();
+        setStep("error");
+        setErrorMsg("Analysis is taking longer than expected. Please try again.");
+        return;
+      }
       try {
         const job = await pollAuditJob(jobId, getToken);
+        pollErrors = 0; // reset on success
         if (job.status === "complete" && job.result) {
           clearPoll();
           setStep("done");
@@ -85,12 +98,17 @@ export function UploadModal({ open, onClose, onComplete }: UploadModalProps) {
           setStep("error");
           setErrorMsg(job.message ?? "Audit processing failed");
         }
-      } catch (err: any) {
-        clearPoll();
-        setStep("error");
-        setErrorMsg(err.message ?? "Polling failed");
+        // status === "processing" → keep polling
+      } catch {
+        pollErrors++;
+        if (pollErrors >= MAX_POLL_ERRORS) {
+          clearPoll();
+          setStep("error");
+          setErrorMsg("Lost connection to server. Please refresh and check your results.");
+        }
+        // otherwise swallow the error and keep polling
       }
-    }, 2000);
+    }, 3000); // poll every 3s for large files
   };
 
   if (!open) return null;
