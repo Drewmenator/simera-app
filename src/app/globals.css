@@ -214,6 +214,27 @@
    CSS media queries beat inline style props — used here to override the
    desktop grid layouts defined as JSX style objects.
 ──────────────────────────────────────────────────────────────────────────── */
+/* ── Revenue finding cards: right-aligned metrics on desktop ── */
+@media (min-width: 768px) {
+  .finding-header {
+    position: relative;
+    padding-right: 300px !important;
+    align-items: center !important;
+  }
+  .finding-metrics {
+    position: absolute;
+    right: 44px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-top: 0 !important;
+    gap: 28px !important;
+    flex-wrap: nowrap !important;
+  }
+  .finding-body {
+    padding-left: 52px !important;
+  }
+}
+
 @media (max-width: 767px) {
 
   /* ── App shell layout ── */

@@ -415,11 +415,12 @@ export default function RevenuePage() {
                 {/* Header */}
                 <button
                   onClick={() => setOpenFinding(isOpen ? null : i)}
+                  className="finding-header"
                   style={{
                     display: "flex",
-                    alignItems: "center",
-                    gap: 16,
-                    padding: "18px 20px",
+                    alignItems: "flex-start",
+                    gap: 14,
+                    padding: "16px 18px",
                     width: "100%",
                     background: "none",
                     border: "none",
@@ -427,49 +428,56 @@ export default function RevenuePage() {
                     textAlign: "left",
                   }}
                 >
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, fontWeight: 600, color: "#8aa0a8", width: 16, flexShrink: 0 }}>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, fontWeight: 600, color: "#8aa0a8", width: 16, flexShrink: 0, marginTop: 2 }}>
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                    {/* Title + tags */}
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                       <span style={{ fontSize: 15, fontWeight: 700, color: "#0b2734" }}>{f.label}</span>
-                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 600, padding: "4px 10px", borderRadius: 999, background: "#f6f8f8", border: "1px solid rgba(11,39,52,0.10)", color: "#5c747e" }}>
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 600, padding: "3px 9px", borderRadius: 999, background: "#f6f8f8", border: "1px solid rgba(11,39,52,0.10)", color: "#5c747e" }}>
                         {f.payer}
                       </span>
                       {currentStatus !== "open" && (
-                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 600, padding: "4px 10px", borderRadius: 999, background: statusCfg.bg, border: `1px solid ${statusCfg.border}`, color: statusCfg.color }}>
+                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 600, padding: "3px 9px", borderRadius: 999, background: statusCfg.bg, border: `1px solid ${statusCfg.border}`, color: statusCfg.color }}>
                           {statusCfg.label}
                         </span>
                       )}
                     </div>
-                    <p style={{ fontSize: 12.5, color: "#5c747e", marginTop: 3 }}>{f.description}</p>
-                  </div>
-                  <div style={{ display: "flex", gap: 28, alignItems: "center", flexShrink: 0 }}>
-                    <div style={{ textAlign: "right" }}>
-                      <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9.5, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8" }}>At Risk</p>
-                      <p style={{ fontSize: 16, fontWeight: 800, color: "#c2553d", fontVariantNumeric: "tabular-nums", marginTop: 2 }}>{fmt(f.dollarAmount)}</p>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                      <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9.5, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8" }}>Recovery</p>
-                      <p style={{ fontSize: 16, fontWeight: 800, color: "#0c8174", fontVariantNumeric: "tabular-nums", marginTop: 2 }}>{fmt(f.expectedRecovery)}</p>
-                    </div>
-                    <span
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 6,
-                        fontFamily: "'IBM Plex Mono', monospace",
-                        fontSize: 11,
-                        fontWeight: 600,
-                        padding: "4px 10px",
-                        borderRadius: 999,
-                        background: f.difficulty === "easy" ? "#e4f4f1" : f.difficulty === "hard" ? "#f8e8e3" : "#f8efdd",
-                        color: f.difficulty === "easy" ? "#0c8174" : f.difficulty === "hard" ? "#c2553d" : "#9a6a1e",
-                        textTransform: "capitalize",
-                      }}
+                    <p style={{ fontSize: 12.5, color: "#5c747e", marginTop: 4 }}>{f.description}</p>
+
+                    {/* Metrics — inline on mobile (below text), absolute-right on desktop */}
+                    <div
+                      className="finding-metrics"
+                      style={{ display: "flex", alignItems: "center", gap: 20, marginTop: 12, flexWrap: "wrap" }}
                     >
-                      {f.difficulty}
-                    </span>
+                      <div>
+                        <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9.5, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8" }}>At Risk</p>
+                        <p style={{ fontSize: 16, fontWeight: 800, color: "#c2553d", fontVariantNumeric: "tabular-nums", marginTop: 2 }}>{fmt(f.dollarAmount)}</p>
+                      </div>
+                      <div>
+                        <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9.5, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8" }}>Recovery</p>
+                        <p style={{ fontSize: 16, fontWeight: 800, color: "#0c8174", fontVariantNumeric: "tabular-nums", marginTop: 2 }}>{fmt(f.expectedRecovery)}</p>
+                      </div>
+                      <span
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 6,
+                          fontFamily: "'IBM Plex Mono', monospace",
+                          fontSize: 11,
+                          fontWeight: 600,
+                          padding: "4px 10px",
+                          borderRadius: 999,
+                          alignSelf: "center",
+                          background: f.difficulty === "easy" ? "#e4f4f1" : f.difficulty === "hard" ? "#f8e8e3" : "#f8efdd",
+                          color: f.difficulty === "easy" ? "#0c8174" : f.difficulty === "hard" ? "#c2553d" : "#9a6a1e",
+                          textTransform: "capitalize",
+                        }}
+                      >
+                        {f.difficulty}
+                      </span>
+                    </div>
                   </div>
                   <ChevronDown
                     style={{
@@ -479,13 +487,14 @@ export default function RevenuePage() {
                       transition: "transform 0.2s",
                       transform: isOpen ? "rotate(180deg)" : "none",
                       flexShrink: 0,
+                      marginTop: 2,
                     }}
                   />
                 </button>
 
                 {/* Body */}
                 {isOpen && (
-                  <div style={{ padding: "0 20px 20px 52px" }}>
+                  <div className="finding-body" style={{ padding: "0 18px 18px" }}>
                     {/* Status row */}
                     <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: currentStatus === "resolved" ? 10 : 20, flexWrap: "wrap" }}>
                       <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>
