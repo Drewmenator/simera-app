@@ -10,12 +10,11 @@ const CLOUD_API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"
 const SPARK_URL = "http://localhost:8000";
 
 /**
- * Returns the active API base URL.
- * If a Spark Agent is detected on localhost:8000, routes there instead of
- * the cloud backend — PHI stays on-prem.
- * Spark detection result is stored in sessionStorage by use-spark.ts.
+ * Returns the active API base URL — called fresh on every request.
+ * If a Spark Agent was detected (cached in sessionStorage by use-spark.ts),
+ * routes to local agent instead of cloud. PHI stays on-prem.
  */
-function getApiUrl(): string {
+function apiUrl(): string {
   if (typeof window !== "undefined") {
     try {
       const cached = sessionStorage.getItem("simera_spark_detected");
@@ -27,8 +26,6 @@ function getApiUrl(): string {
   }
   return CLOUD_API_URL;
 }
-
-const API_URL = getApiUrl();
 
 export interface AuditHeadline {
   total_revenue_analyzed: number;
@@ -115,7 +112,7 @@ export async function listAuditHistory(): Promise<AuditRunSummary[]> {
   if (!("Authorization" in headers)) return [];
 
   try {
-    const res = await fetch(`${API_URL}/audit/history`, {
+    const res = await fetch(`${apiUrl()}/audit/history`, {
       method: "GET",
       headers,
       cache: "no-store",
@@ -137,7 +134,7 @@ export async function getAuditById(runId: string): Promise<AuditResult | null> {
   if (!("Authorization" in headers)) return null;
 
   try {
-    const res = await fetch(`${API_URL}/audit/${runId}`, {
+    const res = await fetch(`${apiUrl()}/audit/${runId}`, {
       method: "GET",
       headers,
       cache: "no-store",
@@ -159,7 +156,7 @@ export async function getLatestAudit(): Promise<AuditResult | null> {
   if (!("Authorization" in headers)) return null;
 
   try {
-    const res = await fetch(`${API_URL}/audit/latest`, {
+    const res = await fetch(`${apiUrl()}/audit/latest`, {
       method: "GET",
       headers,
       cache: "no-store",
@@ -187,7 +184,7 @@ export async function uploadAudit(
   form.append("practice_name", practiceName);
   form.append("specialty", specialty);
 
-  const res = await fetch(`${API_URL}/audit/835`, {
+  const res = await fetch(`${apiUrl()}/audit/835`, {
     method: "POST",
     headers: await getAuthHeaders(),
     body: form,
@@ -224,7 +221,7 @@ export async function uploadAuditAsync(
   form.append("practice_name", practiceName);
   form.append("specialty", specialty);
 
-  const res = await fetch(`${API_URL}/audit/835/async`, {
+  const res = await fetch(`${apiUrl()}/audit/835/async`, {
     method: "POST",
     headers: await getAuthHeaders(),
     body: form,
@@ -243,7 +240,7 @@ export async function uploadAuditAsync(
  * Poll the status of an async audit job.
  */
 export async function pollAuditJob(jobId: string): Promise<AuditJob> {
-  const res = await fetch(`${API_URL}/audit/jobs/${jobId}`, {
+  const res = await fetch(`${apiUrl()}/audit/jobs/${jobId}`, {
     method: "GET",
     headers: await getAuthHeaders(),
     cache: "no-store",
@@ -269,7 +266,7 @@ export async function previewAudit(file: File): Promise<{
   const form = new FormData();
   form.append("file", file);
 
-  const res = await fetch(`${API_URL}/audit/835/preview`, {
+  const res = await fetch(`${apiUrl()}/audit/835/preview`, {
     method: "POST",
     body: form,
   });
@@ -299,7 +296,7 @@ export async function streamChat(
 
   let res: Response;
   try {
-    res = await fetch(`${API_URL}/chat`, {
+    res = await fetch(`${apiUrl()}/chat`, {
       method: "POST",
       headers: { ...headers, "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -335,7 +332,7 @@ export async function streamChat(
  */
 export async function checkApiHealth(): Promise<boolean> {
   try {
-    const res = await fetch(`${API_URL}/health`, { cache: "no-store" });
+    const res = await fetch(`${apiUrl()}/health`, { cache: "no-store" });
     return res.ok;
   } catch {
     return false;
@@ -360,7 +357,7 @@ export interface AppealLetterResponse {
 }
 
 export async function generateAppealLetter(req: AppealLetterRequest): Promise<AppealLetterResponse> {
-  const res = await fetch(`${API_URL}/appeal-letter`, {
+  const res = await fetch(`${apiUrl()}/appeal-letter`, {
     method: "POST",
     headers: { ...await getAuthHeaders(), "Content-Type": "application/json" },
     body: JSON.stringify(req),
@@ -391,7 +388,7 @@ export async function getBillingStatus(): Promise<BillingStatus | null> {
   if (!("Authorization" in headers)) return null;
 
   try {
-    const res = await fetch(`${API_URL}/billing/status`, {
+    const res = await fetch(`${apiUrl()}/billing/status`, {
       method: "GET",
       headers,
       cache: "no-store",
@@ -408,7 +405,7 @@ export async function getBillingStatus(): Promise<BillingStatus | null> {
  * Returns the hosted Checkout URL to redirect the user to.
  */
 export async function createCheckoutSession(plan: "starter" | "growth" | "enterprise"): Promise<string> {
-  const res = await fetch(`${API_URL}/billing/checkout`, {
+  const res = await fetch(`${apiUrl()}/billing/checkout`, {
     method: "POST",
     headers: { ...await getAuthHeaders(), "Content-Type": "application/json" },
     body: JSON.stringify({ plan }),
@@ -426,7 +423,7 @@ export async function createCheckoutSession(plan: "starter" | "growth" | "enterp
  * Returns the portal URL to redirect the user to.
  */
 export async function createPortalSession(): Promise<string> {
-  const res = await fetch(`${API_URL}/billing/portal`, {
+  const res = await fetch(`${apiUrl()}/billing/portal`, {
     method: "POST",
     headers: { ...await getAuthHeaders(), "Content-Type": "application/json" },
   });
@@ -455,7 +452,7 @@ export async function getTeamMembers(): Promise<TeamMember[]> {
   const headers = await getAuthHeaders();
   if (!("Authorization" in headers)) return [];
   try {
-    const res = await fetch(`${API_URL}/team`, { method: "GET", headers, cache: "no-store" });
+    const res = await fetch(`${apiUrl()}/team`, { method: "GET", headers, cache: "no-store" });
     if (!res.ok) return [];
     const data = await res.json();
     return data.members ?? [];
@@ -465,7 +462,7 @@ export async function getTeamMembers(): Promise<TeamMember[]> {
 }
 
 export async function inviteTeamMember(email: string, name: string, role: string): Promise<void> {
-  const res = await fetch(`${API_URL}/team/invite`, {
+  const res = await fetch(`${apiUrl()}/team/invite`, {
     method: "POST",
     headers: { ...await getAuthHeaders(), "Content-Type": "application/json" },
     body: JSON.stringify({ email, name, role }),
@@ -477,7 +474,7 @@ export async function inviteTeamMember(email: string, name: string, role: string
 }
 
 export async function removeTeamMember(email: string): Promise<void> {
-  const res = await fetch(`${API_URL}/team/member/${encodeURIComponent(email)}`, {
+  const res = await fetch(`${apiUrl()}/team/member/${encodeURIComponent(email)}`, {
     method: "DELETE",
     headers: await getAuthHeaders(),
   });
@@ -495,7 +492,7 @@ export async function acceptBaa(data: {
   organization?: string;
 }): Promise<void> {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/baa/accept`, {
+  const res = await fetch(`${apiUrl()}/baa/accept`, {
     method: "POST",
     headers: { ...headers, "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -509,7 +506,7 @@ export async function acceptBaa(data: {
 
 export async function getBaaStatus(): Promise<{ has_baa: boolean; accepted_at?: string }> {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/baa/status`, { headers });
+  const res = await fetch(`${apiUrl()}/baa/status`, { headers });
   if (!res.ok) return { has_baa: false };
   return res.json();
 }
@@ -531,7 +528,7 @@ export interface PracticeSetupResponse {
 
 export async function setupPractice(data: PracticeSetupPayload): Promise<PracticeSetupResponse> {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/onboarding/practice`, {
+  const res = await fetch(`${apiUrl()}/onboarding/practice`, {
     method: "POST",
     headers: { ...headers, "Content-Type": "application/json" },
     body: JSON.stringify(data),
@@ -545,14 +542,14 @@ export async function setupPractice(data: PracticeSetupPayload): Promise<Practic
 
 export async function getAthenaConnectUrl(): Promise<{ auth_url: string; message: string }> {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/adapters/athenahealth/connect`, { headers });
+  const res = await fetch(`${apiUrl()}/adapters/athenahealth/connect`, { headers });
   if (!res.ok) throw new Error(`API error ${res.status}`);
   return res.json();
 }
 
 export async function linkTeamMember(practiceOwnerEmail: string): Promise<void> {
   const headers = await getAuthHeaders();
-  const res = await fetch(`${API_URL}/team/link`, {
+  const res = await fetch(`${apiUrl()}/team/link`, {
     method: "POST",
     headers: { ...headers, "Content-Type": "application/json" },
     body: JSON.stringify({ practice_owner_email: practiceOwnerEmail }),
