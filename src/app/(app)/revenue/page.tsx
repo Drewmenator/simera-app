@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { ChevronDown, TrendingUp, Zap, ShieldAlert, DollarSign, FileText, CheckCircle2 } from "lucide-react";
+import { ChevronDown, TrendingUp, Zap, ShieldAlert, DollarSign, FileText, CheckCircle2, Link2 } from "lucide-react";
 import { useAuditData } from "@/lib/use-audit-data";
 import { useFindingStatuses, findingId, STATUS_CONFIG, type FindingStatus } from "@/lib/use-finding-statuses";
 import { AppealLetterModal } from "@/components/appeal/appeal-letter-modal";
+import { ConnectPortalModal } from "@/components/portal/ConnectPortalModal";
+import { PortalStatusBadge } from "@/components/portal/PortalStatusBadge";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, ReferenceLine, Cell,
@@ -77,6 +79,8 @@ export default function RevenuePage() {
     action: string;
     cptCodes: string[];
   } | null>(null);
+  const [portalModalOpen, setPortalModalOpen] = useState(false);
+  const [portalCredentialId, setPortalCredentialId] = useState<string | undefined>();
 
   const leakageTrend = revenueByMonth.map((m) => ({ month: m.month, leakage: m.leakage }));
 
@@ -150,6 +154,23 @@ export default function RevenuePage() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+
+      {/* Portal navigator row */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+        <PortalStatusBadge credentialId={portalCredentialId} onFetch835={(jobId) => console.log("835 fetch started", jobId)} />
+        <button
+          onClick={() => setPortalModalOpen(true)}
+          style={{
+            display: "inline-flex", alignItems: "center", gap: 7,
+            padding: "6px 14px", borderRadius: 10, cursor: "pointer",
+            background: "#fff", border: "1.5px solid rgba(11,39,52,0.12)",
+            fontSize: 12.5, fontWeight: 600, color: "#0b2734",
+          }}
+        >
+          <Link2 style={{ width: 13, height: 13 }} />
+          Connect Portal
+        </button>
+      </div>
 
       {/* KPI row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-[14px] md:gap-[18px]">
@@ -644,6 +665,14 @@ export default function RevenuePage() {
         onClose={() => setAppealFinding(null)}
         finding={appealFinding}
         practiceName={practiceName}
+      />
+
+      <ConnectPortalModal
+        open={portalModalOpen}
+        onClose={() => setPortalModalOpen(false)}
+        onSaved={() => {
+          setPortalModalOpen(false);
+        }}
       />
     </div>
   );

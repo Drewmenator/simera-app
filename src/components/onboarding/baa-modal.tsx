@@ -30,18 +30,26 @@ export function BaaModal({ open, onAccept, onClose, organization }: BaaModalProp
     if (!checked) return;
     setSaving(true);
     setError(null);
+
+    // Best-effort server-side record. We proceed regardless of outcome so a
+    // missing baa_agreements table (migration 006 pending) never blocks the user.
+    // The client records acceptance in localStorage immediately via onAccept().
     try {
       await acceptBaa({
         userEmail: user?.primaryEmailAddress?.emailAddress ?? "",
         userName: user?.fullName ?? undefined,
         organization: organization,
       });
-      onAccept();
     } catch {
-      setError("Failed to record your acceptance. Please try again.");
+      // Server-side record failed — log and continue. The localStorage record
+      // is the interim audit trail until migration 006 is run in Supabase.
+      console.warn("[Simera] BAA server record failed — proceeding with localStorage record only.");
     } finally {
       setSaving(false);
     }
+
+    // Always call onAccept regardless of API outcome
+    onAccept();
   };
 
   if (!open) return null;

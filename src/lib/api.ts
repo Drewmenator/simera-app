@@ -243,7 +243,16 @@ export async function uploadAuditAsync(
   form.append("specialty", specialty);
 
   const headers = await getAuthHeaders(getToken);
-  if (!("Authorization" in headers)) {
+
+  // Spark Agent is local — no Clerk auth needed (it uses its own JWT or none)
+  const sparkActive = (() => {
+    try {
+      const c = typeof window !== "undefined" ? sessionStorage.getItem("simera_spark_detected") : null;
+      return c ? JSON.parse(c).detected === true : false;
+    } catch { return false; }
+  })();
+
+  if (!("Authorization" in headers) && !sparkActive) {
     throw new Error("Not signed in — please refresh the page and try again.");
   }
 
