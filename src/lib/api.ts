@@ -50,6 +50,10 @@ export interface AuditFinding {
   payer_name: string;
   denial_codes: string[];
   cpt_codes: string[];
+  /** Practice-internal billing reference numbers (NOT PHI). Used in appeal packages. */
+  claim_ids?: string[];
+  /** Total number of claims in this finding (may be larger than claim_ids if >50). */
+  claim_count?: number;
 }
 
 export interface DenialPattern {

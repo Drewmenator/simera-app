@@ -1,0 +1,144 @@
+"use client";
+
+import { useAuditContext } from "@/lib/audit-context";
+import { DenialWorkQueue } from "@/components/appeals/DenialWorkQueue";
+import { Upload, AlertCircle, FileText, TrendingUp } from "lucide-react";
+import Link from "next/link";
+
+export default function AppealsPage() {
+  const { result, isLoading } = useAuditContext();
+
+  const findings = result?.top_findings ?? [];
+  const practiceName = result?.practice_name ?? "Your Practice";
+
+  // Summary metrics
+  const denialFindings = findings.filter(f =>
+    ["unworked_denial", "wrong_writeoff", "timely_filing"].includes(f.category)
+  );
+  const totalAtRisk = denialFindings.reduce((s, f) => s + f.dollar_amount, 0);
+  const totalRecoverable = denialFindings
+    .filter(f => f.category !== "timely_filing")
+    .reduce((s, f) => s + f.expected_recovery, 0);
+  const totalClaims = denialFindings.reduce((s, f) => s + (f.claim_count ?? f.claim_ids?.length ?? 0), 0);
+  const payersAffected = new Set(denialFindings.map(f => f.payer_name).filter(Boolean)).size;
+
+  return (
+    <div className="flex flex-col gap-6 p-6 max-w-5xl mx-auto w-full">
+
+      {/* Page header */}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-bold text-foreground">Denial Work Queue</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            Individual appeal packages — every denial has a specific evidence requirement and winning argument.
+          </p>
+        </div>
+        {result && (
+          <div className="text-right">
+            <p className="text-xs text-muted-foreground">From audit</p>
+            <p className="text-xs font-medium text-foreground">{practiceName}</p>
+          </div>
+        )}
+      </div>
+
+      {/* No audit loaded */}
+      {!isLoading && !result && (
+        <div className="rounded-xl border border-dashed border-border bg-card p-12 text-center space-y-4">
+          <FileText className="w-10 h-10 text-muted-foreground mx-auto" />
+          <div>
+            <p className="text-sm font-semibold text-foreground">No audit data loaded</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Upload an 835 ERA file to populate your denial work queue with individual appeal packages.
+            </p>
+          </div>
+          <Link
+            href="/revenue"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground text-sm font-semibold rounded-lg hover:bg-primary/90 transition-colors"
+          >
+            <Upload className="w-4 h-4" />
+            Upload 835 File
+          </Link>
+        </div>
+      )}
+
+      {/* Loading */}
+      {isLoading && (
+        <div className="flex items-center justify-center h-40">
+          <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      )}
+
+      {/* Audit loaded */}
+      {result && (
+        <>
+          {/* KPI row */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="rounded-xl border border-border bg-card p-4">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide font-medium">Total at risk</p>
+              <p className="text-2xl font-bold text-foreground mt-1 tabular-nums">
+                ${totalAtRisk >= 1000 ? `${(totalAtRisk / 1000).toFixed(0)}K` : totalAtRisk.toLocaleString()}
+              </p>
+            </div>
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+              <p className="text-[10px] text-emerald-700 uppercase tracking-wide font-medium">Recoverable</p>
+              <p className="text-2xl font-bold text-emerald-700 mt-1 tabular-nums">
+                ${totalRecoverable >= 1000 ? `${(totalRecoverable / 1000).toFixed(0)}K` : totalRecoverable.toLocaleString()}
+              </p>
+            </div>
+            <div className="rounded-xl border border-border bg-card p-4">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide font-medium">Claims</p>
+              <p className="text-2xl font-bold text-foreground mt-1 tabular-nums">{totalClaims || "—"}</p>
+            </div>
+            <div className="rounded-xl border border-border bg-card p-4">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide font-medium">Payers</p>
+              <p className="text-2xl font-bold text-foreground mt-1 tabular-nums">{payersAffected || "—"}</p>
+            </div>
+          </div>
+
+          {/* Explainer */}
+          <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 flex gap-3">
+            <AlertCircle className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <p className="text-xs font-semibold text-blue-800">Every denial is different. Every appeal needs its own evidence package.</p>
+              <p className="text-xs text-blue-700 leading-relaxed">
+                Click any work item below to see exactly what documentation to attach, the specific legal argument to make,
+                and a pre-filled appeal letter. A CO-50 from Aetna and a CO-50 from BCBS both need the same core
+                evidence — but your argument is specific to this practice, this payer, and this CPT code.
+              </p>
+            </div>
+          </div>
+
+          {/* Work queue */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold text-foreground">
+                Open Work Items ({denialFindings.length})
+              </h2>
+              {denialFindings.length > 0 && (
+                <p className="text-xs text-muted-foreground">Sorted by expected recovery value</p>
+              )}
+            </div>
+            <DenialWorkQueue
+              findings={[...findings].sort((a, b) => b.expected_recovery - a.expected_recovery)}
+              practiceName={practiceName}
+            />
+          </div>
+
+          {/* Non-denial findings notice */}
+          {findings.some(f => ["underpayment", "undercoding"].includes(f.category)) && (
+            <div className="rounded-xl border border-border bg-card p-4 flex gap-3">
+              <TrendingUp className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-semibold text-foreground">Underpayment & undercoding findings</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  These require a different workflow — contract analysis and coding review rather than denial appeals.
+                  View them in the <Link href="/revenue" className="text-primary hover:underline">Revenue tab</Link>.
+                </p>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}

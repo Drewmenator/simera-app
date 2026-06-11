@@ -14,6 +14,7 @@ import {
   Settings,
   ChevronDown,
   FileText,
+  Inbox,
 } from "lucide-react";
 import { useAuditData } from "@/lib/use-audit-data";
 import { useUser } from "@clerk/nextjs";
@@ -22,6 +23,7 @@ const navItems = [
   { href: "/", label: "Home", icon: LayoutGrid },
   { href: "/revenue", label: "Revenue", icon: TrendingUp },
   { href: "/risks", label: "Risks", icon: Shield, badge: 2 },
+  { href: "/appeals", label: "Appeals", icon: Inbox },
   { href: "/compliance", label: "Compliance", icon: ShieldCheck },
   { href: "/benchmarks", label: "Benchmarks", icon: BarChart2 },
   { href: "/ask", label: "Ask Simera", icon: Sparkles },
