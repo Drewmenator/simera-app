@@ -22,7 +22,7 @@ import { useUser } from "@clerk/nextjs";
 const navItems = [
   { href: "/", label: "Home", icon: LayoutGrid },
   { href: "/revenue", label: "Revenue", icon: TrendingUp },
-  { href: "/risks", label: "Risks", icon: Shield, badge: 2 },
+  { href: "/risks", label: "Risks", icon: Shield },
   { href: "/appeals", label: "Appeals", icon: Inbox },
   { href: "/compliance", label: "Compliance", icon: ShieldCheck },
   { href: "/benchmarks", label: "Benchmarks", icon: BarChart2 },
@@ -38,7 +38,7 @@ interface SidebarProps {
 export function Sidebar({ onUploadClick }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { practiceName, metrics } = useAuditData();
+  const { practiceName, metrics, criticalCount } = useAuditData();
   const { user } = useUser();
 
   const firstName = user?.firstName ?? "Drew";
@@ -190,7 +190,7 @@ export function Sidebar({ onUploadClick }: SidebarProps) {
               )}
               <item.icon style={{ width: 18, height: 18, flexShrink: 0, strokeWidth: 1.9 }} />
               <span style={{ whiteSpace: "nowrap", flex: 1 }}>{item.label}</span>
-              {item.badge && (
+              {item.href === "/risks" && criticalCount > 0 && (
                 <span
                   style={{
                     marginLeft: "auto",
@@ -208,7 +208,7 @@ export function Sidebar({ onUploadClick }: SidebarProps) {
                     fontFamily: "'IBM Plex Mono', monospace",
                   }}
                 >
-                  {item.badge}
+                  {criticalCount}
                 </span>
               )}
             </Link>

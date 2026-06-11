@@ -73,20 +73,21 @@ export default function AppealsPage() {
         <>
           {/* KPI row */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="rounded-xl border border-border bg-card p-4">
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wide font-medium">Total at risk</p>
-              <p className="text-2xl font-bold text-foreground mt-1 tabular-nums">
+            <div className="rounded-xl border border-rose-200 bg-rose-50 p-4">
+              <p className="text-[10px] text-rose-700 uppercase tracking-wide font-medium">Denial Exposure</p>
+              <p className="text-2xl font-bold text-rose-700 mt-1 tabular-nums">
                 ${totalAtRisk >= 1000 ? `${(totalAtRisk / 1000).toFixed(0)}K` : totalAtRisk.toLocaleString()}
               </p>
+              <p className="text-[10px] text-rose-500 mt-0.5">denials only</p>
             </div>
             <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-              <p className="text-[10px] text-emerald-700 uppercase tracking-wide font-medium">Recoverable</p>
+              <p className="text-[10px] text-emerald-700 uppercase tracking-wide font-medium">Recoverable via appeal</p>
               <p className="text-2xl font-bold text-emerald-700 mt-1 tabular-nums">
                 ${totalRecoverable >= 1000 ? `${(totalRecoverable / 1000).toFixed(0)}K` : totalRecoverable.toLocaleString()}
               </p>
             </div>
             <div className="rounded-xl border border-border bg-card p-4">
-              <p className="text-[10px] text-muted-foreground uppercase tracking-wide font-medium">Claims</p>
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide font-medium">Denial claims</p>
               <p className="text-2xl font-bold text-foreground mt-1 tabular-nums">{totalClaims || "—"}</p>
             </div>
             <div className="rounded-xl border border-border bg-card p-4">

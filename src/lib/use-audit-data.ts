@@ -77,11 +77,14 @@ export interface DashboardData {
   denialPatterns: DashboardDenialPattern[];
   revenueByMonth: typeof revenueByMonth;
   risks: typeof risks;
+  /** Count of critical + high severity risk items — drives the Risks nav badge */
+  criticalCount: number;
 }
 
 // ─── Mock → Dashboard shape ──────────────────────────────────────────────────
 
 function mockData(): DashboardData {
+  const mockRisks = risks; // typed alias to avoid shadowing
   return {
     isLive: false,
     practiceName: practiceStats.name,
@@ -96,6 +99,7 @@ function mockData(): DashboardData {
       benchmarkMedian: headlineMetrics.benchmarkMedian,
       benchmarkBest: headlineMetrics.benchmarkBest,
     },
+    criticalCount: mockRisks.filter((r) => r.severity === "critical" || r.severity === "high").length,
     findings: leakageFindings.map((f) => ({
       rank: f.rank,
       label: f.label,
@@ -129,7 +133,7 @@ function mockData(): DashboardData {
       trend: d.trend,
     })),
     revenueByMonth,
-    risks,
+    risks: mockRisks,
   };
 }
 
@@ -227,6 +231,7 @@ function fromApiResult(r: NonNullable<ReturnType<typeof useAuditContext>["result
       benchmarkMedian: h.benchmark_denial_rate_median,
       benchmarkBest: h.benchmark_denial_rate_best,
     },
+    criticalCount: syntheticRisks.filter((r) => r.severity === "critical" || r.severity === "high").length,
     findings,
     payerScorecard: payers,
     denialPatterns: patterns,
@@ -263,6 +268,7 @@ function emptyData(): DashboardData {
       benchmarkMedian: 11.8,
       benchmarkBest: 5.2,
     },
+    criticalCount: 0,
     findings: [],
     payerScorecard: [],
     denialPatterns: [],

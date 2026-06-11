@@ -39,6 +39,8 @@ interface ComplianceState {
   loading: boolean;
   error: string | null;
   refetch: () => void;
+  /** Persist a status change locally (localStorage-backed, survives refetch) */
+  updateStatus: (id: string, status: ComplianceTask["status"]) => void;
 }
 
 // ─── Mock data (demo fallback when API is unavailable) ───────────────────────
@@ -75,13 +77,38 @@ const MOCK_BREACH_ALERTS: BreachAlert[] = [
   { id: "b1", type: "Unusual bulk export — 847 records accessed in 4 min", severity: "high", event_count: 3, created_at: "2026-05-28T14:22:00Z" },
 ];
 
+const LS_KEY = "simera:compliance:statuses";
+
+function readLocalStatuses(): Record<string, ComplianceTask["status"]> {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
 export function useCompliance(phase?: string): ComplianceState {
-  const [kpis, setKpis] = useState<ComplianceKpis | null>(null);
-  const [tasks, setTasks] = useState<ComplianceTask[]>([]);
+  const [rawTasks, setRawTasks] = useState<ComplianceTask[]>([]); // server/mock, unmodified
+  const [allRawTasks, setAllRawTasks] = useState<ComplianceTask[]>([]); // always unfiltered
   const [breachAlerts, setBreachAlerts] = useState<BreachAlert[]>([]);
+  const [serverBreachCount, setServerBreachCount] = useState(MOCK_KPIS.open_breach_alerts);
+  const [serverBaaCount, setServerBaaCount] = useState(MOCK_KPIS.baa_count);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
+
+  // localStorage-backed local status overrides — survive refetch
+  const [localStatuses, setLocalStatuses] = useState<Record<string, ComplianceTask["status"]>>(readLocalStatuses);
+
+  function updateStatus(id: string, status: ComplianceTask["status"]) {
+    setLocalStatuses((prev) => {
+      const next = { ...prev, [id]: status };
+      try { localStorage.setItem(LS_KEY, JSON.stringify(next)); } catch { /* storage unavailable */ }
+      return next;
+    });
+  }
 
   const refetch = () => setTick((t) => t + 1);
 
@@ -96,25 +123,29 @@ export function useCompliance(phase?: string): ComplianceState {
           ? `${BASE}/admin/compliance/tasks?phase=${phase}`
           : `${BASE}/admin/compliance/tasks`;
 
-        const [kpisRes, tasksRes, alertsRes] = await Promise.all([
+        const [kpisRes, tasksRes, alertsRes, allTasksRes] = await Promise.all([
           fetch(`${BASE}/admin/compliance/kpis`),
           fetch(taskUrl),
           fetch(`${BASE}/admin/compliance/breach-alerts`),
+          fetch(`${BASE}/admin/compliance/tasks`), // always fetch all for KPI computation
         ]);
 
         if (!kpisRes.ok || !tasksRes.ok || !alertsRes.ok) {
           throw new Error("Failed to fetch compliance data");
         }
 
-        const [kpisData, tasksData, alertsData] = await Promise.all([
+        const [kpisData, tasksData, alertsData, allTasksData] = await Promise.all([
           kpisRes.json(),
           tasksRes.json(),
           alertsRes.json(),
+          allTasksRes.ok ? allTasksRes.json() : tasksRes.json(),
         ]);
 
         if (!cancelled) {
-          setKpis(kpisData);
-          setTasks(tasksData);
+          setServerBreachCount(kpisData.open_breach_alerts ?? 0);
+          setServerBaaCount(kpisData.baa_count ?? 0);
+          setRawTasks(tasksData);
+          setAllRawTasks(allTasksData);
           setBreachAlerts(alertsData);
         }
       } catch {
@@ -123,8 +154,10 @@ export function useCompliance(phase?: string): ComplianceState {
           const filtered = phase && phase !== "all"
             ? MOCK_TASKS.filter((t) => t.phase === phase)
             : MOCK_TASKS;
-          setKpis(MOCK_KPIS);
-          setTasks(filtered);
+          setServerBreachCount(MOCK_KPIS.open_breach_alerts);
+          setServerBaaCount(MOCK_KPIS.baa_count);
+          setRawTasks(filtered);
+          setAllRawTasks(MOCK_TASKS); // always keep full list
           setBreachAlerts(MOCK_BREACH_ALERTS);
           setError(null);
         }
@@ -137,5 +170,30 @@ export function useCompliance(phase?: string): ComplianceState {
     return () => { cancelled = true; };
   }, [phase, tick]);
 
-  return { kpis, tasks, breachAlerts, loading, error, refetch };
+  // Merge server/mock tasks with local status overrides
+  const tasks = rawTasks.map((t) => ({
+    ...t,
+    status: localStatuses[t.id] ?? t.status,
+  }));
+
+  // Compute KPIs from the FULL unfiltered task list + local overrides
+  // This ensures the donut & KPI cards always reflect reality, not just the current filter
+  const allMerged = allRawTasks.map((t) => ({
+    ...t,
+    status: localStatuses[t.id] ?? t.status,
+  }));
+
+  const kpis: ComplianceKpis | null = allMerged.length > 0
+    ? {
+        tasks_total: allMerged.length,
+        tasks_done: allMerged.filter((t) => t.status === "done").length,
+        critical_open: allMerged.filter(
+          (t) => t.severity === "critical" && t.status !== "done" && t.status !== "waived"
+        ).length,
+        open_breach_alerts: serverBreachCount,
+        baa_count: serverBaaCount,
+      }
+    : null;
+
+  return { kpis, tasks, breachAlerts, loading, error, refetch, updateStatus };
 }

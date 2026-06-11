@@ -64,7 +64,8 @@ export default function RisksPage() {
   const [statusFilter, setStatusFilter] = useState<FindingStatus | "all">("all");
   const { getStatus, setStatus } = useFindingStatuses();
 
-  const totalAtRisk = risks.reduce((s, r) => s + r.dollarAmount, 0);
+  // Use headline total leakage (all categories) — same number shown in sidebar
+  const totalAtRisk = metrics.totalLeakage;
   const critCount = risks.filter((r) => r.severity === "critical").length;
   const highCount = risks.filter((r) => r.severity === "high").length;
   const medCount = risks.filter((r) => r.severity === "medium").length;

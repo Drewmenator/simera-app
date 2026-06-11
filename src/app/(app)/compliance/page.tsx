@@ -227,28 +227,34 @@ function StatusBadge({ status }: { status: ComplianceTask["status"] }) {
 
 function TaskRow({
   task,
-  onUpdated,
+  onStatusChange,
 }: {
   task: ComplianceTask;
-  onUpdated: () => void;
+  onStatusChange: (id: string, status: ComplianceTask["status"]) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [evidence, setEvidence] = useState(task.evidence ?? "");
   const [status, setStatus] = useState(task.status);
   const [saving, setSaving] = useState(false);
 
+  function handleStatusChange(s: ComplianceTask["status"]) {
+    setStatus(s);
+    onStatusChange(task.id, s); // persist to localStorage via parent hook
+  }
+
   async function markDone() {
     setSaving(true);
+    // Optimistic update immediately — don't wait for API
+    handleStatusChange("done");
     try {
-      const res = await fetch(`${BASE}/admin/compliance/tasks/${task.id}`, {
+      await fetch(`${BASE}/admin/compliance/tasks/${task.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "done" }),
       });
-      if (res.ok) {
-        setStatus("done");
-        onUpdated();
-      }
+      // API success — already updated locally, nothing more to do
+    } catch {
+      // API unavailable — local update already applied and persisted to localStorage
     } finally {
       setSaving(false);
     }
@@ -324,7 +330,7 @@ function TaskRow({
               return (
                 <button
                   key={s}
-                  onClick={() => setStatus(s)}
+                  onClick={() => handleStatusChange(s)}
                   style={{
                     height: 28,
                     padding: "0 12px",
@@ -481,7 +487,7 @@ const PHASE_TABS = [
 
 export default function CompliancePage() {
   const [phase, setPhase] = useState("all");
-  const { kpis, tasks, breachAlerts, loading, error, refetch } = useCompliance(
+  const { kpis, tasks, breachAlerts, loading, error, refetch, updateStatus } = useCompliance(
     phase === "all" ? undefined : phase
   );
   const [scanning, setScanning] = useState(false);
@@ -505,13 +511,43 @@ export default function CompliancePage() {
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
 
       {/* Page header */}
-      <div>
-        <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "#0b2734", margin: 0 }}>
-          Compliance
-        </h1>
-        <p style={{ fontSize: 13, color: "#5c747e", marginTop: 4 }}>
-          HIPAA compliance task tracking, breach detection, and BAA management
-        </p>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
+        <div>
+          <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", color: "#0b2734", margin: 0 }}>
+            Compliance
+          </h1>
+          <p style={{ fontSize: 13, color: "#5c747e", marginTop: 4 }}>
+            HIPAA compliance task tracking, breach detection, and BAA management
+          </p>
+        </div>
+        {/* Live compliance score badge */}
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          padding: "10px 20px",
+          borderRadius: 14,
+          background: donePct >= 70 ? "#e4f4f1" : donePct >= 40 ? "#f8efdd" : "#f8e8e3",
+          border: `1px solid ${donePct >= 70 ? "rgba(12,129,116,0.25)" : donePct >= 40 ? "rgba(189,133,47,0.25)" : "rgba(194,85,61,0.25)"}`,
+          flexShrink: 0,
+        }}>
+          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "#8aa0a8" }}>
+            Score
+          </span>
+          <span style={{
+            fontSize: 28,
+            fontWeight: 800,
+            letterSpacing: "-0.03em",
+            color: donePct >= 70 ? "#0c8174" : donePct >= 40 ? "#bd852f" : "#c2553d",
+            fontVariantNumeric: "tabular-nums",
+            lineHeight: 1.1,
+          }}>
+            {donePct}%
+          </span>
+          <span style={{ fontSize: 11, color: "#8aa0a8", marginTop: 1 }}>
+            {kpis ? `${kpis.tasks_done}/${kpis.tasks_total} done` : "—"}
+          </span>
+        </div>
       </div>
 
       {/* KPI row */}
@@ -609,7 +645,7 @@ export default function CompliancePage() {
           {!loading && tasks.length > 0 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {tasks.map((task) => (
-                <TaskRow key={task.id} task={task} onUpdated={refetch} />
+                <TaskRow key={task.id} task={task} onStatusChange={updateStatus} />
               ))}
             </div>
           )}
