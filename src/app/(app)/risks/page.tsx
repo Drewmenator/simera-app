@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle, ArrowRight, Clock, TrendingUp } from "lucide-react";
+import { AlertTriangle, ArrowRight, Clock, TrendingUp, Inbox } from "lucide-react";
+import Link from "next/link";
 import { useAuditData } from "@/lib/use-audit-data";
 import { useFindingStatuses, findingId, STATUS_CONFIG, FindingStatus } from "@/lib/use-finding-statuses";
 import { daysUntil, deadlineLabel, deadlineColor, deadlineBg } from "@/lib/deadlines";
@@ -97,8 +98,24 @@ export default function RisksPage() {
         {/* Denial taxonomy */}
         <div style={{ ...CARD, padding: "22px 24px" }}>
           <div style={{ marginBottom: 16 }}>
-            <h2 style={{ fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em", color: "#0b2734", margin: "0 0 3px" }}>Denial Taxonomy</h2>
-            <p style={{ fontSize: 12.5, color: "#5c747e" }}>Industry-wide breakdown — what&apos;s driving denials and recovery rates · MGMA / HFMA 2024</p>
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
+              <div>
+                <h2 style={{ fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em", color: "#0b2734", margin: "0 0 3px" }}>Denial Taxonomy</h2>
+                <p style={{ fontSize: 12.5, color: "#5c747e" }}>Industry-wide breakdown — what&apos;s driving denials and recovery rates · MGMA / HFMA 2024</p>
+              </div>
+              <Link
+                href="/appeals"
+                style={{
+                  display: "flex", alignItems: "center", gap: 6, flexShrink: 0,
+                  padding: "6px 12px", borderRadius: 8, fontSize: 12, fontWeight: 600,
+                  background: "#0c8174", color: "#fff", textDecoration: "none",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <Inbox size={13} />
+                Work Queue
+              </Link>
+            </div>
           </div>
           {denialTaxonomy.map((row) => (
             <div key={row.category} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "11px 0", borderBottom: "1px solid rgba(11,39,52,0.06)" }}>
