@@ -81,6 +81,7 @@ export default function RevenuePage() {
   } | null>(null);
   const [portalModalOpen, setPortalModalOpen] = useState(false);
   const [portalCredentialId, setPortalCredentialId] = useState<string | undefined>();
+  const [fetchNotice, setFetchNotice] = useState<string | null>(null);
 
   const leakageTrend = revenueByMonth.map((m) => ({ month: m.month, leakage: m.leakage }));
 
@@ -157,7 +158,13 @@ export default function RevenuePage() {
 
       {/* Portal navigator row */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-        <PortalStatusBadge credentialId={portalCredentialId} onFetch835={(jobId) => console.log("835 fetch started", jobId)} />
+        <PortalStatusBadge
+          credentialId={portalCredentialId}
+          onFetch835={(jobId) => {
+            setFetchNotice(`835 import started (job ${jobId.slice(0, 8)}…). New remittances will appear here when ready.`);
+            setTimeout(() => setFetchNotice(null), 8000);
+          }}
+        />
         <button
           onClick={() => setPortalModalOpen(true)}
           style={{
@@ -171,6 +178,25 @@ export default function RevenuePage() {
           Connect Portal
         </button>
       </div>
+
+      {/* 835 import started notice */}
+      {fetchNotice && (
+        <div style={{
+          padding: "10px 16px",
+          borderRadius: 10,
+          background: "#e4f4f1",
+          border: "1px solid rgba(12,129,116,0.25)",
+          color: "#0c8174",
+          fontSize: 13,
+          fontWeight: 500,
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+        }}>
+          <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#0c8174", flexShrink: 0, display: "inline-block" }} />
+          {fetchNotice}
+        </div>
+      )}
 
       {/* KPI row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-[14px] md:gap-[18px]">
@@ -398,7 +424,7 @@ export default function RevenuePage() {
           return (
             <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr 1fr 1fr 1fr", gap: "0 16px", padding: "8px 16px 10px", borderBottom: "1px solid rgba(11,39,52,0.08)" }}>
-                {["CPT Code", "Description", "Findings", "At Risk", "Payers Affected"].map((h) => (
+                {["CPT Code", "Description", "Findings", "Est. at Risk", "Payers Affected"].map((h) => (
                   <span key={h} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{h}</span>
                 ))}
               </div>

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Zap, TrendingUp, AlertTriangle } from "lucide-react";
+import { useAuditData } from "@/lib/use-audit-data";
 
 const CARD: React.CSSProperties = {
   background: "#fff",
@@ -62,6 +63,18 @@ export default function ROIPage() {
   const [specialty, setSpecialty] = useState("family_medicine");
   const [denialRate, setDenialRate] = useState(14);
   const [selectedPlan, setSelectedPlan] = useState("small");
+  const [prefilled, setPrefilled] = useState(false);
+
+  const { metrics, isLive } = useAuditData();
+
+  // Pre-populate denial rate from real 835 data when available
+  useEffect(() => {
+    if (isLive && !prefilled && metrics.denialRate > 0) {
+      const rounded = Math.min(30, Math.max(5, Math.round(metrics.denialRate * 2) / 2)); // clamp to slider range
+      setDenialRate(rounded);
+      setPrefilled(true);
+    }
+  }, [isLive, metrics.denialRate, prefilled]);
 
   const spec = SPECIALTIES.find((s) => s.value === specialty) ?? SPECIALTIES[0];
   const plan = PLANS.find((p) => p.id === selectedPlan) ?? PLANS[1];
@@ -179,7 +192,7 @@ export default function ROIPage() {
           {/* Denial Rate */}
           <div>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-              <span style={MONO}>Current Denial Rate</span>
+              <span style={MONO}>Current Denial Rate{prefilled ? " ↑ from your 835" : ""}</span>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 {isAboveMedian && (
                   <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 999, background: "#f8e8e3", color: "#c2553d" }}>

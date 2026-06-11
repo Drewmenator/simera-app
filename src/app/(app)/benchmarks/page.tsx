@@ -6,6 +6,29 @@ import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
 } from "recharts";
 
+/**
+ * Converts a practice denial rate (%) to an approximate industry percentile.
+ * Lower denial rate = better = higher percentile.
+ * Breakpoints derived from MGMA 2023-2024 data.
+ */
+function denialRateToPercentile(rate: number): number {
+  const bp: [number, number][] = [
+    [3, 96], [5.2, 90], [7, 80], [9, 70], [11.8, 50],
+    [14, 38], [16, 28], [18, 20], [22, 12], [28, 5],
+  ];
+  if (rate <= bp[0][0]) return bp[0][1];
+  if (rate >= bp[bp.length - 1][0]) return bp[bp.length - 1][1];
+  for (let i = 0; i < bp.length - 1; i++) {
+    const [r0, p0] = bp[i];
+    const [r1, p1] = bp[i + 1];
+    if (rate >= r0 && rate <= r1) {
+      const t = (rate - r0) / (r1 - r0);
+      return Math.round(p0 + t * (p1 - p0));
+    }
+  }
+  return 50;
+}
+
 const CARD: React.CSSProperties = {
   background: "#fff",
   border: "1px solid rgba(11,39,52,0.10)",
@@ -71,13 +94,8 @@ function BmRow({ name, percentile, practiceVal, medianVal, bestVal, good }: BmRo
   );
 }
 
-const radarData = [
-  { metric: "Denial Rate", practice: 22, median: 50 },
-  { metric: "Days in A/R", practice: 68, median: 50 },
-  { metric: "Net Collection", practice: 42, median: 50 },
-  { metric: "First Pass", practice: 38, median: 50 },
-  { metric: "Clean Claim", practice: 44, median: 50 },
-];
+// radarData is computed inside the component so denial rate can be live
+// (declared here as type reference only)
 
 function TierCell({ value, isHeader }: { value: string; isHeader?: boolean }) {
   return (
@@ -99,7 +117,26 @@ function TierCell({ value, isHeader }: { value: string; isHeader?: boolean }) {
 }
 
 export default function BenchmarksPage() {
-  const { metrics } = useAuditData();
+  const { metrics, isLive } = useAuditData();
+
+  // When real 835 data is loaded, compute denial rate metrics from actual data.
+  // All other metrics (DAR, net collection, etc.) require claims systems not available
+  // in 835 files — those rows continue to use industry-representative demo values.
+  const denialRatePercentile = isLive
+    ? denialRateToPercentile(metrics.denialRate)
+    : benchmarks.denialRate.percentile;
+  const denialRateValue = isLive
+    ? metrics.denialRate
+    : benchmarks.denialRate.practice;
+
+  // Radar uses percentile scores (0-100). Only denial rate is live when real data loaded.
+  const radarData = [
+    { metric: "Denial Rate", practice: denialRatePercentile, median: 50 },
+    { metric: "Days in A/R", practice: benchmarks.daysInAR.percentile, median: 50 },
+    { metric: "Net Collection", practice: benchmarks.netCollection.percentile, median: 50 },
+    { metric: "First Pass", practice: benchmarks.firstPassResolution.percentile, median: 50 },
+    { metric: "Clean Claim", practice: benchmarks.cleanClaimRate.percentile, median: 50 },
+  ];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -124,9 +161,9 @@ export default function BenchmarksPage() {
           <h2 style={{ fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em", color: "#0b2734", margin: "0 0 4px" }}>Key Performance Metrics</h2>
 
           <BmRow
-            name="Denial Rate"
-            percentile={benchmarks.denialRate.percentile}
-            practiceVal={`${benchmarks.denialRate.practice}%`}
+            name={isLive ? "Denial Rate (from your 835)" : "Denial Rate"}
+            percentile={denialRatePercentile}
+            practiceVal={`${denialRateValue.toFixed(1)}%`}
             medianVal={`${benchmarks.denialRate.median}%`}
             bestVal={`<3%`}
             good={false}

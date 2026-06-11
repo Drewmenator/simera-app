@@ -38,14 +38,14 @@ interface SidebarProps {
 export function Sidebar({ onUploadClick }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { practiceName, metrics, criticalCount } = useAuditData();
+  const { practiceName, metrics, criticalCount, isLoading } = useAuditData();
   const { user } = useUser();
 
   const firstName = user?.firstName ?? "Drew";
   const initials = user?.firstName?.[0] ?? "D";
 
-  const atRiskK = Math.round(metrics.totalLeakage / 1000);
-  const recovK = Math.round(metrics.expectedRecovery / 1000);
+  const atRiskK = isLoading ? null : Math.round(metrics.totalLeakage / 1000);
+  const recovK = isLoading ? null : Math.round(metrics.expectedRecovery / 1000);
 
   return (
     <aside
@@ -264,10 +264,10 @@ export function Sidebar({ onUploadClick }: SidebarProps) {
             fontVariantNumeric: "tabular-nums",
           }}
         >
-          ${atRiskK}<span style={{ fontSize: 18, color: "#e7a999" }}>K</span>
+          {atRiskK !== null ? <>${atRiskK}<span style={{ fontSize: 18, color: "#e7a999" }}>K</span></> : <span style={{ fontSize: 20, color: "#e7a999" }}>—</span>}
         </div>
         <div style={{ fontSize: 12.5, color: "#8fabb5", marginTop: 3 }}>
-          ${recovK}K recoverable this quarter
+          {recovK !== null ? `$${recovK}K recoverable this quarter` : "Upload an 835 file to start"}
         </div>
       </div>
 

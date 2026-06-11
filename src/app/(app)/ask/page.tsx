@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Sparkles, User, ArrowUp, TrendingUp, DollarSign, BarChart2, AlertTriangle, Zap, HelpCircle } from "lucide-react";
 import { streamChat, type ChatMessage } from "@/lib/api";
 import { useAuditContext } from "@/lib/audit-context";
+import { useAuditData } from "@/lib/use-audit-data";
 import { aiSuggestions } from "@/lib/mock-data";
 
 interface Message {
@@ -208,19 +209,37 @@ function MessageBubble({ message, inputRef }: { message: Message; inputRef?: Rea
   );
 }
 
+function buildGreeting(totalLeakage: number, expectedRecovery: number, isLive: boolean, dataRange: string): string {
+  const leakK = `**$${Math.round(totalLeakage / 1000)}K**`;
+  const recovK = `**$${Math.round(expectedRecovery / 1000)}K**`;
+  if (isLive) {
+    return `I've analyzed your 835 data (${dataRange}). I found ${leakK} in revenue leakage — ${recovK} is recoverable.\n\nI can explain your denial patterns, draft appeal letters, model what fixing a specific problem is worth, or compare you to industry benchmarks. What would you like to work on?`;
+  }
+  return `I'm showing you demo data from a 4-physician family practice. There's ${leakK} in revenue leakage — ${recovK} is recoverable.\n\nUpload your own 835 file to see your practice's numbers. Or ask me anything — I can explain denial patterns, draft appeal letters, or model ROI for your specific situation.`;
+}
+
 function AskPageInner() {
   const searchParams = useSearchParams();
   const initialQ = searchParams.get("q");
-  const { result: auditResult } = useAuditContext();
+  const { result: auditResult } = useAuditContext(); // needed for streamChat raw API result
+  const { metrics, isLive, dataRange } = useAuditData();
 
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: auditResult
-        ? `I've analyzed 5 months of your 835 data. I found **$${(auditResult.headline.total_leakage / 1000).toFixed(0)}K** in revenue leakage — **$${(auditResult.headline.expected_recovery / 1000).toFixed(0)}K** of which is recoverable.\n\nI can explain your denial patterns, draft appeal letters, model what fixing a specific problem is worth, or compare you to similar practices. What would you like to work on?`
-        : "I've analyzed 5 months of your 835 data. I found **$83,440** in revenue leakage — **$51,280** of which is recoverable.\n\nI can explain denial patterns, draft appeal letters, model the value of fixing a specific problem, or benchmark you against 1,400+ similar practices. What would you like to explore?",
+      content: buildGreeting(metrics.totalLeakage, metrics.expectedRecovery, isLive, dataRange),
     },
   ]);
+
+  // If user uploads data after arriving on this page, refresh the greeting
+  const prevIsLive = useRef(isLive);
+  useEffect(() => {
+    if (isLive && !prevIsLive.current && messages.length === 1 && messages[0].role === "assistant") {
+      setMessages([{ role: "assistant", content: buildGreeting(metrics.totalLeakage, metrics.expectedRecovery, true, dataRange) }]);
+    }
+    prevIsLive.current = isLive;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLive]);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);

@@ -211,18 +211,56 @@ function PracticeTab() {
   );
 }
 
-function NotificationsTab() {
-  const [alerts, setAlerts] = useState({
-    deadlineApproaching: true,
-    newDenialPattern: true,
-    payerPolicyChange: true,
-    weeklyDigest: true,
-    monthlyReport: false,
-    criticalOnly: false,
-  });
+const NOTIF_LS_KEY = "simera:settings:notifications";
+const NOTIF_EMAIL_LS_KEY = "simera:settings:notif-email";
 
-  const toggle = (k: keyof typeof alerts) =>
-    setAlerts((p) => ({ ...p, [k]: !p[k] }));
+const NOTIF_DEFAULTS = {
+  deadlineApproaching: true,
+  newDenialPattern: true,
+  payerPolicyChange: true,
+  weeklyDigest: true,
+  monthlyReport: false,
+  criticalOnly: false,
+};
+
+function readNotifPrefs() {
+  try {
+    const raw = typeof window !== "undefined" ? localStorage.getItem(NOTIF_LS_KEY) : null;
+    return raw ? { ...NOTIF_DEFAULTS, ...JSON.parse(raw) } : NOTIF_DEFAULTS;
+  } catch { return NOTIF_DEFAULTS; }
+}
+
+function readNotifEmail() {
+  try {
+    return typeof window !== "undefined"
+      ? (localStorage.getItem(NOTIF_EMAIL_LS_KEY) ?? "")
+      : "";
+  } catch { return ""; }
+}
+
+function NotificationsTab() {
+  const [alerts, setAlerts] = useState(readNotifPrefs);
+  const [email, setEmail] = useState(readNotifEmail);
+  const [dirty, setDirty] = useState(false);
+
+  type AlertKey = keyof typeof NOTIF_DEFAULTS;
+  const toggle = (k: AlertKey) => {
+    setAlerts((p: typeof NOTIF_DEFAULTS) => ({ ...p, [k]: !p[k] }));
+    setDirty(true);
+  };
+
+  function handleEmailChange(v: string) {
+    setEmail(v);
+    setDirty(true);
+  }
+
+  function handleSave() {
+    try {
+      localStorage.setItem(NOTIF_LS_KEY, JSON.stringify(alerts));
+      if (email) localStorage.setItem(NOTIF_EMAIL_LS_KEY, email);
+    } catch { /* storage unavailable */ }
+    setDirty(false);
+  }
 
   return (
     <div>
@@ -256,13 +294,18 @@ function NotificationsTab() {
         <label className="text-xs font-medium text-foreground block mb-1.5">Alert email addresses</label>
         <input
           type="email"
-          defaultValue="drriverview@riveviewfamily.com"
+          value={email}
+          onChange={(e) => handleEmailChange(e.target.value)}
+          placeholder="billing@yourpractice.com"
           className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg outline-none focus:border-primary transition-colors"
         />
         <p className="text-xs text-muted-foreground mt-1">Separate multiple addresses with commas</p>
       </div>
 
-      <SaveBar onSave={() => {}} />
+      <SaveBar onSave={handleSave} />
+      {!dirty && (
+        <p className="text-xs text-muted-foreground mt-2 text-center">Preferences saved locally on this device.</p>
+      )}
     </div>
   );
 }
