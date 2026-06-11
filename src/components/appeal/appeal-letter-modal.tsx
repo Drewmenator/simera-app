@@ -18,6 +18,8 @@ interface AppealLetterModalProps {
     description: string;
     action: string;
     cptCodes: string[];
+    /** Claim reference numbers from the 835 file — included in the letter body */
+    claimIds?: string[];
   } | null;
   practiceName: string;
 }
@@ -49,6 +51,7 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
         recommended_action: finding.action,
         practice_name: practiceName,
         cpt_codes: finding.cptCodes,
+        claim_ids: finding.claimIds ?? [],
       }, getToken);
       setLetter(result.letter);
       setSubjectLine(result.subject_line);
@@ -61,7 +64,7 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
             practiceName,
             payerName: finding.payer,
             carcCode: finding.denialCodes[0] ?? "unknown",
-            claimIds: [],
+            claimIds: finding.claimIds ?? [],
             cptCodes: finding.cptCodes,
             dollarAmount: finding.dollarAmount,
           });

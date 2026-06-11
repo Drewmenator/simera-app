@@ -388,6 +388,8 @@ export interface AppealLetterRequest {
   recommended_action: string;
   practice_name: string;
   cpt_codes: string[];
+  /** Claim reference numbers from the 835 (internal billing IDs, not PHI). Included in the letter. */
+  claim_ids?: string[];
 }
 
 export interface AppealLetterResponse {

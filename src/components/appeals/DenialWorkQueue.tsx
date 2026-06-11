@@ -363,6 +363,7 @@ export function DenialWorkQueue({ findings, practiceName }: DenialWorkQueueProps
           description: appealFinding.description,
           action: appealFinding.recommended_action,
           cptCodes: appealFinding.cpt_codes ?? [],
+          claimIds: appealFinding.claim_ids ?? [],
         } : null}
         practiceName={practiceName}
       />

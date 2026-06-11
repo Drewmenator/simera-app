@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { ChevronDown, TrendingUp, Zap, ShieldAlert, DollarSign, FileText, CheckCircle2, Link2 } from "lucide-react";
+import { ChevronDown, TrendingUp, Zap, ShieldAlert, DollarSign, FileText, CheckCircle2, Link2, ArrowRight } from "lucide-react";
 import { useAuditData } from "@/lib/use-audit-data";
 import { useFindingStatuses, findingId, STATUS_CONFIG, type FindingStatus } from "@/lib/use-finding-statuses";
-import { AppealLetterModal } from "@/components/appeal/appeal-letter-modal";
 import { ConnectPortalModal } from "@/components/portal/ConnectPortalModal";
+import Link from "next/link";
 import { PortalStatusBadge } from "@/components/portal/PortalStatusBadge";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -69,16 +69,6 @@ export default function RevenuePage() {
   const [statusFilter, setStatusFilter] = useState<FindingStatus | "all">("all");
   const { getStatus, setStatus, getRecoveredAmount } = useFindingStatuses();
   const [recoveryInputs, setRecoveryInputs] = useState<Record<string, string>>({});
-  const [appealFinding, setAppealFinding] = useState<{
-    label: string;
-    payer: string;
-    denialCodes: string[];
-    dollarAmount: number;
-    expectedRecovery: number;
-    description: string;
-    action: string;
-    cptCodes: string[];
-  } | null>(null);
   const [portalModalOpen, setPortalModalOpen] = useState(false);
   const [portalCredentialId, setPortalCredentialId] = useState<string | undefined>();
   const [fetchNotice, setFetchNotice] = useState<string | null>(null);
@@ -727,20 +717,11 @@ export default function RevenuePage() {
                       </div>
                     </div>
 
-                    {/* Generate Appeal / Dispute Letter — available for all recoverable findings */}
+                    {/* Send to Appeals tab for letter generation */}
                     {f.expectedRecovery > 0 && (
                       <div style={{ marginTop: 16, display: "flex", justifyContent: "flex-end" }}>
-                        <button
-                          onClick={() => setAppealFinding({
-                            label: f.label,
-                            payer: f.payer,
-                            denialCodes: f.denialCodes,
-                            dollarAmount: f.dollarAmount,
-                            expectedRecovery: f.expectedRecovery,
-                            description: f.description,
-                            action: f.action,
-                            cptCodes: f.cptCodes,
-                          })}
+                        <Link
+                          href="/appeals"
                           style={{
                             display: "inline-flex",
                             alignItems: "center",
@@ -753,13 +734,14 @@ export default function RevenuePage() {
                             color: "#0c8174",
                             fontSize: 12.5,
                             fontWeight: 600,
-                            cursor: "pointer",
+                            textDecoration: "none",
                             transition: "all 0.15s",
                           }}
                         >
                           <FileText style={{ width: 13, height: 13 }} />
-                          {f.denialCodes.length > 0 ? "Generate Appeal Letter" : "Generate Dispute Letter"}
-                        </button>
+                          Work in Appeals
+                          <ArrowRight style={{ width: 12, height: 12 }} />
+                        </Link>
                       </div>
                     )}
                   </div>
@@ -770,13 +752,6 @@ export default function RevenuePage() {
         </div>}
 
       </div>
-
-      <AppealLetterModal
-        open={!!appealFinding}
-        onClose={() => setAppealFinding(null)}
-        finding={appealFinding}
-        practiceName={practiceName}
-      />
 
       <ConnectPortalModal
         open={portalModalOpen}
