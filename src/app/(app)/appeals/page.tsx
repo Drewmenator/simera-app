@@ -1,15 +1,37 @@
 "use client";
 
 import { useAuditContext } from "@/lib/audit-context";
+import { useAuditData, type DashboardFinding } from "@/lib/use-audit-data";
+import type { AuditFinding } from "@/lib/api";
 import { DenialWorkQueue } from "@/components/appeals/DenialWorkQueue";
 import { Upload, AlertCircle, FileText, TrendingUp } from "lucide-react";
 import Link from "next/link";
 
+function dashFindingToAuditFinding(f: DashboardFinding): AuditFinding {
+  return {
+    rank: f.rank,
+    category: f.category,
+    payer_name: f.payer,
+    dollar_amount: f.dollarAmount,
+    expected_recovery: f.expectedRecovery,
+    recovery_probability: f.recoveryProbability,
+    difficulty: f.difficulty as "easy" | "medium" | "hard",
+    description: f.description,
+    recommended_action: f.action,
+    denial_codes: f.denialCodes,
+    cpt_codes: f.cptCodes,
+    claim_ids: [],
+    claim_count: 0,
+  };
+}
+
 export default function AppealsPage() {
   const { result, isLoading } = useAuditContext();
+  const { findings: dashFindings, practiceName: demoPracticeName } = useAuditData();
 
-  const findings = result?.top_findings ?? [];
-  const practiceName = result?.practice_name ?? "Your Practice";
+  // Use live API findings OR fall back to demo DashboardFindings
+  const findings: AuditFinding[] = result?.top_findings ?? dashFindings.map(dashFindingToAuditFinding);
+  const practiceName = result?.practice_name ?? demoPracticeName;
 
   // Summary metrics
   const denialFindings = findings.filter(f =>
@@ -33,7 +55,7 @@ export default function AppealsPage() {
             Individual appeal packages — every denial has a specific evidence requirement and winning argument.
           </p>
         </div>
-        {result && (
+        {(result || dashFindings.length > 0) && (
           <div className="text-right">
             <p className="text-xs text-muted-foreground">From audit</p>
             <p className="text-xs font-medium text-foreground">{practiceName}</p>
@@ -42,7 +64,7 @@ export default function AppealsPage() {
       </div>
 
       {/* No audit loaded */}
-      {!isLoading && !result && (
+      {!isLoading && !result && dashFindings.length === 0 && (
         <div className="rounded-xl border border-dashed border-border bg-card p-12 text-center space-y-4">
           <FileText className="w-10 h-10 text-muted-foreground mx-auto" />
           <div>
@@ -69,7 +91,7 @@ export default function AppealsPage() {
       )}
 
       {/* Audit loaded */}
-      {result && (
+      {(result || dashFindings.length > 0) && (
         <>
           {/* KPI row */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

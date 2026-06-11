@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { FileText, X, Copy, Download, RefreshCw } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { generateAppealLetter } from "@/lib/api";
+import { generateAppealLetter as generateLocalLetter } from "@/lib/evidence-engine";
 
 interface AppealLetterModalProps {
   open: boolean;
@@ -30,11 +31,13 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
   const [subjectLine, setSubjectLine] = useState("");
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [isLocalFallback, setIsLocalFallback] = useState(false);
 
   const generate = useCallback(async () => {
     if (!finding) return;
     setState("generating");
     setError("");
+    setIsLocalFallback(false);
     try {
       const result = await generateAppealLetter({
         finding_label: finding.label,
@@ -51,8 +54,33 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
       setSubjectLine(result.subject_line);
       setState("ready");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
-      setState("error");
+      // Try local template fallback before showing error
+      if (finding) {
+        try {
+          const localLetter = generateLocalLetter({
+            practiceName,
+            payerName: finding.payer,
+            carcCode: finding.denialCodes[0] ?? "unknown",
+            claimIds: [],
+            cptCodes: finding.cptCodes,
+            dollarAmount: finding.dollarAmount,
+          });
+          setLetter(localLetter);
+          setSubjectLine(
+            finding.denialCodes[0]
+              ? `Appeal — ${finding.payer} — CARC ${finding.denialCodes[0]}`
+              : `Payment Dispute — ${finding.payer} — ${finding.label}`
+          );
+          setIsLocalFallback(true);
+          setState("ready");
+        } catch {
+          setError(err instanceof Error ? err.message : "Unknown error");
+          setState("error");
+        }
+      } else {
+        setError(err instanceof Error ? err.message : "Unknown error");
+        setState("error");
+      }
     }
   }, [finding, practiceName, getToken]);
 
@@ -76,7 +104,9 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `appeal-${finding?.payer.replace(/\s+/g, "-").toLowerCase() ?? "letter"}.txt`;
+    const dateStr = new Date().toISOString().slice(0, 10);
+    const payerSlug = (finding?.payer ?? "payer").replace(/\s+/g, "-").replace(/[^a-z0-9-]/gi, "").toLowerCase();
+    a.download = `appeal-${payerSlug}-${dateStr}.txt`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -147,10 +177,10 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
               }}
             >
               {state === "generating"
-                ? "Generating Appeal Letter"
+                ? (finding?.denialCodes.length === 0 ? "Generating Dispute Letter" : "Generating Appeal Letter")
                 : state === "error"
-                ? "Appeal Letter — Error"
-                : `Appeal Letter — ${finding?.payer}`}
+                ? "Letter — Error"
+                : `${finding?.denialCodes.length === 0 ? "Dispute Letter" : "Appeal Letter"} — ${finding?.payer}`}
             </h2>
             {state === "ready" && subjectLine && (
               <p
@@ -215,6 +245,44 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
                 >
                   <Download style={{ width: 13, height: 13 }} />
                   Download .txt
+                </button>
+                <button
+                  onClick={() => {
+                    // Open a new window with the letter formatted for printing
+                    const win = window.open("", "_blank");
+                    if (win) {
+                      win.document.write(`
+                        <html><head><title>Appeal Letter — ${finding?.payer ?? ""}</title>
+                        <style>
+                          body { font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.7; padding: 48px; max-width: 720px; margin: 0 auto; color: #111; }
+                          h1 { font-size: 14px; font-weight: bold; margin-bottom: 4px; }
+                          p { margin: 0; }
+                          @media print { body { padding: 0; } }
+                        </style>
+                        </head><body>
+                        <pre style="white-space:pre-wrap;font-family:inherit">${letter.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</pre>
+                        <script>window.onload = () => { window.print(); }<\/script>
+                        </body></html>
+                      `);
+                      win.document.close();
+                    }
+                  }}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    height: 32,
+                    padding: "0 12px",
+                    borderRadius: 8,
+                    border: "1px solid rgba(20,184,166,0.4)",
+                    background: "rgba(20,184,166,0.1)",
+                    color: "#14b8a6",
+                    fontSize: 12.5,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  🖨 Print / PDF
                 </button>
               </>
             )}
@@ -337,6 +405,21 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
 
           {state === "ready" && (
             <div style={{ padding: "0 0 0 0", overflow: "hidden", flex: 1, display: "flex", flexDirection: "column" }}>
+              {isLocalFallback && (
+                <div style={{
+                  padding: "8px 16px",
+                  background: "#f8efdd",
+                  borderBottom: "1px solid rgba(189,133,47,0.2)",
+                  fontSize: 12,
+                  color: "#9a6a1e",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                }}>
+                  <span>⚡</span>
+                  Template letter — AI generation unavailable · Personalize before sending
+                </div>
+              )}
               <pre
                 style={{
                   fontFamily: "'IBM Plex Mono', monospace",

@@ -127,7 +127,7 @@ export default function ROIPage() {
 
   const handleMoneyInput = (raw: string) => {
     const num = parseInt(raw.replace(/[^0-9]/g, ""), 10);
-    if (!isNaN(num)) setMonthlyCollections(Math.max(20000, Math.min(500000, num)));
+    if (!isNaN(num)) setMonthlyCollections(Math.max(20000, Math.min(2000000, num)));
   };
 
   const industryBenchmarkDenial = 11.8;
@@ -159,13 +159,13 @@ export default function ROIPage() {
               />
             </div>
             <input
-              type="range" min={20000} max={500000} step={5000}
+              type="range" min={20000} max={2000000} step={10000}
               value={monthlyCollections}
               onChange={(e) => setMonthlyCollections(Number(e.target.value))}
               style={{ width: "100%", height: 6, borderRadius: 4, margin: "10px 0 4px", cursor: "pointer", accentColor: "#0b2734" }}
             />
             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#8aa0a8", fontFamily: "'IBM Plex Mono', monospace" }}>
-              <span>$20K</span><span>$500K</span>
+              <span>$20K</span><span>$2M</span>
             </div>
             {/* MGMA specialty benchmark callout */}
             <div style={{ marginTop: 10, padding: "8px 12px", borderRadius: 8, background: "#f6f8f8", border: "1px solid rgba(11,39,52,0.08)" }}>

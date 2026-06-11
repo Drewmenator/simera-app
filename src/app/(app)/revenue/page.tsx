@@ -63,7 +63,7 @@ const STATUS_FILTERS: { id: FindingStatus | "all"; label: string }[] = [
 
 export default function RevenuePage() {
   const data = useAuditData();
-  const { metrics, findings, payerScorecard, revenueByMonth, practiceName, isLoading, hasData } = data;
+  const { metrics, findings, payerScorecard, revenueByMonth, practiceName, dataRange, isLoading, hasData, isEstimatedLeakage } = data;
   const [activeTab, setActiveTab] = useState("leakage");
   const [openFinding, setOpenFinding] = useState<number | null>(0);
   const [statusFilter, setStatusFilter] = useState<FindingStatus | "all">("all");
@@ -82,6 +82,31 @@ export default function RevenuePage() {
   const [portalModalOpen, setPortalModalOpen] = useState(false);
   const [portalCredentialId, setPortalCredentialId] = useState<string | undefined>();
   const [fetchNotice, setFetchNotice] = useState<string | null>(null);
+
+  function exportFindingsCSV() {
+    const headers = ["#", "Finding", "Payer", "At Risk ($)", "Recovery ($)", "Recovery %", "Difficulty", "Status", "Denial Codes", "CPT Codes", "Action"];
+    const rows = allFindings.map((f, i) => [
+      i + 1,
+      `"${f.label.replace(/"/g, '""')}"`,
+      `"${f.payer.replace(/"/g, '""')}"`,
+      f.dollarAmount,
+      f.expectedRecovery,
+      `${Math.round(f.recoveryProbability * 100)}%`,
+      f.difficulty,
+      getStatus(findingId(f.label, f.payer)),
+      `"${f.denialCodes.join(", ")}"`,
+      `"${f.cptCodes.join(", ")}"`,
+      `"${f.action.replace(/"/g, '""').replace(/\n/g, " ")}"`,
+    ]);
+    const csv = [headers, ...rows].map((r) => r.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `simera-findings-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   const leakageTrend = revenueByMonth.map((m) => ({ month: m.month, leakage: m.leakage }));
 
@@ -203,30 +228,66 @@ export default function RevenuePage() {
         <KpiCard label="Total Leakage" value={fmt(metrics.totalLeakage)} sub={`${metrics.leakageRatePct.toFixed(1)}% of revenue`} accent="#c2553d" icon={TrendingUp} />
         <KpiCard label="Expected Recovery" value={fmt(metrics.expectedRecovery)} sub="Probability-weighted" accent="#0c8174" icon={Zap} />
         <KpiCard label="Denial Rate" value={`${metrics.denialRate.toFixed(1)}%`} sub={`Median ${metrics.benchmarkMedian}%`} accent="#bd852f" icon={ShieldAlert} />
-        <KpiCard label="Net Collection" value={`${(metrics as { netCollectionRate?: number }).netCollectionRate ? ((metrics as { netCollectionRate?: number }).netCollectionRate! * 100).toFixed(1) : "94.2"}%`} sub="Industry median 95.4%" accent="#0b2734" icon={DollarSign} />
+        <KpiCard label="Net Collection" value={`${(metrics.netCollectionRate * 100).toFixed(1)}%`} sub="Industry median 95.4%" accent="#0b2734" icon={DollarSign} />
       </div>
+
+      {/* Estimated-leakage notice */}
+      {isEstimatedLeakage && (
+        <div style={{
+          padding: "10px 16px",
+          borderRadius: 10,
+          background: "#f8efdd",
+          border: "1px solid rgba(189,133,47,0.28)",
+          color: "#9a6a1e",
+          fontSize: 13,
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+        }}>
+          <span style={{ fontSize: 15 }}>⚡</span>
+          <span>
+            <b>Leakage estimated from denial rates</b> — your 835 was processed but denial dollar amounts weren&apos;t returned by the API. These figures are calculated from your payer-level denial rates × average claim value. Re-upload or contact support to get exact leakage amounts.
+          </span>
+        </div>
+      )}
 
       {/* Charts row */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-[14px] md:gap-[18px]">
         {/* Leakage Trend */}
         <div style={{ ...CARD, padding: "22px 24px" }}>
           <h2 style={{ fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em", color: "#0b2734", margin: "0 0 4px" }}>Leakage Trend</h2>
-          <p style={{ fontSize: 12.5, color: "#5c747e", marginBottom: 18 }}>Monthly leakage, Jan – May 2026</p>
-          <ResponsiveContainer width="100%" height={180}>
-            <AreaChart data={leakageTrend}>
-              <defs>
-                <linearGradient id="leakGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#c2553d" stopOpacity={0.22} />
-                  <stop offset="100%" stopColor="#c2553d" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid vertical={false} stroke="rgba(11,39,52,0.06)" />
-              <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fill: "#8aa0a8" }} />
-              <YAxis axisLine={false} tickLine={false} tick={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fill: "#8aa0a8" }} tickFormatter={(v) => `$${v / 1000}K`} />
-              <Tooltip content={<CustomAreaTooltip />} />
-              <Area type="monotone" dataKey="leakage" stroke="#c2553d" strokeWidth={2.5} fill="url(#leakGrad)" dot={{ fill: "#fff", stroke: "#c2553d", strokeWidth: 2, r: 4 }} activeDot={{ r: 5 }} />
-            </AreaChart>
-          </ResponsiveContainer>
+          <p style={{ fontSize: 12.5, color: "#5c747e", marginBottom: 18 }}>Monthly leakage · {dataRange}</p>
+          {revenueByMonth.length === 1 ? (
+            // Single period view for live uploads
+            <div style={{ display: "flex", gap: 24, alignItems: "center", justifyContent: "center", padding: "30px 0" }}>
+              {[
+                { label: "Paid Revenue", value: revenueByMonth[0].paid, color: "#0c8174" },
+                { label: "Leakage", value: revenueByMonth[0].leakage, color: "#c2553d" },
+              ].map((item) => (
+                <div key={item.label} style={{ textAlign: "center" }}>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8", marginBottom: 6 }}>{item.label}</div>
+                  <div style={{ fontSize: 32, fontWeight: 800, color: item.color, letterSpacing: "-0.03em", fontVariantNumeric: "tabular-nums" }}>{fmt(item.value)}</div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            // Multi-period area chart
+            <ResponsiveContainer width="100%" height={180}>
+              <AreaChart data={leakageTrend}>
+                <defs>
+                  <linearGradient id="leakGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#c2553d" stopOpacity={0.22} />
+                    <stop offset="100%" stopColor="#c2553d" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid vertical={false} stroke="rgba(11,39,52,0.06)" />
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fill: "#8aa0a8" }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fill: "#8aa0a8" }} tickFormatter={(v) => `$${v / 1000}K`} />
+                <Tooltip content={<CustomAreaTooltip />} />
+                <Area type="monotone" dataKey="leakage" stroke="#c2553d" strokeWidth={2.5} fill="url(#leakGrad)" dot={{ fill: "#fff", stroke: "#c2553d", strokeWidth: 2, r: 4 }} activeDot={{ r: 5 }} />
+              </AreaChart>
+            </ResponsiveContainer>
+          )}
         </div>
 
         {/* Denial Rate by Payer */}
@@ -443,6 +504,30 @@ export default function RevenuePage() {
 
         {/* ── Leakage Findings tab ── */}
         {activeTab === "leakage" && <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {/* Export button */}
+          {allFindings.length > 0 && (
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <button
+                onClick={exportFindingsCSV}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  height: 30,
+                  padding: "0 12px",
+                  borderRadius: 8,
+                  border: "1px solid rgba(11,39,52,0.12)",
+                  background: "#fff",
+                  color: "#5c747e",
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                ↓ Export CSV
+              </button>
+            </div>
+          )}
           {displayFindings.map((f, i) => {
             const isOpen = openFinding === i;
             const fid = findingId(f.label, f.payer);
@@ -642,8 +727,8 @@ export default function RevenuePage() {
                       </div>
                     </div>
 
-                    {/* Generate Appeal Letter button — only when denial codes exist */}
-                    {f.denialCodes.length > 0 && (
+                    {/* Generate Appeal / Dispute Letter — available for all recoverable findings */}
+                    {f.expectedRecovery > 0 && (
                       <div style={{ marginTop: 16, display: "flex", justifyContent: "flex-end" }}>
                         <button
                           onClick={() => setAppealFinding({
@@ -673,7 +758,7 @@ export default function RevenuePage() {
                           }}
                         >
                           <FileText style={{ width: 13, height: 13 }} />
-                          Generate Appeal Letter
+                          {f.denialCodes.length > 0 ? "Generate Appeal Letter" : "Generate Dispute Letter"}
                         </button>
                       </div>
                     )}

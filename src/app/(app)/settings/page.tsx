@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import {
   Building2,
   Bell,
@@ -129,6 +130,7 @@ function PracticeTab() {
         timezone,
         provider_count: providers,
       }, getToken);
+      try { localStorage.setItem("simera:settings:practiceName", name); } catch {}
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (e) {
@@ -183,10 +185,13 @@ function PracticeTab() {
           Upload a JSON file mapping CPT codes to contracted rates for precise underpayment detection.
           Format: <code className="bg-secondary px-1 py-0.5 rounded text-[11px]">{`{"99214": 165.00, "99215": 210.00}`}</code>
         </p>
-        <button className="flex items-center gap-2 px-3 py-2 border border-dashed border-border rounded-lg text-sm text-muted-foreground hover:border-primary/50 hover:text-foreground transition-colors">
+        <Link
+          href="/contracts"
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+        >
           <Upload className="w-4 h-4" />
-          Upload rates.json
-        </button>
+          Manage Fee Schedules
+        </Link>
       </div>
 
       <div className="flex items-center justify-between pt-6 mt-6 border-t border-border">
@@ -264,7 +269,25 @@ function NotificationsTab() {
 
   return (
     <div>
-      <h2 className="text-base font-semibold text-foreground mb-1">Notifications</h2>
+      <div className="flex items-center gap-2 mb-1">
+        <h2 className="text-base font-semibold text-foreground">Notifications</h2>
+        <span style={{
+          display: "inline-flex",
+          alignItems: "center",
+          fontFamily: "'IBM Plex Mono', monospace",
+          fontSize: 9.5,
+          fontWeight: 700,
+          letterSpacing: "0.12em",
+          textTransform: "uppercase",
+          padding: "2px 7px",
+          borderRadius: 999,
+          background: "#f8efdd",
+          color: "#9a6a1e",
+          border: "1px solid rgba(189,133,47,0.25)",
+        }}>
+          Coming soon
+        </span>
+      </div>
       <p className="text-sm text-muted-foreground mb-6">
         Choose when Simera alerts you. Delivered by email and in-app.
       </p>
@@ -302,6 +325,10 @@ function NotificationsTab() {
         <p className="text-xs text-muted-foreground mt-1">Separate multiple addresses with commas</p>
       </div>
 
+      <p style={{ fontSize: 12, color: "#8aa0a8", marginTop: 12, lineHeight: 1.5, fontStyle: "italic" }}>
+        Notification preferences are saved but email delivery is not yet active. You&apos;ll receive alerts once this feature launches.
+      </p>
+
       <SaveBar onSave={handleSave} />
       {!dirty && (
         <p className="text-xs text-muted-foreground mt-2 text-center">Preferences saved locally on this device.</p>
@@ -311,6 +338,11 @@ function NotificationsTab() {
 }
 
 function IntegrationsTab() {
+  const { getToken } = useAuth();
+  const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+  const [connecting, setConnecting] = useState<string | null>(null);
+  const [connectError, setConnectError] = useState<string | null>(null);
+
   const integrations = [
     {
       name: "Athenahealth",
@@ -350,6 +382,41 @@ function IntegrationsTab() {
     },
   ];
 
+  async function connectIntegration(name: string) {
+    setConnecting(name);
+    setConnectError(null);
+    try {
+      const token = await getToken();
+      const endpoint = name === "Athenahealth"
+        ? "/adapters/athenahealth/connect"
+        : name === "Kareo / Tebra"
+        ? null
+        : null;
+
+      if (!endpoint) {
+        setConnectError(`${name} integration is coming soon.`);
+        return;
+      }
+
+      const res = await fetch(`${BASE}${endpoint}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error((err as { detail?: string }).detail ?? `HTTP ${res.status}`);
+      }
+
+      const data = await res.json() as { auth_url: string; state: string };
+      window.location.href = data.auth_url;
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Connection failed";
+      setConnectError(msg);
+    } finally {
+      setConnecting(null);
+    }
+  }
+
   return (
     <div>
       <h2 className="text-base font-semibold text-foreground mb-1">Integrations</h2>
@@ -374,8 +441,12 @@ function IntegrationsTab() {
               </span>
             )}
             {int.status === "available" && (
-              <button className="flex items-center gap-1 text-xs text-primary font-medium hover:underline">
-                Connect <ChevronRight className="w-3 h-3" />
+              <button
+                onClick={() => connectIntegration(int.name)}
+                disabled={connecting === int.name}
+                className="flex items-center gap-1 text-xs text-primary font-medium hover:underline disabled:opacity-50"
+              >
+                {connecting === int.name ? "Connecting…" : <><span>Connect</span><ChevronRight className="w-3 h-3" /></>}
               </button>
             )}
             {int.status === "soon" && (
@@ -386,6 +457,12 @@ function IntegrationsTab() {
           </div>
         ))}
       </div>
+
+      {connectError && (
+        <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700">
+          {connectError}
+        </div>
+      )}
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Sparkles, User, ArrowUp, TrendingUp, DollarSign, BarChart2, AlertTriangle, Zap, HelpCircle } from "lucide-react";
-import { streamChat, type ChatMessage } from "@/lib/api";
+import { streamChat, type ChatMessage, type AuditResult } from "@/lib/api";
 import { useAuditContext } from "@/lib/audit-context";
 import { useAuditData } from "@/lib/use-audit-data";
 import { aiSuggestions } from "@/lib/mock-data";
@@ -221,8 +221,48 @@ function buildGreeting(totalLeakage: number, expectedRecovery: number, isLive: b
 function AskPageInner() {
   const searchParams = useSearchParams();
   const initialQ = searchParams.get("q");
-  const { result: auditResult } = useAuditContext(); // needed for streamChat raw API result
-  const { metrics, isLive, dataRange } = useAuditData();
+  const { result: rawAuditResult } = useAuditContext();
+  const { metrics, findings, isLive, practiceName, dataRange, payerScorecard } = useAuditData();
+
+  // When in demo mode (no live upload), build a synthetic context so the AI has numbers to work with
+  const auditResult: AuditResult | null = rawAuditResult ?? (!isLive ? {
+    practice_name: practiceName,
+    generated_at: new Date().toISOString(),
+    analysis_period: { start: "2026-01-01", end: "2026-05-31", days: 151 },
+    headline: {
+      total_revenue_analyzed: metrics.revenueAnalyzed,
+      total_leakage: metrics.totalLeakage,
+      expected_recovery: metrics.expectedRecovery,
+      leakage_rate_pct: metrics.leakageRatePct,
+      denial_rate_pct: metrics.denialRate,
+      denial_grade: metrics.denialGrade,
+      benchmark_denial_rate_median: metrics.benchmarkMedian,
+      benchmark_denial_rate_best: metrics.benchmarkBest,
+    },
+    top_findings: findings.map(f => ({
+      rank: f.rank,
+      category: f.category,
+      payer_name: f.payer,
+      dollar_amount: f.dollarAmount,
+      expected_recovery: f.expectedRecovery,
+      recovery_probability: f.recoveryProbability,
+      difficulty: f.difficulty as "easy" | "medium" | "hard",
+      description: f.description,
+      recommended_action: f.action,
+      denial_codes: f.denialCodes,
+      cpt_codes: f.cptCodes,
+      claim_ids: [],
+      claim_count: 0,
+    })),
+    denial_patterns: [],
+    payer_scorecard: payerScorecard.map(p => ({
+      payer_name: p.payer,
+      total_claims: p.claims,
+      denial_rate_pct: p.denialRate,
+      denial_grade: p.grade,
+      net_collection_rate_pct: p.netCollection,
+    })),
+  } : null);
 
   const [messages, setMessages] = useState<Message[]>([
     {

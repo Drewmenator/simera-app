@@ -12,7 +12,7 @@ export const practiceStats = {
 export const headlineMetrics = {
   revenueAnalyzed: 487320,
   totalLeakage: 83440,
-  expectedRecovery: 51280,
+  expectedRecovery: 51136, // matches sum of leakageFindings.expectedRecovery (22464+14912+8880+4880+0)
   leakageRatePct: 17.1,
   denialRate: 14.2,
   denialGrade: "D",
@@ -216,12 +216,15 @@ export const payerScorecard = [
 ];
 
 // Monthly revenue trend (Jan–May 2026)
+// leakage values scaled so they sum exactly to headlineMetrics.totalLeakage ($83,440)
+// paid = billed − leakage; billed sums to revenueAnalyzed ($487,320)
 export const revenueByMonth = [
-  { month: "Jan", billed: 98400, paid: 82560, denied: 11280, leakage: 15840 },
-  { month: "Feb", billed: 91200, paid: 76608, denied: 10440, leakage: 14592 },
-  { month: "Mar", billed: 102800, paid: 86352, denied: 11520, leakage: 16448 },
-  { month: "Apr", billed: 96600, paid: 81144, denied: 10680, leakage: 15456 },
-  { month: "May", billed: 98320, paid: 82589, denied: 10856, leakage: 15731 },
+  { month: "Jan", billed: 98400,  paid: 81470, denied: 11280, leakage: 16930 },
+  { month: "Feb", billed: 91200,  paid: 75604, denied: 10440, leakage: 15596 },
+  { month: "Mar", billed: 102800, paid: 85219, denied: 11520, leakage: 17581 },
+  { month: "Apr", billed: 96600,  paid: 80080, denied: 10680, leakage: 16520 },
+  { month: "May", billed: 98320,  paid: 81507, denied: 10856, leakage: 16813 },
+  // sum: leakage 83,440 | billed 487,320 | paid 403,880
 ];
 
 // CPT code analysis

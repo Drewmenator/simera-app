@@ -47,8 +47,18 @@ interface UploadedContract {
 }
 
 export default function ContractsPage() {
-  const [contracts, setContracts] = useState<UploadedContract[]>([]);
-  const [manualRates, setManualRates] = useState<ContractRate[]>([]);
+  const [contracts, setContracts] = useState<UploadedContract[]>(() => {
+    try {
+      const raw = typeof window !== "undefined" ? localStorage.getItem("simera:contracts:uploads") : null;
+      return raw ? JSON.parse(raw) : [];
+    } catch { return []; }
+  });
+  const [manualRates, setManualRates] = useState<ContractRate[]>(() => {
+    try {
+      const raw = typeof window !== "undefined" ? localStorage.getItem("simera:contracts:rates") : null;
+      return raw ? JSON.parse(raw) : [];
+    } catch { return []; }
+  });
   const [dragOver, setDragOver] = useState(false);
   const [activeTab, setActiveTab] = useState<"upload" | "manual" | "rates">("upload");
   const [newRate, setNewRate] = useState<Partial<ContractRate>>({ payer: "", cptCode: "", contractedRate: "", effectiveDate: new Date().toISOString().slice(0, 10) });
@@ -78,41 +88,49 @@ export default function ContractsPage() {
       status: "processing",
       ratesFound: 0,
     };
-    setContracts((prev) => [...prev, entry]);
-    // Simulate parsing (in prod: POST /contracts/parse)
+    setContracts((prev) => {
+      const next = [...prev, entry];
+      localStorage.setItem("simera:contracts:uploads", JSON.stringify(next));
+      return next;
+    });
     setTimeout(() => {
-      setContracts((prev) =>
-        prev.map((c) => c.id === entry.id
-          ? { ...c, status: "parsed", ratesFound: Math.floor(Math.random() * 40) + 5 }
+      setContracts((prev) => {
+        const next = prev.map((c) => c.id === entry.id
+          ? { ...c, status: "parsed" as const, ratesFound: 0 }
           : c
-        )
-      );
-    }, 2000);
+        );
+        localStorage.setItem("simera:contracts:uploads", JSON.stringify(next));
+        return next;
+      });
+    }, 1000);
   }
 
   function addManualRate() {
     if (!newRate.payer || !newRate.cptCode || !newRate.contractedRate) return;
     const cptInfo = COMMON_CPTS.find((c) => c.code === newRate.cptCode);
-    setManualRates((prev) => [
-      ...prev,
-      {
-        id: Math.random().toString(36).slice(2),
-        payer: newRate.payer!,
-        cptCode: newRate.cptCode!,
-        description: cptInfo?.desc ?? "",
-        contractedRate: newRate.contractedRate!,
-        effectiveDate: newRate.effectiveDate ?? new Date().toISOString().slice(0, 10),
-      },
-    ]);
+    const newEntry: ContractRate = {
+      id: Math.random().toString(36).slice(2),
+      payer: newRate.payer!,
+      cptCode: newRate.cptCode!,
+      description: cptInfo?.desc ?? "",
+      contractedRate: newRate.contractedRate!,
+      effectiveDate: newRate.effectiveDate ?? new Date().toISOString().slice(0, 10),
+    };
+    const updated = [...manualRates, newEntry];
+    setManualRates(updated);
+    localStorage.setItem("simera:contracts:rates", JSON.stringify(updated));
     setNewRate({ payer: "", cptCode: "", contractedRate: "", effectiveDate: new Date().toISOString().slice(0, 10) });
   }
 
   async function saveRates() {
     setSaving(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    try {
+      localStorage.setItem("simera:contracts:rates", JSON.stringify(manualRates));
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } finally {
+      setSaving(false);
+    }
   }
 
   const totalRates = manualRates.length + contracts.filter((c) => c.status === "parsed").reduce((s, c) => s + c.ratesFound, 0);
@@ -219,7 +237,11 @@ export default function ContractsPage() {
                     {c.status === "error" && (
                       <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "#c2553d", background: "#f8e8e3", padding: "3px 10px", borderRadius: 999 }}>Error</span>
                     )}
-                    <button onClick={() => setContracts((p) => p.filter((x) => x.id !== c.id))} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: "#8aa0a8" }}>
+                    <button onClick={() => {
+                      const updated = contracts.filter((x) => x.id !== c.id);
+                      setContracts(updated);
+                      localStorage.setItem("simera:contracts:uploads", JSON.stringify(updated));
+                    }} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: "#8aa0a8" }}>
                       <Trash2 style={{ width: 14, height: 14 }} />
                     </button>
                   </div>
@@ -228,7 +250,7 @@ export default function ContractsPage() {
             )}
 
             <p style={{ fontSize: 12, color: "#8aa0a8", marginTop: 4, lineHeight: 1.6 }}>
-              Contract PDFs are parsed locally — rate data is extracted and stored securely. The original PDF is never sent to our servers.
+              Contract PDFs are queued. Use &ldquo;Enter Rates Manually&rdquo; to add the rates from this document.
             </p>
           </div>
         )}
@@ -305,7 +327,11 @@ export default function ContractsPage() {
                     <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: "#0b2734" }}>{r.cptCode}</span>
                     <span style={{ fontSize: 12.5, color: "#5c747e" }}>{r.description}</span>
                     <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, fontWeight: 700, color: "#0c8174" }}>${parseFloat(r.contractedRate).toFixed(2)}</span>
-                    <button onClick={() => setManualRates((p) => p.filter((x) => x.id !== r.id))} style={{ background: "none", border: "none", cursor: "pointer", color: "#8aa0a8", padding: 2 }}>
+                    <button onClick={() => {
+                      const updated = manualRates.filter((x) => x.id !== r.id);
+                      setManualRates(updated);
+                      localStorage.setItem("simera:contracts:rates", JSON.stringify(updated));
+                    }} style={{ background: "none", border: "none", cursor: "pointer", color: "#8aa0a8", padding: 2 }}>
                       <Trash2 style={{ width: 13, height: 13 }} />
                     </button>
                   </div>

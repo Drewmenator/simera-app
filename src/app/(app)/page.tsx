@@ -90,7 +90,7 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
 }
 
 export default function HomePage() {
-  const { metrics, findings, payerScorecard, revenueByMonth, risks, isLoading, hasData } = useAuditData();
+  const { metrics, findings, payerScorecard, revenueByMonth, risks, dataRange, isLoading, hasData, isEstimatedLeakage } = useAuditData();
   const { getStatus, getRecoveredAmount } = useFindingStatuses();
 
   // Sum actual recovered amounts; fall back to expected recovery if not recorded
@@ -191,7 +191,7 @@ export default function HomePage() {
         <KpiCard
           label="Revenue Analyzed"
           value={fmt(metrics.revenueAnalyzed)}
-          sub={<>Jan – May 2026</>}
+          sub={<>{dataRange}</>}
           accent="#0b2734"
           icon={DollarSign}
         />
@@ -228,6 +228,18 @@ export default function HomePage() {
           icon={CheckCircle2}
         />
       </div>
+
+      {/* Estimated-leakage notice */}
+      {isEstimatedLeakage && (
+        <div style={{
+          padding: "10px 16px", borderRadius: 10,
+          background: "#f8efdd", border: "1px solid rgba(189,133,47,0.28)",
+          color: "#9a6a1e", fontSize: 13, display: "flex", alignItems: "center", gap: 10,
+        }}>
+          <span style={{ fontSize: 15 }}>⚡</span>
+          <span><b>Leakage estimated from denial rates</b> — exact dollar amounts weren&apos;t returned by the API. Numbers reflect your payer denial rates × average claim value. Re-upload to get precise figures.</span>
+        </div>
+      )}
 
       {/* Row 2: chart + opportunities */}
       <div className="grid grid-cols-1 md:grid-cols-[1.55fr_1fr] gap-[14px] md:gap-[18px]">

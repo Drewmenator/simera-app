@@ -44,8 +44,10 @@ export function Sidebar({ onUploadClick }: SidebarProps) {
   const firstName = user?.firstName ?? "Drew";
   const initials = user?.firstName?.[0] ?? "D";
 
-  const atRiskK = isLoading ? null : Math.round(metrics.totalLeakage / 1000);
-  const recovK = isLoading ? null : Math.round(metrics.expectedRecovery / 1000);
+  // Show values immediately — never gate on isLoading (that caused "missing leakage").
+  // Only hide if genuinely no data (e.g., real upload with zero leakage is impossible).
+  const atRiskK = metrics.totalLeakage > 0 ? Math.round(metrics.totalLeakage / 1000) : null;
+  const recovK = metrics.expectedRecovery > 0 ? Math.round(metrics.expectedRecovery / 1000) : null;
 
   return (
     <aside

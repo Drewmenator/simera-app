@@ -491,6 +491,26 @@ export default function CompliancePage() {
     phase === "all" ? undefined : phase
   );
   const [scanning, setScanning] = useState(false);
+  const [scanError, setScanError] = useState<string | null>(null);
+
+  const ROADMAP_LS_KEY = "simera:compliance:roadmap";
+
+  function readRoadmapDone(): Record<string, boolean> {
+    try {
+      const raw = typeof window !== "undefined" ? localStorage.getItem(ROADMAP_LS_KEY) : null;
+      return raw ? JSON.parse(raw) : {};
+    } catch { return {}; }
+  }
+
+  const [roadmapDone, setRoadmapDone] = useState<Record<string, boolean>>(readRoadmapDone);
+
+  function toggleRoadmapItem(key: string) {
+    setRoadmapDone(prev => {
+      const next = { ...prev, [key]: !prev[key] };
+      try { localStorage.setItem(ROADMAP_LS_KEY, JSON.stringify(next)); } catch {}
+      return next;
+    });
+  }
 
   const donePct =
     kpis && kpis.tasks_total > 0
@@ -499,9 +519,13 @@ export default function CompliancePage() {
 
   async function runScan() {
     setScanning(true);
+    setScanError(null);
     try {
-      await fetch(`${BASE}/admin/compliance/breach-scan`, { method: "POST" });
+      const res = await fetch(`${BASE}/admin/compliance/breach-scan`, { method: "POST" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       refetch();
+    } catch {
+      setScanError("Breach scan API not reachable. Automated scanning runs on the server every 24 hours.");
     } finally {
       setScanning(false);
     }
@@ -742,6 +766,21 @@ export default function CompliancePage() {
             <p style={{ fontSize: 12.5, color: "#5c747e", marginBottom: 16 }}>
               Active alerts from automated monitoring
             </p>
+            {scanError && (
+              <div
+                style={{
+                  padding: "10px 14px",
+                  borderRadius: 8,
+                  background: "#f8efdd",
+                  border: "1px solid rgba(189,133,47,0.25)",
+                  color: "#9a6a1e",
+                  fontSize: 12,
+                  marginBottom: 12,
+                }}
+              >
+                {scanError}
+              </div>
+            )}
 
             {loading && (
               <div style={{ fontSize: 13, color: "#8aa0a8", padding: "16px 0" }}>Loading alerts…</div>
@@ -840,17 +879,49 @@ export default function CompliancePage() {
               <span style={{ fontSize: 13, color: "#5c747e", fontWeight: 500 }}>{phase.label}</span>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {phase.items.map((item, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "10px 14px", borderRadius: 10, background: "#f9fbfb", border: "1px solid rgba(11,39,52,0.07)" }}>
-                  <div style={{ width: 16, height: 16, borderRadius: 5, border: `2px solid ${phase.color}`, flexShrink: 0, marginTop: 1, background: item.done ? phase.color : "transparent", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    {item.done && <svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-                  </div>
-                  <span style={{ fontSize: 13, color: "#0b2734", lineHeight: 1.5 }}>{item.text}</span>
-                </div>
-              ))}
+              {phase.items.map((item, i) => {
+                const isDone = roadmapDone[phase.phase + "_" + i] ?? item.done;
+                return (
+                  <button
+                    key={i}
+                    onClick={() => toggleRoadmapItem(phase.phase + "_" + i)}
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: 10,
+                      padding: "10px 14px",
+                      borderRadius: 10,
+                      background: isDone ? (phase.phase === "Immediate" ? "#e4f4f1" : "#f6f8f8") : "#f9fbfb",
+                      border: `1px solid ${isDone ? "rgba(12,129,116,0.2)" : "rgba(11,39,52,0.07)"}`,
+                      width: "100%",
+                      textAlign: "left",
+                      cursor: "pointer",
+                      transition: "background 0.15s, border-color 0.15s",
+                    }}
+                  >
+                    <div style={{
+                      width: 16, height: 16, borderRadius: 5,
+                      border: `2px solid ${isDone ? "#0c8174" : phase.color}`,
+                      flexShrink: 0, marginTop: 1,
+                      background: isDone ? "#0c8174" : "transparent",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      transition: "background 0.15s",
+                    }}>
+                      {isDone && <svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3L3 5L7 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                    </div>
+                    <span style={{ fontSize: 13, color: isDone ? "#5c747e" : "#0b2734", lineHeight: 1.5, textDecoration: isDone ? "line-through" : "none" }}>
+                      {item.text}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         ))}
+
+        <p style={{ fontSize: 12, color: "#8aa0a8", marginTop: 8, marginBottom: 12 }}>
+          Click items to mark them complete. Progress is saved locally.
+        </p>
 
         <div style={{ padding: "12px 16px", borderRadius: 10, background: "#f6f8f8", border: "1px solid rgba(11,39,52,0.08)", marginTop: 4 }}>
           <p style={{ fontSize: 12, color: "#8aa0a8", lineHeight: 1.55 }}>
