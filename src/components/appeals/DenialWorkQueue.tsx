@@ -3,11 +3,13 @@
 import { useState } from "react";
 import {
   AlertCircle, CheckCircle2, ChevronDown, ChevronRight,
-  FileText, Clipboard, ExternalLink, AlertTriangle, Info
+  FileText, Clipboard, ExternalLink, AlertTriangle, Info, Printer, Send,
 } from "lucide-react";
 import type { AuditFinding } from "@/lib/api";
-import { getAppealStrategy, findingIsAppealable, generateAppealLetter } from "@/lib/evidence-engine";
+import { getAppealStrategy, findingIsAppealable, generateAppealLetter, generateFaxCoverSheet } from "@/lib/evidence-engine";
 import { AppealLetterModal } from "@/components/appeal/appeal-letter-modal";
+import { useAppealSubmissions } from "@/lib/use-appeal-submissions";
+import { rankDenials, TIER_META, type RankedFinding } from "@/lib/recovery-triage";
 
 interface DenialWorkQueueProps {
   findings: AuditFinding[];
@@ -145,15 +147,23 @@ function EvidenceChecklist({ carcCode }: { carcCode: string }) {
 
 
 export function DenialWorkQueue({ findings, practiceName }: DenialWorkQueueProps) {
-  const [expanded, setExpanded] = useState<number | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [showSkip, setShowSkip] = useState(false);
   const [appealOpen, setAppealOpen] = useState(false);
   const [appealFinding, setAppealFinding] = useState<AuditFinding | null>(null);
   const [copiedLetter, setCopiedLetter] = useState(false);
+  const [loggedId, setLoggedId] = useState<string | null>(null); // which finding was just logged
+  const { addSubmission } = useAppealSubmissions();
 
   // Only show denial-type findings (not undercoding/underpayment — those have different workflows)
   const denialFindings = findings.filter(f =>
     ["unworked_denial", "wrong_writeoff", "timely_filing"].includes(f.category)
   );
+
+  // Triage: rank winnable denials by expected recovery; separate the unwinnable.
+  const ranked = rankDenials(denialFindings);
+  const active = ranked.filter(r => r.tier !== "skip");
+  const skipped = ranked.filter(r => r.tier === "skip");
 
   const openAppeal = (f: AuditFinding) => {
     setAppealFinding(f);
@@ -162,6 +172,12 @@ export function DenialWorkQueue({ findings, practiceName }: DenialWorkQueueProps
 
   const copyQuickLetter = (f: AuditFinding) => {
     const carcCode = f.denial_codes?.[0] ?? "unknown";
+    // Read saved practice profile so the template letter has real provider info
+    let practiceProfile: { npi?: string; taxId?: string; address?: string; phone?: string; fax?: string } = {};
+    try {
+      const stored = typeof window !== "undefined" ? localStorage.getItem("simera:settings:practiceProfile") : null;
+      if (stored) practiceProfile = JSON.parse(stored);
+    } catch { /* ignore */ }
     const letter = generateAppealLetter({
       practiceName,
       payerName: f.payer_name || "Payer",
@@ -169,11 +185,261 @@ export function DenialWorkQueue({ findings, practiceName }: DenialWorkQueueProps
       claimIds: f.claim_ids ?? [],
       cptCodes: f.cpt_codes ?? [],
       dollarAmount: f.dollar_amount,
+      npi: practiceProfile.npi,
+      taxId: practiceProfile.taxId,
+      address: practiceProfile.address,
+      phone: practiceProfile.phone,
+      fax: practiceProfile.fax,
+      diagnosisCodes: f.diagnosis_codes,
+      serviceDates: f.service_dates,
+      denialDate: f.denial_date,
+      payerClaimNumber: f.payer_claim_number,
     });
     navigator.clipboard.writeText(letter).then(() => {
       setCopiedLetter(true);
       setTimeout(() => setCopiedLetter(false), 2000);
     });
+  };
+
+  const printFaxCoverSheet = (f: AuditFinding) => {
+    let practiceProfile: { npi?: string; taxId?: string; address?: string; phone?: string; fax?: string } = {};
+    try {
+      const stored = typeof window !== "undefined" ? localStorage.getItem("simera:settings:practiceProfile") : null;
+      if (stored) practiceProfile = JSON.parse(stored);
+    } catch { /* ignore */ }
+    const sheet = generateFaxCoverSheet({
+      practiceName,
+      payerName: f.payer_name || "Payer",
+      carcCode: f.denial_codes?.[0] ?? "unknown",
+      claimIds: f.claim_ids ?? [],
+      dollarAmount: f.dollar_amount,
+      totalPages: 3, // cover + letter + supporting doc estimate
+      npi: practiceProfile.npi,
+      taxId: practiceProfile.taxId,
+      address: practiceProfile.address,
+      phone: practiceProfile.phone,
+      fax: practiceProfile.fax,
+    });
+    const win = window.open("", "_blank");
+    if (win) {
+      win.document.write(`
+        <html><head><title>Fax Cover Sheet — ${f.payer_name}</title>
+        <style>
+          body { font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.7;
+                 padding: 48px; max-width: 680px; margin: 0 auto; color: #111; }
+          pre { white-space: pre-wrap; font-family: inherit; }
+          @media print { body { padding: 0; } }
+        </style></head><body>
+        <pre>${sheet.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</pre>
+        <script>window.onload = () => { window.print(); }<\/script>
+        </body></html>
+      `);
+      win.document.close();
+    }
+  };
+
+  const logSubmission = (f: AuditFinding) => {
+    const key = `${f.payer_name}_${f.denial_codes?.[0] ?? ""}_${f.dollar_amount}`;
+    addSubmission({
+      payer: f.payer_name || "Unknown Payer",
+      denialCode: f.denial_codes?.[0] ?? "",
+      dollarAmount: f.dollar_amount,
+      expectedRecovery: f.expected_recovery,
+      claimIds: f.claim_ids ?? [],
+      cptCodes: f.cpt_codes ?? [],
+      description: f.description,
+    });
+    setLoggedId(key);
+    setTimeout(() => setLoggedId(null), 3000);
+  };
+
+  const renderItem = (r: RankedFinding, key: string) => {
+    const finding = r.finding;
+    const isExpanded = expanded === key;
+    const primaryCarcCode = finding.denial_codes?.[0] ?? "";
+    const strategy = getAppealStrategy(primaryCarcCode);
+    const appealable = findingIsAppealable(finding.denial_codes ?? []);
+    const claimCount = finding.claim_count ?? finding.claim_ids?.length ?? 0;
+    const catColor = CATEGORY_COLOR[finding.category] ?? "bg-secondary text-muted-foreground border-border";
+    const tierMeta = TIER_META[r.tier];
+    const isSkip = r.tier === "skip";
+
+    return (
+      <div
+        key={key}
+        className={`rounded-xl border bg-card transition-all ${isExpanded ? "border-primary/30 shadow-sm" : "border-border hover:border-border/80"}`}
+      >
+        <button
+          className="w-full flex items-start gap-3 p-4 text-left"
+          onClick={() => setExpanded(isExpanded ? null : key)}
+        >
+          <div className="flex-shrink-0 mt-0.5">
+            {isSkip
+              ? <Info className="w-4 h-4 text-muted-foreground" />
+              : <AlertCircle className="w-4 h-4 text-red-500" />}
+          </div>
+
+          <div className="flex-1 min-w-0 space-y-1.5">
+            <div className="flex flex-wrap items-center gap-2">
+              {!isSkip && (
+                <span className="text-[10px] font-bold font-mono px-1.5 py-0.5 rounded bg-secondary text-foreground border border-border">#{r.rank}</span>
+              )}
+              <span
+                className="text-[10px] font-semibold px-2 py-0.5 rounded-full border"
+                style={{ color: tierMeta.color, background: tierMeta.bg, borderColor: tierMeta.border }}
+              >
+                {tierMeta.label}
+              </span>
+              <span className="text-sm font-semibold text-foreground">
+                {finding.payer_name || "Unknown Payer"}
+              </span>
+              {finding.denial_codes?.map(code => (
+                <span key={code} className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border ${catColor}`}>
+                  {code}
+                </span>
+              ))}
+              {claimCount > 0 && (
+                <span className="text-[10px] text-muted-foreground">
+                  {claimCount} claim{claimCount !== 1 ? "s" : ""}
+                </span>
+              )}
+            </div>
+
+            <p className="text-[11px] font-medium text-muted-foreground">{r.reason}</p>
+            <p className="text-xs text-muted-foreground leading-relaxed pr-4">{finding.description}</p>
+
+            {!isSkip && (
+              <div className="flex flex-wrap items-center gap-4 pt-0.5">
+                <div>
+                  <p className="text-[10px] text-muted-foreground">At risk</p>
+                  <p className="text-sm font-bold text-foreground">${finding.dollar_amount.toLocaleString("en-US", { maximumFractionDigits: 0 })}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-muted-foreground">Expected recovery</p>
+                  <p className="text-sm font-bold text-emerald-600">${finding.expected_recovery.toLocaleString("en-US", { maximumFractionDigits: 0 })}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-muted-foreground">Win rate</p>
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-xs font-semibold text-foreground">{strategy.winRateLabel}</p>
+                    {finding.recovery_confidence === "empirical" && (
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-emerald-100 text-emerald-700 border border-emerald-200">✓ Your data</span>
+                    )}
+                    {finding.recovery_confidence === "network_estimate" && (
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-blue-100 text-blue-700 border border-blue-200">🌐 Network</span>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-[10px] text-muted-foreground">Difficulty</p>
+                  <p className={`text-xs font-semibold capitalize ${DIFFICULTY_COLOR[finding.difficulty] ?? "text-foreground"}`}>
+                    {finding.difficulty}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="flex-shrink-0 ml-2 mt-1">
+            {isExpanded
+              ? <ChevronDown className="w-4 h-4 text-muted-foreground" />
+              : <ChevronRight className="w-4 h-4 text-muted-foreground" />}
+          </div>
+        </button>
+
+        {isExpanded && (
+          <div className="border-t border-border">
+            <div className="p-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-xs font-semibold text-foreground uppercase tracking-wide mb-3">
+                  Appeal Package — CARC {primaryCarcCode}
+                </h3>
+                <EvidenceChecklist carcCode={primaryCarcCode} />
+              </div>
+
+              <div className="space-y-4">
+                {(finding.claim_ids?.length ?? 0) > 0 && (
+                  <div>
+                    <h3 className="text-xs font-semibold text-foreground uppercase tracking-wide mb-2">
+                      Claim Reference Numbers ({claimCount})
+                    </h3>
+                    <div className="rounded-lg bg-secondary/40 border border-border p-3 max-h-28 overflow-y-auto">
+                      <div className="flex flex-wrap gap-1.5">
+                        {finding.claim_ids?.map(id => (
+                          <span key={id} className="text-[10px] font-mono bg-background border border-border rounded px-1.5 py-0.5 text-foreground">{id}</span>
+                        ))}
+                        {(finding.claim_count ?? 0) > (finding.claim_ids?.length ?? 0) && (
+                          <span className="text-[10px] text-muted-foreground self-center">
+                            +{(finding.claim_count ?? 0) - (finding.claim_ids?.length ?? 0)} more
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-1">Include these in your appeal letter and on the fax cover sheet.</p>
+                  </div>
+                )}
+
+                {(finding.cpt_codes?.length ?? 0) > 0 && (
+                  <div>
+                    <h3 className="text-xs font-semibold text-foreground uppercase tracking-wide mb-2">Procedure Codes</h3>
+                    <div className="flex flex-wrap gap-1.5">
+                      {finding.cpt_codes?.map(cpt => (
+                        <span key={cpt} className="text-xs font-mono bg-primary/10 text-primary border border-primary/20 rounded px-2 py-0.5">{cpt}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {appealable && !isSkip && (
+                  <div className="space-y-2 pt-2">
+                    <h3 className="text-xs font-semibold text-foreground uppercase tracking-wide">Actions</h3>
+                    <button
+                      onClick={() => openAppeal(finding)}
+                      className="w-full flex items-center justify-center gap-2 py-2 bg-primary text-primary-foreground text-xs font-semibold rounded-lg hover:bg-primary/90 transition-colors"
+                    >
+                      <FileText className="w-3.5 h-3.5" />
+                      Generate AI Appeal Letter
+                    </button>
+                    <button
+                      onClick={() => copyQuickLetter(finding)}
+                      className="w-full flex items-center justify-center gap-2 py-2 bg-secondary text-foreground text-xs font-semibold rounded-lg hover:bg-secondary/80 transition-colors border border-border"
+                    >
+                      {copiedLetter
+                        ? <><CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Copied to clipboard</>
+                        : <><Clipboard className="w-3.5 h-3.5" /> Copy template letter</>}
+                    </button>
+                    <button
+                      onClick={() => printFaxCoverSheet(finding)}
+                      className="w-full flex items-center justify-center gap-2 py-2 bg-secondary text-foreground text-xs font-semibold rounded-lg hover:bg-secondary/80 transition-colors border border-border"
+                    >
+                      <Printer className="w-3.5 h-3.5" />
+                      Print fax cover sheet
+                    </button>
+                    {(() => {
+                      const logKey = `${finding.payer_name}_${finding.denial_codes?.[0] ?? ""}_${finding.dollar_amount}`;
+                      const justLogged = loggedId === logKey;
+                      return (
+                        <button
+                          onClick={() => logSubmission(finding)}
+                          className="w-full flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-lg transition-colors border"
+                          style={justLogged
+                            ? { background: "rgba(20,184,166,0.08)", color: "#0c8174", borderColor: "rgba(20,184,166,0.3)" }
+                            : { background: "#fff", color: "#0b2734", borderColor: "rgba(11,39,52,0.18)" }}
+                        >
+                          <Send className="w-3.5 h-3.5" />
+                          {justLogged ? "Logged ✓" : "Log submission & track outcome"}
+                        </button>
+                      );
+                    })()}
+                    <p className="text-[10px] text-muted-foreground text-center">AI letter · Template · Fax sheet · Outcome tracking</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
   };
 
   if (denialFindings.length === 0) {
@@ -188,167 +454,29 @@ export function DenialWorkQueue({ findings, practiceName }: DenialWorkQueueProps
 
   return (
     <div className="space-y-3">
-      {denialFindings.map((finding, idx) => {
-        const isExpanded = expanded === idx;
-        const primaryCarcCode = finding.denial_codes?.[0] ?? "";
-        const strategy = getAppealStrategy(primaryCarcCode);
-        const appealable = findingIsAppealable(finding.denial_codes ?? []);
-        const claimCount = finding.claim_count ?? finding.claim_ids?.length ?? 0;
-        const catColor = CATEGORY_COLOR[finding.category] ?? "bg-secondary text-muted-foreground border-border";
+      {active.map((r, i) => renderItem(r, `a${i}`))}
 
-        return (
-          <div
-            key={idx}
-            className={`rounded-xl border bg-card transition-all ${isExpanded ? "border-primary/30 shadow-sm" : "border-border hover:border-border/80"}`}
+      {skipped.length > 0 && (
+        <div className="rounded-xl border border-dashed border-border bg-secondary/30 overflow-hidden">
+          <button
+            onClick={() => setShowSkip(s => !s)}
+            className="w-full flex items-center gap-2 p-3 text-left"
           >
-            {/* Header row */}
-            <button
-              className="w-full flex items-start gap-3 p-4 text-left"
-              onClick={() => setExpanded(isExpanded ? null : idx)}
-            >
-              <div className="flex-shrink-0 mt-0.5">
-                {appealable
-                  ? <AlertCircle className="w-4 h-4 text-red-500" />
-                  : <Info className="w-4 h-4 text-muted-foreground" />
-                }
-              </div>
-
-              <div className="flex-1 min-w-0 space-y-1.5">
-                {/* Top row: payer + code badge + amount */}
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-sm font-semibold text-foreground">
-                    {finding.payer_name || "Unknown Payer"}
-                  </span>
-                  {finding.denial_codes?.map(code => (
-                    <span key={code} className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border ${catColor}`}>
-                      {code}
-                    </span>
-                  ))}
-                  {claimCount > 0 && (
-                    <span className="text-[10px] text-muted-foreground">
-                      {claimCount} claim{claimCount !== 1 ? "s" : ""}
-                    </span>
-                  )}
-                </div>
-
-                {/* Description */}
-                <p className="text-xs text-muted-foreground leading-relaxed pr-4">{finding.description}</p>
-
-                {/* Bottom row: amounts + difficulty + win rate */}
-                <div className="flex flex-wrap items-center gap-4 pt-0.5">
-                  <div>
-                    <p className="text-[10px] text-muted-foreground">At risk</p>
-                    <p className="text-sm font-bold text-foreground">${finding.dollar_amount.toLocaleString("en-US", { maximumFractionDigits: 0 })}</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-muted-foreground">Expected recovery</p>
-                    <p className="text-sm font-bold text-emerald-600">${finding.expected_recovery.toLocaleString("en-US", { maximumFractionDigits: 0 })}</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-muted-foreground">Win rate</p>
-                    <p className="text-xs font-semibold text-foreground">{strategy.winRateLabel}</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-muted-foreground">Difficulty</p>
-                    <p className={`text-xs font-semibold capitalize ${DIFFICULTY_COLOR[finding.difficulty] ?? "text-foreground"}`}>
-                      {finding.difficulty}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex-shrink-0 ml-2 mt-1">
-                {isExpanded
-                  ? <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                  : <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                }
-              </div>
-            </button>
-
-            {/* Expanded: evidence + actions */}
-            {isExpanded && (
-              <div className="border-t border-border">
-                <div className="p-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Left: evidence engine */}
-                  <div>
-                    <h3 className="text-xs font-semibold text-foreground uppercase tracking-wide mb-3">
-                      Appeal Package — CARC {primaryCarcCode}
-                    </h3>
-                    <EvidenceChecklist carcCode={primaryCarcCode} />
-                  </div>
-
-                  {/* Right: claim IDs + actions */}
-                  <div className="space-y-4">
-                    {/* Claim IDs */}
-                    {(finding.claim_ids?.length ?? 0) > 0 && (
-                      <div>
-                        <h3 className="text-xs font-semibold text-foreground uppercase tracking-wide mb-2">
-                          Claim Reference Numbers ({claimCount})
-                        </h3>
-                        <div className="rounded-lg bg-secondary/40 border border-border p-3 max-h-28 overflow-y-auto">
-                          <div className="flex flex-wrap gap-1.5">
-                            {finding.claim_ids?.map(id => (
-                              <span key={id} className="text-[10px] font-mono bg-background border border-border rounded px-1.5 py-0.5 text-foreground">
-                                {id}
-                              </span>
-                            ))}
-                            {(finding.claim_count ?? 0) > (finding.claim_ids?.length ?? 0) && (
-                              <span className="text-[10px] text-muted-foreground self-center">
-                                +{(finding.claim_count ?? 0) - (finding.claim_ids?.length ?? 0)} more
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <p className="text-[10px] text-muted-foreground mt-1">Include these in your appeal letter and on the fax cover sheet.</p>
-                      </div>
-                    )}
-
-                    {/* CPT codes */}
-                    {(finding.cpt_codes?.length ?? 0) > 0 && (
-                      <div>
-                        <h3 className="text-xs font-semibold text-foreground uppercase tracking-wide mb-2">Procedure Codes</h3>
-                        <div className="flex flex-wrap gap-1.5">
-                          {finding.cpt_codes?.map(cpt => (
-                            <span key={cpt} className="text-xs font-mono bg-primary/10 text-primary border border-primary/20 rounded px-2 py-0.5">
-                              {cpt}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Action buttons */}
-                    {appealable && (
-                      <div className="space-y-2 pt-2">
-                        <h3 className="text-xs font-semibold text-foreground uppercase tracking-wide">Actions</h3>
-                        <button
-                          onClick={() => openAppeal(finding)}
-                          className="w-full flex items-center justify-center gap-2 py-2 bg-primary text-primary-foreground text-xs font-semibold rounded-lg hover:bg-primary/90 transition-colors"
-                        >
-                          <FileText className="w-3.5 h-3.5" />
-                          Generate AI Appeal Letter
-                        </button>
-                        <button
-                          onClick={() => copyQuickLetter(finding)}
-                          className="w-full flex items-center justify-center gap-2 py-2 bg-secondary text-foreground text-xs font-semibold rounded-lg hover:bg-secondary/80 transition-colors border border-border"
-                        >
-                          {copiedLetter
-                            ? <><CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Copied to clipboard</>
-                            : <><Clipboard className="w-3.5 h-3.5" /> Copy template letter</>
-                          }
-                        </button>
-                        <p className="text-[10px] text-muted-foreground text-center">
-                          AI letter is personalized with your clinical context · Template is instant
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      })}
+            {showSkip
+              ? <ChevronDown className="w-4 h-4 text-muted-foreground" />
+              : <ChevronRight className="w-4 h-4 text-muted-foreground" />}
+            <span className="text-xs font-semibold text-muted-foreground">
+              Skip these — not worth appealing ({skipped.length})
+            </span>
+            <span className="ml-auto text-[10px] text-muted-foreground hidden sm:inline">don&apos;t waste effort on unwinnable denials</span>
+          </button>
+          {showSkip && (
+            <div className="p-3 pt-0 space-y-3">
+              {skipped.map((r, i) => renderItem(r, `s${i}`))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Appeal letter modal (existing AI-powered one) */}
       <AppealLetterModal
@@ -364,6 +492,10 @@ export function DenialWorkQueue({ findings, practiceName }: DenialWorkQueueProps
           action: appealFinding.recommended_action,
           cptCodes: appealFinding.cpt_codes ?? [],
           claimIds: appealFinding.claim_ids ?? [],
+          diagnosisCodes: appealFinding.diagnosis_codes ?? [],
+          serviceDates: appealFinding.service_dates ?? [],
+          denialDate: appealFinding.denial_date,
+          payerClaimNumber: appealFinding.payer_claim_number,
         } : null}
         practiceName={practiceName}
       />
