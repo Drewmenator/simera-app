@@ -35,10 +35,10 @@ const SEARCH_ITEMS = [
 ];
 
 const NOTIFICATIONS = [
-  { id: 1, type: "critical", title: "CO-197 Prior Auth Denials", body: "23 United Healthcare claims unworked — $18,240 at risk", time: "2h ago", read: false },
-  { id: 2, type: "warning", title: "Timely Filing Deadline", body: "Aetna 90-day window closes in 8 days for 6 claims", time: "5h ago", read: false },
-  { id: 3, type: "info", title: "New benchmark data available", body: "Q1 2026 denial rate benchmarks updated for family medicine", time: "1d ago", read: true },
-  { id: 4, type: "success", title: "Recovery opportunity found", body: "Undercoding pattern detected — potential $12K annual uplift", time: "2d ago", read: true },
+  { id: 1, type: "critical", title: "CO-197 Prior Auth Denials", body: "23 United Healthcare claims unworked — $18,240 at risk", time: "2h ago", read: false, href: "/appeals" },
+  { id: 2, type: "warning", title: "Timely Filing Deadline", body: "Aetna 90-day window closes in 8 days for 6 claims", time: "5h ago", read: false, href: "/risks" },
+  { id: 3, type: "info", title: "New benchmark data available", body: "Q1 2026 denial rate benchmarks updated for family medicine", time: "1d ago", read: true, href: "/benchmarks" },
+  { id: 4, type: "success", title: "Recovery opportunity found", body: "Undercoding pattern detected — potential $12K annual uplift", time: "2d ago", read: true, href: "/revenue" },
 ];
 
 interface TopbarProps {
@@ -137,14 +137,15 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
         }}
         className="px-4 py-3 md:px-[34px] md:py-[18px] md:gap-5"
       >
-        {/* Mobile menu button */}
+        {/* Mobile menu button — display controlled by `md:hidden`; do NOT set `display`
+            inline (it would override the class and show the hamburger on desktop,
+            where the sidebar is already persistent). */}
         <button
           onClick={onMenuClick}
-          className="md:hidden"
+          className="flex md:hidden"
           style={{
             width: 34,
             height: 34,
-            display: "flex",
             alignItems: "center",
             justifyContent: "center",
             borderRadius: 8,
@@ -221,7 +222,10 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
               ⌘K
             </kbd>
           </button>
-          {/* Search icon-only on mobile */}
+          {/* Search icon-only on mobile.
+              NOTE: display is controlled by the `flex md:hidden` classes — do NOT set
+              `display` inline here, as an inline style overrides `md:hidden` and the
+              icon would wrongly appear next to the full search box on desktop. */}
           <button
             onClick={() => setSearchOpen(true)}
             className="flex md:hidden"
@@ -231,7 +235,6 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
               borderRadius: 9,
               border: "1px solid rgba(11,39,52,0.10)",
               background: "#fff",
-              display: "flex",
               alignItems: "center",
               justifyContent: "center",
               cursor: "pointer",
@@ -402,6 +405,11 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
                       {notifications.map((n) => (
                         <div
                           key={n.id}
+                          onClick={() => {
+                            setNotifications((prev) => prev.map((x) => (x.id === n.id ? { ...x, read: true } : x)));
+                            setBellOpen(false);
+                            router.push(n.href);
+                          }}
                           style={{
                             display: "flex",
                             gap: 12,

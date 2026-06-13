@@ -931,6 +931,85 @@ export default function CompliancePage() {
         </div>
       </div>
 
+      {/* BAA Status Panel */}
+      <div style={{ ...CARD, overflow: "hidden" }}>
+        <div style={{ padding: "18px 22px", borderBottom: "1px solid rgba(11,39,52,0.08)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+          <div>
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: "#0b2734", margin: "0 0 2px", letterSpacing: "-0.01em" }}>
+              Business Associate Agreement Status
+            </h2>
+            <p style={{ fontSize: 12.5, color: "#5c747e", margin: 0 }}>
+              All subprocessors that touch PHI must have a signed BAA before any real patient data is uploaded.
+            </p>
+          </div>
+          <a href="/trust" target="_blank" rel="noopener noreferrer" style={{
+            flexShrink: 0, fontSize: 12, fontWeight: 600, color: "#14b8a6",
+            textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4,
+          }}>
+            Security &amp; Trust Center →
+          </a>
+        </div>
+
+        <div style={{ padding: "6px 0 14px" }}>
+          {[
+            { name: "Simera Health",        role: "Primary Business Associate",     status: "pending", email: "security@simerahealth.org" },
+            { name: "Amazon Web Services",   role: "Cloud infrastructure (ECS, S3)", status: "signed",  email: null },
+            { name: "Anthropic",             role: "AI engine — appeal letters",     status: "pending", email: "privacy@anthropic.com" },
+            { name: "Supabase",              role: "Database — claim ledger",        status: "pending", email: "security@supabase.io" },
+            { name: "Vercel",                role: "Frontend hosting",               status: "pending", email: "privacy@vercel.com" },
+            { name: "Clerk",                 role: "Authentication",                 status: "pending", email: "privacy@clerk.com" },
+          ].map((v) => (
+            <div key={v.name} style={{
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+              padding: "10px 22px", gap: 12,
+              borderBottom: "1px solid rgba(11,39,52,0.05)",
+            }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{ fontSize: 13.5, fontWeight: 600, color: "#0b2734", margin: 0 }}>{v.name}</p>
+                <p style={{ fontSize: 11.5, color: "#8aa0a8", margin: "2px 0 0" }}>{v.role}</p>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+                {v.email && v.status === "pending" && (
+                  <a
+                    href={`mailto:${v.email}?subject=BAA Request — Simera Health&body=Hi, I am reaching out on behalf of Simera Health to initiate a Business Associate Agreement. Please advise on next steps.`}
+                    style={{ fontSize: 11.5, color: "#5c747e", textDecoration: "none", borderBottom: "1px dotted #b0c4ca" }}
+                  >
+                    Initiate BAA →
+                  </a>
+                )}
+                <span style={{
+                  display: "inline-flex", alignItems: "center", gap: 5,
+                  padding: "3px 10px", borderRadius: 20, fontSize: 11.5, fontWeight: 700,
+                  background: v.status === "signed" ? "#e4f4f1" : "#fff8ed",
+                  color: v.status === "signed" ? "#0c8174" : "#c89020",
+                  border: `1px solid ${v.status === "signed" ? "rgba(12,129,116,0.25)" : "rgba(200,144,32,0.3)"}`,
+                }}>
+                  {v.status === "signed"
+                    ? <><CheckCircle2 style={{ width: 11, height: 11 }} /> Signed</>
+                    : <><AlertTriangle style={{ width: 11, height: 11 }} /> Pending</>
+                  }
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ padding: "12px 22px 18px" }}>
+          <a
+            href="mailto:security@simerahealth.org?subject=BAA Initiation — All Subprocessors"
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              padding: "9px 18px", borderRadius: 9,
+              background: "#0b2734", color: "#fff",
+              fontSize: 13, fontWeight: 700, textDecoration: "none",
+              letterSpacing: "-0.01em",
+            }}
+          >
+            Email security@simerahealth.org to initiate all BAAs →
+          </a>
+        </div>
+      </div>
+
       {/* Spin keyframe (inline style injection) */}
       <style>{`
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

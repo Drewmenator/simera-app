@@ -301,6 +301,89 @@ export default function BenchmarksPage() {
           Sources: MGMA 2023–2024 Physician Compensation Survey · HFMA Benchmarking Initiative · CMS NHE Fact Sheet · CAQH 2023 Index
         </p>
       </div>
+
+      {/* Network Intelligence — the data moat */}
+      <div style={{ ...CARD, padding: 0, overflow: "hidden" }}>
+        <div style={{ background: "#0b2734", padding: "18px 22px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
+          <div>
+            <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "#14b8a6", margin: "0 0 5px" }}>
+              Simera Network Intelligence
+            </p>
+            <h2 style={{ fontSize: 17, fontWeight: 700, color: "#eaf2f3", letterSpacing: "-0.02em", margin: "0 0 4px" }}>
+              Payer Win Rates Across the Simera Network
+            </h2>
+            <p style={{ fontSize: 13, color: "#8fabb5", margin: 0 }}>
+              Every appeal outcome logged by any practice improves predictions for all practices. This is the moat.
+            </p>
+          </div>
+          <div style={{
+            flexShrink: 0, padding: "4px 12px", borderRadius: 20,
+            background: "rgba(20,184,166,0.18)", color: "#14b8a6",
+            fontSize: 11, fontWeight: 700, letterSpacing: "0.06em", whiteSpace: "nowrap",
+          }}>
+            SAMPLE DATA
+          </div>
+        </div>
+
+        <div style={{ padding: "18px 22px" }}>
+          <p style={{ fontSize: 13, color: "#5c747e", marginBottom: 18, lineHeight: 1.6 }}>
+            As practices upload 835 files and confirm appeal outcomes, Simera builds payer-level denial intelligence that no single practice could compute alone. The table below shows what this looks like — win rates by payer and denial code, derived from aggregated (de-identified) outcomes across the network.
+          </p>
+
+          <div style={{ overflowX: "auto", borderRadius: 10, border: "1px solid rgba(11,39,52,0.09)" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", fontSize: 13 }}>
+              <thead>
+                <tr style={{ background: "#f3f6f7" }}>
+                  {["Payer", "Denial Code", "Network Claims", "Win Rate", "vs. Industry Est.", "Best Action"].map((h) => (
+                    <th key={h} style={{ padding: "10px 14px", textAlign: "left", fontSize: 10.5, fontWeight: 700, color: "#8aa0a8", letterSpacing: "0.08em", textTransform: "uppercase", borderBottom: "1px solid rgba(11,39,52,0.09)", whiteSpace: "nowrap" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { payer: "United Healthcare", code: "CO-4",  n: 847, winRate: 0.72, industry: 0.55, delta: "+17pp", action: "Medical necessity letter + CPT documentation" },
+                  { payer: "United Healthcare", code: "CO-97", n: 612, winRate: 0.58, industry: 0.45, delta: "+13pp", action: "Resubmit with modifier -59" },
+                  { payer: "Aetna",             code: "CO-45", n: 531, winRate: 0.41, industry: 0.38, delta: "+3pp",  action: "Contract rate review required" },
+                  { payer: "BlueCross BlueShield", code: "CO-16", n: 489, winRate: 0.66, industry: 0.52, delta: "+14pp", action: "Missing/invalid field correction + resubmit" },
+                  { payer: "Cigna",             code: "PR-1",  n: 378, winRate: 0.31, industry: 0.30, delta: "+1pp",  action: "Patient responsibility — limited recourse" },
+                  { payer: "Humana",            code: "CO-4",  n: 294, winRate: 0.63, industry: 0.55, delta: "+8pp",  action: "Prior auth appeal with clinical notes" },
+                ].map((row, i) => {
+                  const deltaColor = parseFloat(row.delta) > 5 ? "#0c8174" : parseFloat(row.delta) > 0 ? "#9a6a1e" : "#c2553d";
+                  const winColor = row.winRate >= 0.6 ? "#0c8174" : row.winRate >= 0.4 ? "#9a6a1e" : "#c2553d";
+                  return (
+                    <tr key={i} style={{ background: i % 2 === 0 ? "#fff" : "#fafbfb", borderBottom: "1px solid rgba(11,39,52,0.06)" }}>
+                      <td style={{ padding: "12px 14px", fontWeight: 600, color: "#0b2734" }}>{row.payer}</td>
+                      <td style={{ padding: "12px 14px" }}>
+                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, background: "rgba(11,39,52,0.07)", padding: "2px 7px", borderRadius: 5, color: "#0b2734" }}>
+                          {row.code}
+                        </span>
+                      </td>
+                      <td style={{ padding: "12px 14px", fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: "#5c747e" }}>{row.n.toLocaleString()}</td>
+                      <td style={{ padding: "12px 14px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <div style={{ width: 52, height: 6, borderRadius: 3, background: "rgba(11,39,52,0.08)", overflow: "hidden" }}>
+                            <div style={{ height: "100%", width: `${row.winRate * 100}%`, background: winColor, borderRadius: 3 }} />
+                          </div>
+                          <span style={{ fontSize: 13, fontWeight: 700, color: winColor }}>{Math.round(row.winRate * 100)}%</span>
+                        </div>
+                      </td>
+                      <td style={{ padding: "12px 14px", fontSize: 12, fontWeight: 700, color: deltaColor }}>{row.delta}</td>
+                      <td style={{ padding: "12px 14px", fontSize: 12, color: "#5c747e" }}>{row.action}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 16, padding: "12px 16px", background: "rgba(20,184,166,0.07)", borderRadius: 10, border: "1px solid rgba(20,184,166,0.18)" }}>
+            <div style={{ fontSize: 20 }}>🔒</div>
+            <p style={{ fontSize: 12.5, color: "#3a6b60", margin: 0, lineHeight: 1.6 }}>
+              <strong>How the data moat works:</strong> Each practice's outcomes are de-identified (payer name + CARC code + won/lost only — no patient data) and pooled. A solo practice might have 30 CO-4 denials with United; the Simera network has 847 and knows exactly what works. The more practices use Simera, the more accurate every practice's recovery predictions become.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

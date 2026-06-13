@@ -96,6 +96,9 @@ export default function BookDemoPage() {
 
   const valid = form.name.trim() && form.email.includes("@") && form.practice.trim() && form.specialty && form.providers;
 
+  // Once the booking widget is showing, give it the full width (hide the agenda column)
+  const showCalendly = submitted && !!CALENDLY_URL;
+
   // Load Calendly inline widget script once, after mount
   useEffect(() => {
     if (!CALENDLY_URL) return;
@@ -170,8 +173,22 @@ export default function BookDemoPage() {
   return (
     <div style={{ background: NAVY, minHeight: "100vh", fontFamily: F }}>
 
+      {/* Responsive rules — page is inline-styled, so mobile overrides live here.
+          Stacks the two-column grid, shrinks the hero, and tightens padding < 768px. */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @media (max-width: 768px) {
+          #bd-nav { padding: 16px 20px !important; }
+          #bd-grid { grid-template-columns: 1fr !important; gap: 32px !important; padding: 32px 20px 56px !important; }
+          #bd-hero { font-size: 28px !important; }
+          #bd-form-grid { grid-template-columns: 1fr !important; }
+          #bd-footer { padding: 18px 20px !important; }
+          /* Mobile stacks calendar above time slots → needs more height to avoid internal scroll */
+          #calendly-inline-container { height: 1150px !important; }
+        }
+      ` }} />
+
       {/* Nav */}
-      <nav style={{
+      <nav id="bd-nav" style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
         padding: "18px 32px", borderBottom: "1px solid rgba(255,255,255,0.07)",
       }}>
@@ -183,12 +200,13 @@ export default function BookDemoPage() {
         </Link>
       </nav>
 
-      <div style={{ maxWidth: 1000, margin: "0 auto", padding: "56px 32px 80px", display: "grid", gridTemplateColumns: "1fr 420px", gap: 56 }}>
+      <div id="bd-grid" style={{ maxWidth: showCalendly ? 1080 : 1000, margin: "0 auto", padding: "56px 32px 80px", display: "grid", gridTemplateColumns: showCalendly ? "1fr" : "1fr 420px", gap: 56 }}>
 
-        {/* Left column — agenda + context */}
+        {/* Left column — agenda + context (hidden once the booking widget takes over) */}
+        {!showCalendly && (
         <div>
           <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: TEAL, marginBottom: 12 }}>Book a demo</p>
-          <h1 style={{ fontSize: 38, fontWeight: 800, color: "#eaf2f3", letterSpacing: "-0.03em", lineHeight: 1.1, margin: "0 0 16px" }}>
+          <h1 id="bd-hero" style={{ fontSize: 38, fontWeight: 800, color: "#eaf2f3", letterSpacing: "-0.03em", lineHeight: 1.1, margin: "0 0 16px" }}>
             See your practice&apos;s<br />
             <span style={{ color: TEAL }}>real numbers</span> — live.
           </h1>
@@ -229,8 +247,9 @@ export default function BookDemoPage() {
             ))}
           </div>
         </div>
+        )}
 
-        {/* Right column — form */}
+        {/* Right column — form (or full-width booking widget once submitted) */}
         <div>
           <div style={{
             background: "rgba(255,255,255,0.05)",
@@ -260,10 +279,15 @@ export default function BookDemoPage() {
                       <p style={{ fontSize: 11, color: "#8fabb5", margin: 0 }}>Your name and email are pre-filled below</p>
                     </div>
                   </div>
-                  {/* Calendly populates this div after initInlineWidget() */}
+                  {/* Calendly populates this div after initInlineWidget().
+                      Calendly's iframe is height:100%, so the container needs an
+                      EXPLICIT height (not min-height) or the iframe collapses to the
+                      150px browser default and the calendar gets clipped. Height must
+                      also clear Calendly's tallest state (date picked → time slots).
+                      Mobile stacks calendar above slots → taller; see media query. */}
                   <div
                     id="calendly-inline-container"
-                    style={{ minHeight: 630, borderRadius: "0 0 16px 16px", overflow: "hidden" }}
+                    style={{ height: 850, borderRadius: "0 0 16px 16px", overflow: "hidden" }}
                   />
                 </div>
               ) : (
@@ -306,7 +330,7 @@ export default function BookDemoPage() {
                   </p>
                 </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div id="bd-form-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                   <div>
                     <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "#8fabb5", marginBottom: 5, letterSpacing: "0.04em" }}>Your name *</label>
                     <input
@@ -445,7 +469,7 @@ export default function BookDemoPage() {
       </div>
 
       {/* Footer */}
-      <footer style={{ borderTop: "1px solid rgba(255,255,255,0.06)", padding: "20px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+      <footer id="bd-footer" style={{ borderTop: "1px solid rgba(255,255,255,0.06)", padding: "20px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
         <Logo />
         <div style={{ display: "flex", gap: 20 }}>
           <Link href="/trust" style={{ fontSize: 12.5, color: "#5c747e", textDecoration: "none" }}>Trust & Security</Link>

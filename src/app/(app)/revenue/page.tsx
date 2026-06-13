@@ -321,7 +321,7 @@ export default function RevenuePage() {
                 Industry data: 2.5–3% of line items are underpaid at avg $38 shortfall · ~{underpaidCount.toLocaleString()} line items affected · Upload payer contracts to verify against your contracted rates
               </div>
             </div>
-            <div style={{ display: "flex", gap: 20, flexShrink: 0 }}>
+            <div style={{ display: "flex", gap: 20, flexWrap: "wrap", justifyContent: "flex-start" }}>
               {[
                 { label: "Industry Rate", value: "2.7%", sub: "of line items underpaid" },
                 { label: "Avg Shortfall", value: "$38", sub: "per underpaid line item" },
@@ -342,7 +342,7 @@ export default function RevenuePage() {
       <div style={{ ...CARD, padding: "22px 24px" }}>
         {/* Tabs + status filter row */}
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", borderBottom: "1px solid rgba(11,39,52,0.10)", marginBottom: 20, gap: 12, flexWrap: "wrap" }}>
-          <div style={{ display: "flex", gap: 4 }}>
+          <div className="no-scrollbar" style={{ display: "flex", gap: 4, overflowX: "auto" }}>
           {tabs.map((t) => (
             <button
               key={t.id}
@@ -397,7 +397,8 @@ export default function RevenuePage() {
 
         {/* ── Denial Patterns tab ── */}
         {activeTab === "denial" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+          <div style={{ overflowX: "auto" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 540 }}>
             <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", gap: "0 16px", padding: "8px 16px 10px", borderBottom: "1px solid rgba(11,39,52,0.08)" }}>
               {["Pattern / Code", "Payer", "Claims", "At Risk", "Priority"].map((h) => (
                 <span key={h} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{h}</span>
@@ -423,11 +424,13 @@ export default function RevenuePage() {
               );
             })}
           </div>
+          </div>
         )}
 
         {/* ── Payer Scorecard tab ── */}
         {activeTab === "payer" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+          <div style={{ overflowX: "auto" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 540 }}>
             <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", gap: "0 16px", padding: "8px 16px 10px", borderBottom: "1px solid rgba(11,39,52,0.08)" }}>
               {["Payer", "Claims", "Denial Rate", "Grade", "Net Collection"].map((h) => (
                 <span key={h} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{h}</span>
@@ -452,6 +455,7 @@ export default function RevenuePage() {
               );
             })}
           </div>
+          </div>
         )}
 
         {/* ── CPT Analysis tab ── */}
@@ -473,7 +477,8 @@ export default function RevenuePage() {
             "G0439": "Annual wellness visit (est.)",
           };
           return (
-            <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+            <div style={{ overflowX: "auto" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 540 }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr 1fr 1fr 1fr", gap: "0 16px", padding: "8px 16px 10px", borderBottom: "1px solid rgba(11,39,52,0.08)" }}>
                 {["CPT Code", "Description", "Findings", "Est. at Risk", "Payers Affected"].map((h) => (
                   <span key={h} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{h}</span>
@@ -488,6 +493,7 @@ export default function RevenuePage() {
                   <span style={{ fontSize: 12.5, color: "#5c747e" }}>{[...r.payers].join(", ")}</span>
                 </div>
               ))}
+            </div>
             </div>
           );
         })()}

@@ -21,6 +21,8 @@ function AppShell({ children }: { children: React.ReactNode }) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [baaOpen, setBaaOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [historicalAuditId, setHistoricalAuditId] = useState<string | undefined>(undefined);
+  const [historicalAuditPeriod, setHistoricalAuditPeriod] = useState<string | undefined>(undefined);
   const { setResult } = useAuditContext();
   const { baaAccepted, acceptBaa } = useBaa();
   const auditData = useAuditData();
@@ -28,6 +30,9 @@ function AppShell({ children }: { children: React.ReactNode }) {
 
   const handleAuditComplete = (result: AuditResult) => {
     setResult(result);
+    // A fresh upload clears any "viewing historical" state
+    setHistoricalAuditId(undefined);
+    setHistoricalAuditPeriod(undefined);
   };
 
   const handleUploadClick = () => {
@@ -69,6 +74,36 @@ function AppShell({ children }: { children: React.ReactNode }) {
       <div style={{ display: "flex", flexDirection: "column", overflow: "hidden", background: "#e9eded", minWidth: 0 }}>
         <Topbar onMenuClick={() => setMobileNavOpen(true)} onHistoryClick={() => setHistoryOpen(true)} />
         {!auditData.isLive && <DemoBanner onUploadClick={handleUploadClick} />}
+        {/* Historical-audit notice */}
+        {historicalAuditId && (
+          <div style={{
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            padding: "6px 20px", background: "#0b2734", color: "#fff", fontSize: 12.5,
+            gap: 12, flexShrink: 0,
+          }}>
+            <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 14 }}>🕒</span>
+              <span>
+                Viewing historical audit
+                {historicalAuditPeriod && <span style={{ color: "#14b8a6", fontWeight: 600 }}> · {historicalAuditPeriod}</span>}
+              </span>
+            </span>
+            <button
+              onClick={() => {
+                setHistoricalAuditId(undefined);
+                setHistoricalAuditPeriod(undefined);
+                handleUploadClick();
+              }}
+              style={{
+                padding: "3px 10px", borderRadius: 6, fontSize: 11.5, fontWeight: 600,
+                border: "1px solid rgba(255,255,255,0.22)", background: "rgba(255,255,255,0.08)",
+                color: "#fff", cursor: "pointer",
+              }}
+            >
+              Upload new file
+            </button>
+          </div>
+        )}
         <main style={{ flex: 1, overflowY: "auto" }} className="px-4 py-5 pb-16 md:px-[34px] md:py-[26px] md:pb-[60px]">
           <div style={{ maxWidth: 1340, margin: "0 auto" }}>
             <PageTransition key={typeof window !== "undefined" ? window.location.pathname : ""}>{children}</PageTransition>
@@ -91,11 +126,13 @@ function AppShell({ children }: { children: React.ReactNode }) {
       <AuditHistoryPanel
         open={historyOpen}
         onClose={() => setHistoryOpen(false)}
-        onSelectAudit={(selectedResult) => {
+        onSelectAudit={(selectedResult, auditId, period) => {
           setResult(selectedResult);
+          setHistoricalAuditId(auditId);
+          setHistoricalAuditPeriod(period);
           setHistoryOpen(false);
         }}
-        currentAuditId={undefined}
+        currentAuditId={historicalAuditId}
       />
     </div>
   );

@@ -363,9 +363,9 @@ export function Sidebar({ onUploadClick }: SidebarProps) {
 
       {/* Legal links */}
       <div style={{ display: "flex", gap: 12, padding: "8px 16px 14px", borderTop: "1px solid rgba(255,255,255,0.07)", marginTop: 4 }}>
+        <Link href="/trust" style={{ fontSize: 11, color: "rgba(20,184,166,0.70)", textDecoration: "none", fontWeight: 600 }}>Security</Link>
         <Link href="/legal/terms" style={{ fontSize: 11, color: "rgba(234,242,243,0.35)", textDecoration: "none" }}>Terms</Link>
         <Link href="/legal/privacy" style={{ fontSize: 11, color: "rgba(234,242,243,0.35)", textDecoration: "none" }}>Privacy</Link>
-        <Link href="/legal/hipaa" style={{ fontSize: 11, color: "rgba(234,242,243,0.35)", textDecoration: "none" }}>HIPAA</Link>
         <Link href="/legal/baa" style={{ fontSize: 11, color: "rgba(234,242,243,0.35)", textDecoration: "none" }}>BAA</Link>
       </div>
     </aside>

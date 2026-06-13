@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { DollarSign, TrendingUp, Zap, ShieldAlert, ArrowRight, CheckCircle2, Clock } from "lucide-react";
+import { DollarSign, TrendingUp, Zap, ShieldAlert, ArrowRight, CheckCircle2, Clock, Mail, FileDown } from "lucide-react";
 import { useAuditData } from "@/lib/use-audit-data";
 import { useFindingStatuses, findingId } from "@/lib/use-finding-statuses";
 import { daysUntil, deadlineLabel, deadlineColor, deadlineBg } from "@/lib/deadlines";
+import { EmailReportModal } from "@/components/email/email-report-modal";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   Cell,
@@ -90,7 +92,8 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
 }
 
 export default function HomePage() {
-  const { metrics, findings, payerScorecard, revenueByMonth, risks, dataRange, isLoading, hasData, isEstimatedLeakage } = useAuditData();
+  const [emailOpen, setEmailOpen] = useState(false);
+  const { metrics, findings, payerScorecard, revenueByMonth, risks, dataRange, practiceName, isLoading, hasData, isEstimatedLeakage } = useAuditData();
   const { getStatus, getRecoveredAmount } = useFindingStatuses();
 
   // Sum actual recovered amounts; fall back to expected recovery if not recorded
@@ -183,8 +186,52 @@ export default function HomePage() {
     );
   }
 
+  const handleDownloadPDF = async () => {
+    const { downloadAuditPDF } = await import("@/components/pdf/audit-pdf");
+    downloadAuditPDF({ practiceName, metrics, findings, payerScorecard, denialPatterns: [] });
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+
+      {/* Email modal */}
+      <EmailReportModal
+        open={emailOpen}
+        onClose={() => setEmailOpen(false)}
+        auditData={{ practiceName, dataRange, totalLeakage: metrics.totalLeakage, expectedRecovery: metrics.expectedRecovery }}
+      />
+
+      {/* Action bar */}
+      {hasData && (
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+          <button
+            onClick={() => setEmailOpen(true)}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 7,
+              height: 34, padding: "0 14px", borderRadius: 9,
+              border: "1px solid rgba(11,39,52,0.14)", background: "#fff",
+              color: "#0b2734", fontSize: 12.5, fontWeight: 600, cursor: "pointer",
+              boxShadow: "0 1px 2px rgba(11,39,52,0.06)",
+            }}
+          >
+            <Mail style={{ width: 14, height: 14 }} />
+            Email report
+          </button>
+          <button
+            onClick={handleDownloadPDF}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 7,
+              height: 34, padding: "0 14px", borderRadius: 9,
+              border: "1px solid rgba(11,39,52,0.14)", background: "#fff",
+              color: "#0b2734", fontSize: 12.5, fontWeight: 600, cursor: "pointer",
+              boxShadow: "0 1px 2px rgba(11,39,52,0.06)",
+            }}
+          >
+            <FileDown style={{ width: 14, height: 14 }} />
+            Download PDF
+          </button>
+        </div>
+      )}
 
       {/* KPI row */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-[14px] md:gap-[18px]">

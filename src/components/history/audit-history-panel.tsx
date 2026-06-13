@@ -8,7 +8,8 @@ import type { AuditResult, AuditRunSummary } from "@/lib/api";
 interface AuditHistoryPanelProps {
   open: boolean;
   onClose: () => void;
-  onSelectAudit: (result: AuditResult) => void;
+  /** Called when user selects an audit — passes the full result, the run ID, and a human-readable period string. */
+  onSelectAudit: (result: AuditResult, auditId: string, period: string) => void;
   currentAuditId?: string;
 }
 
@@ -50,7 +51,7 @@ export function AuditHistoryPanel({
     try {
       const result = await getAuditById(audit.id);
       if (result) {
-        onSelectAudit(result);
+        onSelectAudit(result, audit.id, formatPeriod(audit.period_start, audit.period_end));
         onClose();
       }
     } finally {

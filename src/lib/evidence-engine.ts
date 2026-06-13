@@ -287,46 +287,166 @@ export function generateAppealLetter(params: {
   claimIds: string[];
   cptCodes: string[];
   dollarAmount: number;
+  /** Deprecated single-date field — use serviceDates instead. */
   dateOfService?: string;
+  // ── Provider identity (from Settings / localStorage) ────────────────────
+  npi?: string;
+  taxId?: string;
+  address?: string;
+  phone?: string;
+  fax?: string;
+  // ── Claim-level clinical context ─────────────────────────────────────────
+  diagnosisCodes?: string[];
+  serviceDates?: string[];
+  denialDate?: string;
+  payerClaimNumber?: string;
 }): string {
   const strategy = getAppealStrategy(params.carcCode);
   const today = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
-  const claimList = params.claimIds.slice(0, 10).join(", ") + (params.claimIds.length > 10 ? ` (and ${params.claimIds.length - 10} more)` : "");
 
-  return `Date: ${today}
+  // Claim references — cap display at 10 IDs
+  const claimList = params.claimIds.length > 0
+    ? params.claimIds.slice(0, 10).join(", ") + (params.claimIds.length > 10 ? ` (and ${params.claimIds.length - 10} more)` : "")
+    : "[Insert claim numbers]";
 
-TO: ${params.payerName} — Appeals Department
+  // Dates — prefer explicit service dates array, fall back to legacy dateOfService
+  const serviceDateStr = params.serviceDates && params.serviceDates.length > 0
+    ? params.serviceDates.join(", ")
+    : (params.dateOfService ?? "[Insert date range]");
 
-FROM: ${params.practiceName} — Billing Department
+  const diagnosisStr = params.diagnosisCodes && params.diagnosisCodes.length > 0
+    ? params.diagnosisCodes.join(", ")
+    : null;
 
-RE: Formal Appeal — CARC ${params.carcCode} — ${params.claimIds.length} Claim(s)
+  const cptStr = params.cptCodes.length > 0 ? params.cptCodes.join(", ") : "[Insert CPT codes]";
+  const npi = params.npi || "[NPI]";
+  const taxId = params.taxId || "[Tax ID / EIN]";
+  const phone = params.phone || "[Practice Phone]";
+  const fax = params.fax || "[Practice Fax]";
+  const address = params.address || "[Practice Address]";
+
+  return `${today}
+
+${params.practiceName}
+${address}
+Phone: ${phone}
+Fax: ${fax}
+NPI: ${npi}
+Tax ID (EIN): ${taxId}
+
+TO: ${params.payerName}
+    Appeals Department
+
+RE: Formal Appeal — CARC ${params.carcCode} — ${params.claimIds.length || "Multiple"} Claim(s)
 
 Dear Appeals Reviewer,
 
-We are writing to formally appeal the denial(s) of the following claim(s):
+We are writing to formally appeal the denial(s) of the following claim(s) on behalf of ${params.practiceName}:
 
-Claim Reference(s): ${claimList || "[Insert claim numbers]"}
-Procedure Code(s): ${params.cptCodes.join(", ") || "[Insert CPT codes]"}
-Date(s) of Service: ${params.dateOfService ?? "[Insert date range]"}
+────────────────────────────────────────────
+CLAIM DETAILS
+────────────────────────────────────────────
+Claim Reference(s):      ${claimList}${params.payerClaimNumber ? `\nPayer Claim Number:      ${params.payerClaimNumber}` : ""}
+Date(s) of Service:      ${serviceDateStr}${params.denialDate ? `\nDenial Date:             ${params.denialDate}` : ""}
+Denial Reason Code:      CARC ${params.carcCode} — "${strategy.carcDescription}"
+Procedure Code(s):       ${cptStr}${diagnosisStr ? `\nDiagnosis Code(s):       ${diagnosisStr}` : ""}
 Total Amount in Dispute: $${params.dollarAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-Denial Reason Code: CARC ${params.carcCode} — "${strategy.carcDescription}"
+────────────────────────────────────────────
 
 BASIS FOR APPEAL
 ${strategy.coreArgument}
 
 SUPPORTING DOCUMENTATION
-The following documentation is attached in support of this appeal:
-${strategy.evidence.filter(e => e.required).map((e, i) => `${i + 1}. ${e.label} — ${e.description}`).join("\n")}
+The following documentation is enclosed in support of this appeal:
+${strategy.evidence.filter(e => e.required).map((e, i) => `  ${i + 1}. ${e.label} — ${e.description}`).join("\n")}
 
-We request that ${params.payerName} review this appeal and reprocess the above claim(s) for payment in accordance with our contractual agreement.
+REQUESTED ACTION
+We respectfully request that ${params.payerName} review this appeal and reprocess the above claim(s) for payment in accordance with our contractual agreement and applicable coverage policies.
 
-If additional information is needed, please contact our billing department immediately. We are committed to resolving this matter promptly.
+If additional information is required, please contact our billing department by phone at ${phone} or fax at ${fax}. We are committed to resolving this matter promptly within all applicable appeal deadlines.
 
 Sincerely,
 
+___________________________________
 [Authorized Signature]
 ${params.practiceName}
-[Phone Number]
-[Fax Number]
-[NPI: ___________]`;
+NPI: ${npi} | Tax ID: ${taxId}
+Phone: ${phone} | Fax: ${fax}`;
+}
+
+/** Generate a printable fax cover sheet for an appeal package. */
+export function generateFaxCoverSheet(params: {
+  practiceName: string;
+  payerName: string;
+  payerFax?: string;
+  carcCode: string;
+  claimIds: string[];
+  dollarAmount: number;
+  totalPages?: number;
+  // Provider identity
+  npi?: string;
+  taxId?: string;
+  address?: string;
+  phone?: string;
+  fax?: string;
+}): string {
+  const today = new Date().toLocaleDateString("en-US", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
+  });
+  const npi = params.npi || "[NPI]";
+  const taxId = params.taxId || "[Tax ID]";
+  const phone = params.phone || "[Phone]";
+  const fax = params.fax || "[Fax]";
+  const address = params.address || "[Address]";
+  const claimList = params.claimIds.slice(0, 15).join(", ")
+    + (params.claimIds.length > 15 ? ` (+${params.claimIds.length - 15} more)` : "");
+
+  return `════════════════════════════════════════════════════
+                    FAX COVER SHEET
+════════════════════════════════════════════════════
+
+DATE:          ${today}
+TO:            ${params.payerName} — Appeals Department
+TO FAX:        ${params.payerFax || "[Payer Fax Number]"}
+FROM:          ${params.practiceName} — Billing Department
+FROM FAX:      ${fax}
+FROM PHONE:    ${phone}
+PAGES:         ${params.totalPages ?? "[N]"} (including this cover sheet)
+
+────────────────────────────────────────────────────
+RE: APPEAL — CARC ${params.carcCode}
+────────────────────────────────────────────────────
+
+This fax contains a formal appeal package for the
+denial(s) listed below.
+
+Claim Reference(s):      ${claimList || "[Insert claim numbers]"}
+Total Amount in Dispute: $${params.dollarAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+Denial Reason Code:      CARC ${params.carcCode}
+
+────────────────────────────────────────────────────
+PROVIDER INFORMATION
+────────────────────────────────────────────────────
+Practice:    ${params.practiceName}
+Address:     ${address}
+NPI:         ${npi}
+Tax ID:      ${taxId}
+Phone:       ${phone}
+Fax:         ${fax}
+
+────────────────────────────────────────────────────
+CONTENTS OF THIS FAX
+────────────────────────────────────────────────────
+  ☐  Page 1:    This cover sheet
+  ☐  Pages 2+:  Formal appeal letter
+  ☐            Medical records / clinical notes
+  ☐            Explanation of Benefits (EOB)
+  ☐            Additional supporting documentation
+
+CONFIDENTIALITY NOTICE: This fax contains information
+that may be confidential. It is intended solely for
+the named recipient. If received in error, please
+contact the sender immediately and destroy this fax.
+
+════════════════════════════════════════════════════`;
 }

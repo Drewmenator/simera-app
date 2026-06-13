@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { Zap, TrendingUp, AlertTriangle } from "lucide-react";
 import { useAuditData } from "@/lib/use-audit-data";
+import { PRICING_TIERS, calculateMonthlyPrice } from "@/lib/pricing";
 
 const CARD: React.CSSProperties = {
   background: "#fff",
@@ -20,10 +21,11 @@ const MONO: React.CSSProperties = {
   color: "#8aa0a8",
 };
 
+// Use unified pricing config. For ROI calculator, show example prices.
 const PLANS = [
-  { id: "solo", name: "Solo", desc: "1 provider", price: 299 },
-  { id: "small", name: "Small Group", desc: "2–5 providers", price: 599 },
-  { id: "group", name: "Group Practice", desc: "6–10 providers", price: 999 },
+  { id: "starter", name: "Starter", desc: "1 provider", price: 149 },
+  { id: "small", name: "Small Group", desc: "5 providers", price: 645 }, // 5 × $129
+  { id: "group", name: "Group Practice", desc: "10 providers", price: 1290 }, // 10 × $129
 ];
 
 // Specialty leakage rates + MGMA annual revenue per physician
@@ -282,17 +284,17 @@ export default function ROIPage() {
         {/* ROI Hero */}
         <div style={{ background: "linear-gradient(150deg, #0b2734, #07202b)", color: "#fff", borderRadius: 16, padding: "30px 32px", boxShadow: "0 1px 2px rgba(11,39,52,0.05), 0 24px 48px -20px rgba(11,39,52,0.30)", position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", right: -100, top: -100, width: 320, height: 320, borderRadius: "50%", background: "radial-gradient(circle, rgba(20,184,166,0.16), transparent 65%)", pointerEvents: "none" }} />
-          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 28, position: "relative", zIndex: 1 }}>
-            <div>
+          <div className="flex items-start justify-between flex-wrap" style={{ gap: 28, position: "relative", zIndex: 1 }}>
+            <div style={{ minWidth: 0 }}>
               <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "#14b8a6" }}>Expected Annual Return</p>
-              <p style={{ fontSize: 48, fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1, marginTop: 10, color: "#14b8a6", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
+              <p className="text-[36px] md:text-[48px]" style={{ fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1, marginTop: 10, color: "#14b8a6", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
                 {formatMoney(roi.annualReturn)}
               </p>
               <p style={{ fontSize: 13.5, color: "#8fabb5", marginTop: 8 }}>vs. {formatMoney(roi.annualCost)}/year cost</p>
             </div>
-            <div style={{ flexShrink: 0, textAlign: "right" }}>
+            <div style={{ textAlign: "right", flexShrink: 0 }}>
               <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "#14b8a6", whiteSpace: "nowrap" }}>ROI</p>
-              <p style={{ fontSize: 48, fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1, marginTop: 10, color: "#fff", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
+              <p className="text-[36px] md:text-[48px]" style={{ fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1, marginTop: 10, color: "#fff", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
                 {roi.roiPct > 999 ? "999+%" : `${roi.roiPct}%`}
               </p>
             </div>

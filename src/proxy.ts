@@ -6,6 +6,8 @@ const isPublicRoute = createRouteMatcher([
   "/sign-up(.*)",
   "/legal(.*)",
   "/waitlist(.*)",
+  "/trust(.*)",
+  "/book-demo(.*)",
 ]);
 
 // Beta allowlist — emails that can access the app.

@@ -188,6 +188,10 @@
 ::-webkit-scrollbar-thumb { background: rgba(11,39,52,0.16); border-radius: 6px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(11,39,52,0.28); }
 
+/* Hide scrollbar but keep scroll functionality */
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
 /* Status dot animation */
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(224,138,115,0.4); }

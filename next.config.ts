@@ -32,18 +32,18 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              // Scripts: self + Clerk
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://clerk.simerahealth.org https://*.clerk.accounts.dev",
-              // Styles: self + inline (Tailwind)
-              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              // Scripts: self + Clerk + Calendly embed widget
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://clerk.simerahealth.org https://*.clerk.accounts.dev https://assets.calendly.com",
+              // Styles: self + inline (Tailwind) + Calendly widget CSS
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://assets.calendly.com",
               // Fonts
               "font-src 'self' https://fonts.gstatic.com",
-              // Images
-              "img-src 'self' data: blob: https://img.clerk.com",
-              // API calls — ONLY backend + Clerk. PHI cannot go to Vercel or anywhere else.
-              `connect-src 'self' ${API_ORIGIN} http://localhost:8000 http://127.0.0.1:8000 https://clerk.simerahealth.org https://*.clerk.accounts.dev https://api.clerk.dev wss://*.clerk.accounts.dev`,
-              // Frames: Clerk hosted pages only
-              "frame-src 'self' https://clerk.simerahealth.org https://*.clerk.accounts.dev",
+              // Images — Calendly loads avatars/assets in its widget
+              "img-src 'self' data: blob: https://img.clerk.com https://*.calendly.com",
+              // API calls — backend + Clerk + Calendly (booking page only; no PHI ever sent here)
+              `connect-src 'self' ${API_ORIGIN} http://localhost:8000 http://127.0.0.1:8000 https://clerk.simerahealth.org https://*.clerk.accounts.dev https://api.clerk.dev wss://*.clerk.accounts.dev https://calendly.com https://*.calendly.com`,
+              // Frames: Clerk hosted pages + Calendly booking iframe
+              "frame-src 'self' https://clerk.simerahealth.org https://*.clerk.accounts.dev https://calendly.com",
               // Workers
               "worker-src 'self' blob:",
             ].join("; "),

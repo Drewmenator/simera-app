@@ -46,6 +46,25 @@ export interface DashboardFinding {
   denialCodes: string[];
   cptCodes: string[];
   category: string;
+  // ── Appeal letter fields ──────────────────────────────────────────────────
+  /** Claim reference numbers from the 835. */
+  claimIds?: string[];
+  /** ICD-10 diagnosis codes on the claim. */
+  diagnosisCodes?: string[];
+  /** Date(s) of service. */
+  serviceDates?: string[];
+  /** Date the denial was issued. */
+  denialDate?: string;
+  /** Payer-assigned claim number. */
+  payerClaimNumber?: string;
+  /**
+   * Confidence tier for the recovery probability.
+   * "empirical"        — derived from this practice's own verified appeal outcomes
+   * "network_estimate" — aggregated from Simera's cross-practice network
+   * "industry_estimate"— MGMA/HFMA static estimate (default when no data yet)
+   * "certain"          — mathematically fixed (e.g. timely filing = 0%)
+   */
+  recoveryConfidence?: "empirical" | "network_estimate" | "industry_estimate" | "certain";
 }
 
 export interface DashboardPayer {
@@ -165,6 +184,12 @@ function fromApiResult(r: NonNullable<ReturnType<typeof useAuditContext>["result
     denialCodes: f.denial_codes,
     cptCodes: f.cpt_codes,
     category: f.category,
+    claimIds: f.claim_ids,
+    diagnosisCodes: f.diagnosis_codes,
+    serviceDates: f.service_dates,
+    denialDate: f.denial_date,
+    payerClaimNumber: f.payer_claim_number,
+    recoveryConfidence: f.recovery_confidence,
   }));
 
   // ── Step 2: leakage estimation fallback ───────────────────────────────────

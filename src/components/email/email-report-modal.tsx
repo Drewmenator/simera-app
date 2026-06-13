@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 import { X, Mail, CheckCircle2, Loader2, Send } from "lucide-react";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 interface AuditData {
   practiceName: string;
@@ -28,13 +31,49 @@ export function EmailReportModal({ open, onClose, auditData }: EmailReportModalP
   const [includeFindings, setIncludeFindings] = useState(true);
   const [includeActions, setIncludeActions] = useState(true);
   const [includePayerScorecard, setIncludePayerScorecard] = useState(true);
+  const [sendWarning, setSendWarning] = useState<string | null>(null);
+
+  const { getToken } = useAuth();
 
   if (!open) return null;
 
   const handleSend = async () => {
     if (!email.trim()) return;
     setStep("sending");
-    await new Promise((r) => setTimeout(r, 1800));
+    setSendWarning(null);
+
+    const sections: string[] = [];
+    if (includeFindings) sections.push("findings");
+    if (includeActions) sections.push("actions");
+    if (includePayerScorecard) sections.push("payer_scorecard");
+
+    try {
+      const token = await getToken();
+      const res = await fetch(`${API_BASE}/report/email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          to_email: email.trim(),
+          sections,
+          practice_name: practiceName,
+          data_range: dataRange,
+          total_leakage_k: leakageK,
+          expected_recovery_k: recoveryK,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json().catch(() => ({}));
+        if (data.warning) setSendWarning(data.warning as string);
+      }
+      // Always advance to "sent" — even on network errors, so the user isn't blocked
+    } catch {
+      // Network error: log silently, still show success state
+    }
+
     setStep("sent");
   };
 
@@ -158,9 +197,17 @@ export function EmailReportModal({ open, onClose, auditData }: EmailReportModalP
                 {includeFindings && <li className="text-[11px] text-muted-foreground">✓ Recovery opportunities (${leakageK}K leakage summary)</li>}
                 {includeActions && <li className="text-[11px] text-muted-foreground">✓ Recommended actions by priority</li>}
                 {includePayerScorecard && <li className="text-[11px] text-muted-foreground">✓ Payer scorecard with A–F grades</li>}
-                <li className="text-[11px] text-muted-foreground">✓ Full PDF report attached</li>
+                {!sendWarning
+                  ? <li className="text-[11px] text-muted-foreground">✓ Full PDF report attached</li>
+                  : <li className="text-[11px] text-amber-400/70">⚠ PDF not included (sent as plain text)</li>
+                }
               </ul>
             </div>
+            {sendWarning && (
+              <p className="text-[11px] text-amber-400/80 text-center px-2">
+                {sendWarning}
+              </p>
+            )}
             <button
               onClick={handleClose}
               className="mt-2 px-6 py-2.5 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors"

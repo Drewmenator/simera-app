@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Shield, X, CheckCircle2, Download, Loader2 } from "lucide-react";
+import { Shield, X, CheckCircle2, Download, Loader2, Clock, ExternalLink } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { acceptBaa } from "@/lib/api";
 
@@ -18,6 +18,17 @@ const BAA_POINTS = [
   "Breach notification within 60 days",
   "PHI returned or destroyed upon termination",
   "Compliant with 45 CFR Parts 160 and 164",
+];
+
+type BaaVendorStatus = "signed" | "pending";
+
+const VENDOR_BAA_STATUS: { name: string; role: string; status: BaaVendorStatus }[] = [
+  { name: "Simera Health",   role: "Primary BA",           status: "pending" },
+  { name: "Amazon Web Services", role: "Cloud infrastructure", status: "signed"  },
+  { name: "Anthropic",       role: "AI engine",            status: "pending" },
+  { name: "Supabase",        role: "Database",             status: "pending" },
+  { name: "Vercel",          role: "Frontend hosting",     status: "pending" },
+  { name: "Clerk",           role: "Authentication",       status: "pending" },
 ];
 
 export function BaaModal({ open, onAccept, onClose, organization }: BaaModalProps) {
@@ -217,7 +228,7 @@ export function BaaModal({ open, onAccept, onClose, organization }: BaaModalProp
               border: "1px solid #e2e8f0",
               borderRadius: 8,
               padding: "16px 18px",
-              marginBottom: 20,
+              marginBottom: 16,
             }}
           >
             <p
@@ -245,6 +256,54 @@ export function BaaModal({ open, onAccept, onClose, organization }: BaaModalProp
                 </li>
               ))}
             </ul>
+          </div>
+
+          {/* Subprocessor BAA status */}
+          <div style={{ border: "1px solid #e2e8f0", borderRadius: 8, overflow: "hidden", marginBottom: 16 }}>
+            <div style={{
+              padding: "9px 14px", background: "#f8fafc",
+              borderBottom: "1px solid #e2e8f0",
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+            }}>
+              <p style={{ margin: 0, fontSize: 11, fontFamily: "'IBM Plex Mono', monospace", letterSpacing: "0.06em", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>
+                Subprocessor BAA Status
+              </p>
+              <a href="/trust" target="_blank" rel="noopener noreferrer"
+                style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 11, color: "#14b8a6", textDecoration: "none", fontWeight: 600 }}>
+                Full details <ExternalLink size={10} />
+              </a>
+            </div>
+            {VENDOR_BAA_STATUS.map((v, i) => (
+              <div key={v.name} style={{
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                padding: "8px 14px",
+                borderBottom: i < VENDOR_BAA_STATUS.length - 1 ? "1px solid rgba(11,39,52,0.05)" : "none",
+              }}>
+                <div>
+                  <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: "#0b2734" }}>{v.name}</p>
+                  <p style={{ margin: 0, fontSize: 11, color: "#94a3b8" }}>{v.role}</p>
+                </div>
+                <div style={{
+                  display: "inline-flex", alignItems: "center", gap: 5,
+                  padding: "3px 9px", borderRadius: 20, fontSize: 11, fontWeight: 600,
+                  background: v.status === "signed" ? "#e4f4f1" : "#fef3e2",
+                  color: v.status === "signed" ? "#0c8174" : "#c89020",
+                }}>
+                  {v.status === "signed"
+                    ? <><CheckCircle2 size={11} /> Signed</>
+                    : <><Clock size={11} /> Pending</>
+                  }
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Pending BAA warning */}
+          <div style={{ background: "#fff8ed", border: "1px solid rgba(200,144,32,0.28)", borderRadius: 8, padding: "10px 14px", marginBottom: 16, display: "flex", gap: 10, alignItems: "flex-start" }}>
+            <span style={{ fontSize: 14 }}>⚠️</span>
+            <p style={{ margin: 0, fontSize: 12.5, color: "#9a6a1e", lineHeight: 1.55 }}>
+              <strong>Several subprocessor BAAs are still pending.</strong> By accepting below, you confirm you understand real PHI should not be uploaded until all agreements are fully executed. Contact us at <a href="mailto:security@simerahealth.org" style={{ color: "#0c8174" }}>security@simerahealth.org</a> to initiate all BAAs together.
+            </p>
           </div>
 
           {/* Checkbox */}

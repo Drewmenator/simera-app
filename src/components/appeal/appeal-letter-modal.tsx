@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { FileText, X, Copy, Download, RefreshCw } from "lucide-react";
+import { FileText, X, Copy, Download, RefreshCw, TriangleAlert, ShieldCheck } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { generateAppealLetter } from "@/lib/api";
 import { generateAppealLetter as generateLocalLetter } from "@/lib/evidence-engine";
@@ -20,6 +20,14 @@ interface AppealLetterModalProps {
     cptCodes: string[];
     /** Claim reference numbers from the 835 file — included in the letter body */
     claimIds?: string[];
+    /** ICD-10 diagnosis codes on the claim */
+    diagnosisCodes?: string[];
+    /** Date(s) of service */
+    serviceDates?: string[];
+    /** Date the payer issued the denial */
+    denialDate?: string;
+    /** Payer-assigned claim number */
+    payerClaimNumber?: string;
   } | null;
   practiceName: string;
 }
@@ -40,6 +48,14 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
     setState("generating");
     setError("");
     setIsLocalFallback(false);
+
+    // Read practice profile saved in Settings — needed for letter header
+    let practiceProfile: { npi?: string; taxId?: string; address?: string; phone?: string; fax?: string } = {};
+    try {
+      const stored = typeof window !== "undefined" ? localStorage.getItem("simera:settings:practiceProfile") : null;
+      if (stored) practiceProfile = JSON.parse(stored);
+    } catch { /* ignore */ }
+
     try {
       const result = await generateAppealLetter({
         finding_label: finding.label,
@@ -52,6 +68,17 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
         practice_name: practiceName,
         cpt_codes: finding.cptCodes,
         claim_ids: finding.claimIds ?? [],
+        // Provider identity
+        provider_npi: practiceProfile.npi,
+        provider_tax_id: practiceProfile.taxId,
+        provider_address: practiceProfile.address,
+        provider_phone: practiceProfile.phone,
+        provider_fax: practiceProfile.fax,
+        // Claim context
+        diagnosis_codes: finding.diagnosisCodes,
+        service_dates: finding.serviceDates,
+        denial_date: finding.denialDate,
+        payer_claim_number: finding.payerClaimNumber,
       }, getToken);
       setLetter(result.letter);
       setSubjectLine(result.subject_line);
@@ -67,6 +94,15 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
             claimIds: finding.claimIds ?? [],
             cptCodes: finding.cptCodes,
             dollarAmount: finding.dollarAmount,
+            npi: practiceProfile.npi,
+            taxId: practiceProfile.taxId,
+            address: practiceProfile.address,
+            phone: practiceProfile.phone,
+            fax: practiceProfile.fax,
+            diagnosisCodes: finding.diagnosisCodes,
+            serviceDates: finding.serviceDates,
+            denialDate: finding.denialDate,
+            payerClaimNumber: finding.payerClaimNumber,
           });
           setLetter(localLetter);
           setSubjectLine(
@@ -449,42 +485,65 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
         {state === "ready" && (
           <div
             style={{
-              padding: "13px 24px",
               borderTop: "1px solid rgba(11,39,52,0.08)",
-              background: "#f9fbfb",
+              background: "#fff",
+            }}
+          >
+            {/* Human-review disclaimer — P0 compliance requirement */}
+            <div style={{
+              margin: "0 20px",
+              borderRadius: 10,
+              border: "1.5px solid rgba(194,85,61,0.28)",
+              background: "rgba(248,232,227,0.6)",
+              padding: "10px 14px",
+              display: "flex",
+              gap: 10,
+              alignItems: "flex-start",
+              marginTop: 14,
+            }}>
+              <TriangleAlert style={{ width: 15, height: 15, color: "#c2553d", flexShrink: 0, marginTop: 1 }} />
+              <div>
+                <p style={{ fontSize: 12, fontWeight: 700, color: "#8b3a27", margin: "0 0 2px" }}>
+                  Professional review required before sending
+                </p>
+                <p style={{ fontSize: 11.5, color: "#9a4c37", lineHeight: 1.55, margin: 0 }}>
+                  This letter was AI-generated and <strong>must be reviewed and approved</strong> by a qualified medical billing professional or healthcare attorney before submission. Verify all claim numbers, codes, dates, and regulatory citations. Simera is not a substitute for professional billing or legal advice.
+                </p>
+              </div>
+            </div>
+
+            {/* Compliance assurances row */}
+            <div style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
               gap: 12,
-            }}
-          >
-            <p
-              style={{
-                fontFamily: "'IBM Plex Mono', monospace",
-                fontSize: 10.5,
-                color: "#8aa0a8",
-                lineHeight: 1.5,
-              }}
-            >
-              Review before sending. No PHI included — this covers the aggregate denial pattern.
-            </p>
-            <button
-              onClick={onClose}
-              style={{
-                height: 32,
-                padding: "0 14px",
-                borderRadius: 8,
-                border: "1px solid rgba(11,39,52,0.14)",
-                background: "#fff",
-                color: "#5c747e",
-                fontSize: 12.5,
-                fontWeight: 600,
-                cursor: "pointer",
-                flexShrink: 0,
-              }}
-            >
-              Close
-            </button>
+              padding: "10px 20px 14px",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                <ShieldCheck style={{ width: 12, height: 12, color: "#0c8174" }} />
+                <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, color: "#8aa0a8", lineHeight: 1.4, margin: 0 }}>
+                  No patient PHI in letter · Aggregate denial pattern only
+                </p>
+              </div>
+              <button
+                onClick={onClose}
+                style={{
+                  height: 30,
+                  padding: "0 14px",
+                  borderRadius: 7,
+                  border: "1px solid rgba(11,39,52,0.14)",
+                  background: "#fff",
+                  color: "#5c747e",
+                  fontSize: 12.5,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  flexShrink: 0,
+                }}
+              >
+                Close
+              </button>
+            </div>
           </div>
         )}
       </div>

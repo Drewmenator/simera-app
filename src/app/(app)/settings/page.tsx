@@ -30,6 +30,7 @@ import {
   type TeamMember,
   type BillingStatus,
 } from "@/lib/api";
+import { PRICING_TIERS, calculateMonthlyPrice } from "@/lib/pricing";
 
 const TABS = [
   { id: "practice",      label: "Practice",      icon: Building2 },
@@ -97,12 +98,28 @@ function PracticeTab() {
   const [specialty, setSpecialty] = useState("Family Medicine");
   const [npi, setNpi] = useState("1234567890");
   const [taxId, setTaxId] = useState("**-*******");
+  const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
+  const [fax, setFax] = useState("");
   const [timezone, setTimezone] = useState("America/New_York");
   const [providers, setProviders] = useState("3");
   const contactEmail = user?.emailAddresses?.[0]?.emailAddress ?? "";
 
-  // Load saved settings from backend on mount
+  // Load saved settings on mount
   useEffect(() => {
+    // Immediately hydrate contact fields from localStorage so they're never blank
+    try {
+      const stored = localStorage.getItem("simera:settings:practiceProfile");
+      if (stored) {
+        const p = JSON.parse(stored);
+        if (p.npi) setNpi(p.npi);
+        if (p.taxId) setTaxId(p.taxId);
+        if (p.address) setAddress(p.address);
+        if (p.phone) setPhone(p.phone);
+        if (p.fax) setFax(p.fax);
+      }
+    } catch { /* ignore */ }
+
     let cancelled = false;
     getPracticeSettings(getToken)
       .then((p) => {
@@ -113,6 +130,9 @@ function PracticeTab() {
         if (p.tax_id) setTaxId(p.tax_id);
         if (p.timezone) setTimezone(p.timezone);
         if (p.provider_count) setProviders(p.provider_count);
+        if (p.address) setAddress(p.address);
+        if (p.phone) setPhone(p.phone);
+        if (p.fax) setFax(p.fax);
       })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
@@ -129,8 +149,15 @@ function PracticeTab() {
         tax_id: taxId,
         timezone,
         provider_count: providers,
+        address,
+        phone,
+        fax,
       }, getToken);
-      try { localStorage.setItem("simera:settings:practiceName", name); } catch {}
+      try {
+        localStorage.setItem("simera:settings:practiceName", name);
+        // Full profile used by appeal letter generation — persisted for offline/fallback use
+        localStorage.setItem("simera:settings:practiceProfile", JSON.stringify({ npi, taxId, address, phone, fax }));
+      } catch { /* ignore */ }
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (e) {
@@ -152,8 +179,6 @@ function PracticeTab() {
           { label: "Practice Name", value: name, onChange: setName, type: "text" },
           { label: "Specialty", value: specialty, onChange: setSpecialty, type: "text" },
           { label: "Number of Providers", value: providers, onChange: setProviders, type: "number" },
-          { label: "NPI Number", value: npi, onChange: setNpi, type: "text" },
-          { label: "Tax ID (EIN)", value: taxId, onChange: setTaxId, type: "text" },
           { label: "Timezone", value: timezone, onChange: setTimezone, type: "text" },
         ].map((f) => (
           <div key={f.label}>
@@ -175,6 +200,34 @@ function PracticeTab() {
             className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg outline-none text-muted-foreground"
           />
         </div>
+      </div>
+
+      {/* ── Appeal Letter Identity ─────────────────────────────────────────── */}
+      <div className="pt-6 mt-6 border-t border-border space-y-4">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground mb-0.5">Appeal Letter Identity</h3>
+          <p className="text-xs text-muted-foreground mb-4">
+            These fields print on every generated appeal letter. Payers require NPI, Tax ID, address, phone, and fax to process appeals.
+          </p>
+        </div>
+        {[
+          { label: "NPI Number", value: npi, onChange: setNpi, placeholder: "10-digit NPI" },
+          { label: "Tax ID (EIN)", value: taxId, onChange: setTaxId, placeholder: "XX-XXXXXXX" },
+          { label: "Practice Address", value: address, onChange: setAddress, placeholder: "123 Main St, Suite 200, City, ST 00000" },
+          { label: "Billing Phone", value: phone, onChange: setPhone, placeholder: "(555) 000-0000" },
+          { label: "Billing Fax", value: fax, onChange: setFax, placeholder: "(555) 000-0001" },
+        ].map((f) => (
+          <div key={f.label}>
+            <label className="text-xs font-medium text-foreground block mb-1.5">{f.label}</label>
+            <input
+              type="text"
+              value={f.value}
+              onChange={(e) => f.onChange(e.target.value)}
+              placeholder={f.placeholder}
+              className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg outline-none focus:border-primary transition-colors placeholder:text-muted-foreground/50"
+            />
+          </div>
+        ))}
       </div>
 
       <div className="pt-6 mt-6 border-t border-border">
@@ -679,43 +732,14 @@ const STATUS_BADGE: Record<
   canceled:  { label: "Canceled", className: "text-red-600 bg-red-50 border-red-200" },
 };
 
-const PLANS = [
-  {
-    id: "starter" as const,
-    name: "Starter",
-    price: "$149",
-    features: [
-      "1 provider",
-      "Up to 3 835 uploads/month",
-      "All analysis features",
-      "Email support",
-    ],
-  },
-  {
-    id: "growth" as const,
-    name: "Growth",
-    price: "$399",
-    features: [
-      "Up to 5 providers",
-      "Unlimited uploads",
-      "Priority support",
-      "Team members",
-    ],
-    highlighted: true,
-  },
-  {
-    id: "enterprise" as const,
-    name: "Enterprise",
-    price: "Custom",
-    features: [
-      "Unlimited providers",
-      "Unlimited uploads",
-      "Dedicated support",
-      "Custom integrations",
-      "SSO & advanced security",
-    ],
-  },
-];
+// Use shared pricing config from lib/pricing.ts
+const PLANS = PRICING_TIERS.map((tier) => ({
+  id: tier.id,
+  name: tier.name,
+  price: tier.id === "starter" ? "$149" : tier.id === "growth" ? "from $129" : "Custom",
+  features: tier.features,
+  highlighted: tier.highlighted,
+}));
 
 function BillingTab() {
   const [billing, setBilling] = useState<BillingStatus | null>(null);
@@ -809,7 +833,7 @@ function BillingTab() {
                 <p className="text-sm text-muted-foreground">1 provider · 3 uploads/month · $149/month</p>
               )}
               {plan === "growth" && (
-                <p className="text-sm text-muted-foreground">Up to 5 providers · Unlimited uploads · $399/month</p>
+                <p className="text-sm text-muted-foreground">Up to 10 providers · Unlimited uploads · $129/provider/month</p>
               )}
               {plan === "free" && (
                 <p className="text-sm text-muted-foreground">Limited access — subscribe to unlock full analysis</p>
@@ -990,16 +1014,16 @@ export default function SettingsPage() {
         <p className="text-sm text-muted-foreground">Manage your practice, team, and account preferences</p>
       </div>
 
-      <div className="flex gap-6">
-        {/* Sidebar nav */}
-        <nav className="w-44 flex-shrink-0 space-y-0.5">
+      <div className="flex flex-col md:flex-row gap-6">
+        {/* Sidebar nav — horizontal scroll on mobile, vertical on desktop */}
+        <nav className="no-scrollbar flex md:flex-col md:w-44 md:flex-shrink-0 gap-0.5 overflow-x-auto pb-1 md:pb-0">
           {TABS.map((tab) => {
             const active = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition-colors text-left ${
+                className={`flex-shrink-0 md:w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition-colors text-left whitespace-nowrap md:whitespace-normal ${
                   active
                     ? "bg-primary/8 text-primary font-medium"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary"

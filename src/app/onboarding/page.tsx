@@ -16,6 +16,7 @@ import {
   SkipForward,
 } from "lucide-react";
 import { acceptBaa, setupPractice, uploadAuditAsync, pollAuditJob, type AuditResult } from "@/lib/api";
+import { stashAuditResult } from "@/lib/audit-context";
 
 // ── Design tokens ──────────────────────────────────────────────────────────────
 const C = {
@@ -1020,7 +1021,8 @@ export default function OnboardingPage() {
   const handleEhrSkip = () => setStep(3);
 
   const handleUploadComplete = (result: AuditResult) => {
-    // Store the result and navigate to dashboard
+    // Stash result so dashboard loads it instantly (no API round-trip)
+    stashAuditResult(result);
     sessionStorage.setItem("simera_onboarded", "1");
     router.push("/");
   };
