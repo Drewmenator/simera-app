@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 // Calendly inline widget URL — configure via NEXT_PUBLIC_CALENDLY_URL env var
-const CALENDLY_URL = "https://calendly.com/andrewesiri/30min";
+const CALENDLY_URL = process.env.NEXT_PUBLIC_CALENDLY_URL ?? "";
 
 // Declare the global Calendly embed helper that the inline widget script provides
 declare global {
