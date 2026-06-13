@@ -1,0 +1,27 @@
+# Pre-commit hooks — block secrets & oversized files before they ever land in git.
+#
+# One-time setup per clone:
+#     brew install pre-commit gitleaks      # or: pipx install pre-commit
+#     pre-commit install
+#
+# After that it runs automatically on every `git commit`. To scan everything now:
+#     pre-commit run --all-files
+repos:
+  # Secret scanning (API keys, tokens, private keys) on the staged diff.
+  - repo: local
+    hooks:
+      - id: gitleaks
+        name: gitleaks — block secrets
+        entry: gitleaks git --staged --redact --no-banner
+        language: system
+        pass_filenames: false
+
+  # Hardening guards — these would have caught this repo's earlier near-miss
+  # (a 648MB terraform provider binary + terraform.tfstate with a private key).
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files
+        name: block files larger than 5 MB
+        args: ['--maxkb=5120']
+      - id: detect-private-key      # blocks committing PEM/SSH private keys
