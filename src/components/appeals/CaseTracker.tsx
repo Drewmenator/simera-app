@@ -19,6 +19,7 @@ import {
   useCases, fetchCaseDetail, CASE_STATUSES, STATUS_META,
   type DenialCase, type CaseStatus, type CaseSort, type CaseTimelineEntry,
 } from "@/lib/use-cases";
+import { useArtifacts, type CaseArtifact } from "@/lib/use-artifacts";
 
 function money(n: number | null | undefined): string {
   if (!n || n <= 0) return "$0";
@@ -88,6 +89,62 @@ function Timeline({ caseId }: { caseId: string }) {
         </li>
       ))}
     </ol>
+  );
+}
+
+function ArtifactPanel({ caseId }: { caseId: string }) {
+  const { artifacts, isLoading, generate, regenerate, review } = useArtifacts(caseId);
+  const requiredReady = artifacts.some(a => a.required) &&
+    artifacts.filter(a => a.required).every(a => a.status === "approved");
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <p className="text-xs font-semibold text-foreground">Recovery package</p>
+        {artifacts.length === 0 ? (
+          <button onClick={generate} disabled={isLoading}
+            className="text-xs px-2.5 py-1 rounded-md bg-primary text-primary-foreground disabled:opacity-50">
+            Build package
+          </button>
+        ) : (
+          <button onClick={() => regenerate(false)} disabled={isLoading}
+            className="text-xs px-2.5 py-1 rounded-md border border-border text-muted-foreground">
+            Regenerate
+          </button>
+        )}
+      </div>
+      {artifacts.map((a: CaseArtifact) => (
+        <div key={a.id} className="rounded-lg border border-border p-2 text-xs space-y-1">
+          <div className="flex items-center justify-between">
+            <span className="font-medium capitalize">{a.type.replace("_", " ")}
+              {a.required && <span className="ml-1 text-rose-600">*</span>}</span>
+            <span className="text-muted-foreground">{a.status}</span>
+          </div>
+          {a.type === "appeal_letter" && Array.isArray((a.generated_payload as {warnings?: string[]}).warnings)
+            && (a.generated_payload as {warnings: string[]}).warnings.length > 0 && (
+            <div className="rounded bg-amber-50 border border-amber-200 p-1.5 text-amber-700">
+              {(a.generated_payload as {warnings: string[]}).warnings.length} warning(s) — review before approving.
+            </div>
+          )}
+          {a.transmittable === false && a.type === "corrected_claim" && (
+            <p className="text-amber-600">Manual action needed — not electronically fileable.</p>
+          )}
+          {a.status === "draft" && (
+            <div className="flex gap-2 pt-1">
+              <button onClick={() => review(a.id, "approved")}
+                className="px-2 py-0.5 rounded bg-emerald-600 text-white">Approve</button>
+              <button onClick={() => review(a.id, "rejected")}
+                className="px-2 py-0.5 rounded border border-border text-muted-foreground">Reject</button>
+            </div>
+          )}
+        </div>
+      ))}
+      {requiredReady && (
+        <p className="text-xs text-emerald-600 font-medium">
+          Required artifact approved — ready to submit (Phase 3).
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -177,6 +234,10 @@ function CaseRow({
           <div>
             <p className="text-xs font-semibold text-foreground mb-1.5">History</p>
             <Timeline caseId={c.id} />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-foreground mb-1.5">Recovery package</p>
+            <ArtifactPanel caseId={c.id} />
           </div>
         </div>
       )}
