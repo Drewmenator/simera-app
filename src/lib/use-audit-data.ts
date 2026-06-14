@@ -9,6 +9,7 @@
  */
 
 import { useAuditContext } from "@/lib/audit-context";
+import { actionFor } from "@/lib/recommended-actions";
 import {
   headlineMetrics,
   practiceStats,
@@ -232,7 +233,7 @@ function fromApiResult(r: NonNullable<ReturnType<typeof useAuditContext>["result
           recoveryProbability: 0.65,
           difficulty: "medium" as const,
           payer: p.payer_name,
-          action: `Review all denied claims from ${p.payer_name} in your payer portal. Identify denial reason codes and submit appeals within the payer's appeal window.`,
+          action: actionFor("unworked_denial", { payerName: p.payer_name, claimCount: deniedClaims }),
           denialCodes: [],
           cptCodes: [],
           category: "unworked_denial",
