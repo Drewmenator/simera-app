@@ -59,8 +59,12 @@ export default clerkMiddleware(async (auth, request) => {
     "";
 
   const allowed = getAllowedEmails();
-  // If allowlist is empty (not configured), allow all signed-in users
-  if (allowed.size > 0 && email && !allowed.has(email.toLowerCase())) {
+  // Default-deny: a known email that isn't on the allowlist is sent to the
+  // waitlist, even if the list were ever misconfigured to empty (SEC-L5). The
+  // seed list above always contains the owner, so this can't lock you out.
+  // (Sessions without an email claim are allowed through — Clerk JWT templates
+  // don't always expose email — so we never deny based on a missing claim.)
+  if (email && !allowed.has(email.toLowerCase())) {
     return NextResponse.redirect(new URL("/waitlist", request.url));
   }
 });
