@@ -1,4 +1,11 @@
 /**
+ * DEMO-ONLY — used by the in-memory DenialWorkQueue. The PRODUCT source of truth
+ * for the records checklist is the backend `simera/engines/records_checklist.py`
+ * (Phase 2). Do not wire this into the persisted /cases path; converge or retire
+ * with the demo. See docs/superpowers/specs/2026-06-14-phase2-artifact-approval-design.md.
+ */
+
+/**
  * Evidence Engine — maps every CARC denial code to:
  *   • The required evidence package for an appeal
  *   • The core legal/contractual argument
