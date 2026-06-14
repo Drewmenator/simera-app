@@ -6,6 +6,7 @@ import { useAuditData, type DashboardFinding } from "@/lib/use-audit-data";
 import type { AuditFinding } from "@/lib/api";
 import { DenialWorkQueue } from "@/components/appeals/DenialWorkQueue";
 import { SubmissionsTracker } from "@/components/appeals/SubmissionsTracker";
+import { CaseTracker } from "@/components/appeals/CaseTracker";
 import { RecoveryFunnel } from "@/components/appeals/RecoveryFunnel";
 import { useOverdueAppeals } from "@/hooks/use-overdue-appeals";
 import { Upload, AlertCircle, FileText, TrendingUp, ListChecks, Inbox, Bell } from "lucide-react";
@@ -34,7 +35,7 @@ function dashFindingToAuditFinding(f: DashboardFinding): AuditFinding {
   };
 }
 
-type Tab = "queue" | "tracker";
+type Tab = "queue" | "cases" | "tracker";
 
 export default function AppealsPage() {
   const [tab, setTab] = useState<Tab>("queue");
@@ -95,6 +96,7 @@ export default function AppealsPage() {
       <div className="flex gap-1 p-1 bg-secondary rounded-xl w-fit">
         {([
           { id: "queue",   label: "Work Queue",          icon: Inbox },
+          { id: "cases",   label: "Case Tracker",        icon: ListChecks },
           { id: "tracker", label: "Submissions Tracker", icon: ListChecks },
         ] as { id: Tab; label: string; icon: React.ElementType }[]).map(({ id, label, icon: Icon }) => (
           <button
@@ -226,6 +228,21 @@ export default function AppealsPage() {
       )}
 
       {/* ── Submissions Tracker tab ─────────────────────────────────────── */}
+      {tab === "cases" && (
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-sm font-semibold text-foreground">Denial Cases</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Every denial as a tracked case, sorted by deadline and recoverable dollars. Advance each
+                through the recovery lifecycle — status is saved and survives reloads.
+              </p>
+            </div>
+          </div>
+          <CaseTracker />
+        </div>
+      )}
+
       {tab === "tracker" && (
         <div>
           <div className="flex items-center justify-between mb-4">
