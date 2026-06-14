@@ -116,7 +116,7 @@ function ArtifactPanel({ caseId }: { caseId: string }) {
       {artifacts.map((a: CaseArtifact) => (
         <div key={a.id} className="rounded-lg border border-border p-2 text-xs space-y-1">
           <div className="flex items-center justify-between">
-            <span className="font-medium capitalize">{a.type.replace("_", " ")}
+            <span className="font-medium capitalize">{a.type.replaceAll("_", " ")}
               {a.required && <span className="ml-1 text-rose-600">*</span>}</span>
             <span className="text-muted-foreground">{a.status}</span>
           </div>
@@ -235,10 +235,7 @@ function CaseRow({
             <p className="text-xs font-semibold text-foreground mb-1.5">History</p>
             <Timeline caseId={c.id} />
           </div>
-          <div>
-            <p className="text-xs font-semibold text-foreground mb-1.5">Recovery package</p>
-            <ArtifactPanel caseId={c.id} />
-          </div>
+          <ArtifactPanel caseId={c.id} />
         </div>
       )}
     </div>
