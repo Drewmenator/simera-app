@@ -92,8 +92,61 @@ function Timeline({ caseId }: { caseId: string }) {
   );
 }
 
+function ArtifactCard({ a, onReview, onEdit }: {
+  a: CaseArtifact;
+  onReview: (id: string, status: "approved" | "rejected") => void;
+  onEdit: (id: string, payload: Record<string, unknown>) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const payload = (a.final_payload ?? a.generated_payload) as { letter?: string; warnings?: string[] };
+  const [text, setText] = useState(payload.letter ?? "");
+  const isLetter = a.type === "appeal_letter";
+
+  return (
+    <div className="rounded-lg border border-border p-2 text-xs space-y-1">
+      <div className="flex items-center justify-between">
+        <span className="font-medium capitalize">{a.type.replaceAll("_", " ")}
+          {a.required && <span className="ml-1 text-rose-600">*</span>}</span>
+        <span className="text-muted-foreground">{a.status}</span>
+      </div>
+      {isLetter && Array.isArray(payload.warnings) && payload.warnings.length > 0 && (
+        <div className="rounded bg-amber-50 border border-amber-200 p-1.5 text-amber-700">
+          {payload.warnings.length} warning(s) — review before approving.
+        </div>
+      )}
+      {a.transmittable === false && a.type === "corrected_claim" && (
+        <p className="text-amber-600">Manual action needed — not electronically fileable.</p>
+      )}
+      {isLetter && editing && (
+        <div className="space-y-1">
+          <textarea value={text} onChange={(e) => setText(e.target.value)}
+            className="w-full h-32 rounded border border-border p-1.5 text-xs bg-background text-foreground" />
+          <div className="flex gap-2">
+            <button onClick={() => { onEdit(a.id, { ...payload, letter: text }); setEditing(false); }}
+              className="px-2 py-0.5 rounded bg-primary text-primary-foreground">Save</button>
+            <button onClick={() => { setText(payload.letter ?? ""); setEditing(false); }}
+              className="px-2 py-0.5 rounded border border-border text-muted-foreground">Cancel</button>
+          </div>
+        </div>
+      )}
+      {a.status === "draft" && !editing && (
+        <div className="flex gap-2 pt-1">
+          {isLetter && (
+            <button onClick={() => setEditing(true)}
+              className="px-2 py-0.5 rounded border border-border text-muted-foreground">Edit</button>
+          )}
+          <button onClick={() => onReview(a.id, "approved")}
+            className="px-2 py-0.5 rounded bg-emerald-600 text-white">Approve</button>
+          <button onClick={() => onReview(a.id, "rejected")}
+            className="px-2 py-0.5 rounded border border-border text-muted-foreground">Reject</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ArtifactPanel({ caseId }: { caseId: string }) {
-  const { artifacts, isLoading, generate, regenerate, review } = useArtifacts(caseId);
+  const { artifacts, isLoading, generate, regenerate, review, edit } = useArtifacts(caseId);
   const requiredReady = artifacts.some(a => a.required) &&
     artifacts.filter(a => a.required).every(a => a.status === "approved");
 
@@ -114,30 +167,9 @@ function ArtifactPanel({ caseId }: { caseId: string }) {
         )}
       </div>
       {artifacts.map((a: CaseArtifact) => (
-        <div key={a.id} className="rounded-lg border border-border p-2 text-xs space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="font-medium capitalize">{a.type.replaceAll("_", " ")}
-              {a.required && <span className="ml-1 text-rose-600">*</span>}</span>
-            <span className="text-muted-foreground">{a.status}</span>
-          </div>
-          {a.type === "appeal_letter" && Array.isArray((a.generated_payload as {warnings?: string[]}).warnings)
-            && (a.generated_payload as {warnings: string[]}).warnings.length > 0 && (
-            <div className="rounded bg-amber-50 border border-amber-200 p-1.5 text-amber-700">
-              {(a.generated_payload as {warnings: string[]}).warnings.length} warning(s) — review before approving.
-            </div>
-          )}
-          {a.transmittable === false && a.type === "corrected_claim" && (
-            <p className="text-amber-600">Manual action needed — not electronically fileable.</p>
-          )}
-          {a.status === "draft" && (
-            <div className="flex gap-2 pt-1">
-              <button onClick={() => review(a.id, "approved")}
-                className="px-2 py-0.5 rounded bg-emerald-600 text-white">Approve</button>
-              <button onClick={() => review(a.id, "rejected")}
-                className="px-2 py-0.5 rounded border border-border text-muted-foreground">Reject</button>
-            </div>
-          )}
-        </div>
+        <ArtifactCard key={a.id} a={a}
+          onReview={(id, s) => review(id, s)}
+          onEdit={(id, p) => edit(id, p)} />
       ))}
       {requiredReady && (
         <p className="text-xs text-emerald-600 font-medium">

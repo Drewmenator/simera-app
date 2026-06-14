@@ -68,5 +68,14 @@ export function useArtifacts(caseId: string | null) {
     post(`/artifacts/${artifactId}/review`, { status: statusValue, edited_payload: editedPayload }),
     [post]);
 
-  return { artifacts, isLoading, refresh, generate, regenerate, review };
+  const edit = useCallback(async (artifactId: string, finalPayload: Record<string, unknown>) => {
+    const headers = { ...(await getAuthHeaders()), "Content-Type": "application/json" };
+    const res = await fetch(`${API_URL}/artifacts/${artifactId}`, {
+      method: "PATCH", headers, body: JSON.stringify({ final_payload: finalPayload }),
+    });
+    await refresh();
+    return res.ok;
+  }, [refresh]);
+
+  return { artifacts, isLoading, refresh, generate, regenerate, review, edit };
 }
