@@ -4,8 +4,8 @@
  *
  * Voice: lead with what Simera DID (generated the appeal package), never "go to the
  * payer portal." Honest to current capability (Phase 0/1a: we build the package;
- * the practice/biller submits). Keep in lockstep with the backend twin
- * simera/copy/recommended_actions.py.
+ * the practice/biller submits). Frontend/demo copy only — the backend action strings
+ * were audited and found already recovery-oriented (no twin needed); see the voice doc.
  */
 
 // One switch to remove every "Auto-submit coming soon" teaser. Treat as a dated

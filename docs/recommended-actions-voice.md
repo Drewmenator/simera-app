@@ -1,9 +1,13 @@
 # Recommended-action copy — voice guide
 
-The single source of truth for the "what should the practice do about this finding" copy.
-Lives in code as **`src/lib/recommended-actions.ts`** (frontend) and
-**`simera/copy/recommended_actions.py`** (backend, in the `simera` repo). Keep the two in
-lockstep — same category keys, same voice.
+The source of truth for the **frontend / demo** "what should the practice do about this
+finding" copy: **`src/lib/recommended-actions.ts`**.
+
+> **Backend note:** the original plan was a backend twin (`simera/copy/recommended_actions.py`).
+> A full audit of the backend action strings (see below) found they were *already*
+> recovery-oriented and richer than a generic template — so no twin was built. The
+> "payer portal" vitamin framing existed only in the frontend demo data. If backend copy
+> ever needs centralizing, mirror this module and these rules.
 
 ## Why this exists
 Simera is pivoting from *detection* ("here's what you're losing") to *recovery*
