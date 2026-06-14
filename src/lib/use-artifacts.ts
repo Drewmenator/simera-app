@@ -1,5 +1,13 @@
 "use client";
 
+/**
+ * use-artifacts — client hook for a denial case's recovery artifacts (Phase 2).
+ *
+ * Reads /cases/{id}/artifacts and exposes generate / regenerate / review actions
+ * (the human-approval gate). Mirrors use-cases.ts auth/fetch conventions. Artifacts
+ * exist only after a "Build package" action; empty otherwise.
+ */
+
 import { useCallback, useEffect, useState } from "react";
 import { getAuthHeaders } from "@/lib/api";
 
@@ -23,16 +31,16 @@ export interface CaseArtifact {
 
 export function useArtifacts(caseId: string | null) {
   const [artifacts, setArtifacts] = useState<CaseArtifact[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const refresh = useCallback(async () => {
     if (!caseId) return;
-    setLoading(true);
+    setIsLoading(true);
     try {
       const headers = await getAuthHeaders();
       const res = await fetch(`${API_URL}/cases/${caseId}/artifacts`, { headers });
       setArtifacts(res.ok ? ((await res.json()).artifacts ?? []) : []);
-    } catch { setArtifacts([]); } finally { setLoading(false); }
+    } catch { setArtifacts([]); } finally { setIsLoading(false); }
   }, [caseId]);
 
   useEffect(() => { refresh(); }, [refresh]);
@@ -46,13 +54,19 @@ export function useArtifacts(caseId: string | null) {
     return res.ok;
   }, [refresh]);
 
-  const generate = useCallback(() => post(`/cases/${caseId}/artifacts`), [post, caseId]);
-  const regenerate = useCallback((force = false) =>
-    post(`/cases/${caseId}/artifacts/regenerate?force=${force}`), [post, caseId]);
+  const generate = useCallback(
+    () => (caseId ? post(`/cases/${caseId}/artifacts`) : Promise.resolve(false)),
+    [post, caseId]
+  );
+  const regenerate = useCallback(
+    (force = false) =>
+      caseId ? post(`/cases/${caseId}/artifacts/regenerate?force=${force}`) : Promise.resolve(false),
+    [post, caseId]
+  );
   const review = useCallback((artifactId: string, statusValue: ArtifactStatus,
                               editedPayload?: Record<string, unknown>) =>
     post(`/artifacts/${artifactId}/review`, { status: statusValue, edited_payload: editedPayload }),
     [post]);
 
-  return { artifacts, loading, refresh, generate, regenerate, review };
+  return { artifacts, isLoading, refresh, generate, regenerate, review };
 }
