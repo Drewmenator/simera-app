@@ -7,10 +7,15 @@ import { useFindingStatuses, findingId, STATUS_CONFIG, type FindingStatus } from
 import { ConnectPortalModal } from "@/components/portal/ConnectPortalModal";
 import Link from "next/link";
 import { PortalStatusBadge } from "@/components/portal/PortalStatusBadge";
-import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  BarChart, Bar, ReferenceLine, Cell,
-} from "recharts";
+import dynamic from "next/dynamic";
+
+// Recharts code-split into its own chunk (out of First Load JS).
+const LeakageTrendChart = dynamic(() => import("@/components/charts/LeakageTrendChart"), {
+  ssr: false, loading: () => <div style={{ height: 180 }} />,
+});
+const PayerDenialChart = dynamic(() => import("@/components/charts/PayerDenialChart"), {
+  ssr: false, loading: () => <div style={{ height: 180 }} />,
+});
 
 function fmt(n: number) {
   if (n >= 1000000) return `$${(n / 1000000).toFixed(1)}M`;
@@ -38,16 +43,6 @@ function KpiCard({ label, value, sub, accent, icon: Icon }: { label: string; val
       </div>
       <div style={{ fontSize: 38, fontWeight: 800, letterSpacing: "-0.035em", lineHeight: 1, marginTop: 14, color: accent, fontVariantNumeric: "tabular-nums" }}>{value}</div>
       <div style={{ fontSize: 12.5, color: "#5c747e", marginTop: 7 }}>{sub}</div>
-    </div>
-  );
-}
-
-function CustomAreaTooltip({ active, payload, label }: { active?: boolean; payload?: { value: number }[]; label?: string }) {
-  if (!active || !payload?.length) return null;
-  return (
-    <div style={{ background: "#fff", border: "1px solid rgba(11,39,52,0.10)", borderRadius: 10, padding: "10px 14px", boxShadow: "0 4px 16px rgba(11,39,52,0.12)", fontSize: 13 }}>
-      <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.1em", color: "#8aa0a8", textTransform: "uppercase", marginBottom: 4 }}>{label}</p>
-      <p style={{ color: "#c2553d", fontWeight: 700 }}>{fmt(payload[0].value)}</p>
     </div>
   );
 }
@@ -262,21 +257,7 @@ export default function RevenuePage() {
             </div>
           ) : (
             // Multi-period area chart
-            <ResponsiveContainer width="100%" height={180}>
-              <AreaChart data={leakageTrend}>
-                <defs>
-                  <linearGradient id="leakGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#c2553d" stopOpacity={0.22} />
-                    <stop offset="100%" stopColor="#c2553d" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid vertical={false} stroke="rgba(11,39,52,0.06)" />
-                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fill: "#8aa0a8" }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fill: "#8aa0a8" }} tickFormatter={(v) => `$${v / 1000}K`} />
-                <Tooltip content={<CustomAreaTooltip />} />
-                <Area type="monotone" dataKey="leakage" stroke="#c2553d" strokeWidth={2.5} fill="url(#leakGrad)" dot={{ fill: "#fff", stroke: "#c2553d", strokeWidth: 2, r: 4 }} activeDot={{ r: 5 }} />
-              </AreaChart>
-            </ResponsiveContainer>
+            <LeakageTrendChart data={leakageTrend} />
           )}
         </div>
 
@@ -284,21 +265,7 @@ export default function RevenuePage() {
         <div style={{ ...CARD, padding: "22px 24px" }}>
           <h2 style={{ fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em", color: "#0b2734", margin: "0 0 4px" }}>Denial Rate by Payer</h2>
           <p style={{ fontSize: 12.5, color: "#5c747e", marginBottom: 18 }}>vs. median 11.8% and best-in-class 5.2%</p>
-          <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={payerBars} layout="vertical" barSize={16} margin={{ left: 12, right: 50 }}>
-              <CartesianGrid horizontal={false} stroke="rgba(11,39,52,0.06)" />
-              <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fill: "#8aa0a8" }} tickFormatter={(v) => `${v}%`} domain={[0, 28]} />
-              <YAxis type="category" dataKey="payer" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#0b2734", fontWeight: 500 }} width={44} />
-              <Tooltip formatter={(v) => [`${Number(v).toFixed(1)}%`, "Denial Rate"]} />
-              <ReferenceLine x={11.8} stroke="#bd852f" strokeDasharray="4 3" label={{ value: "Median", position: "top", fontSize: 10, fill: "#bd852f", fontFamily: "'IBM Plex Mono', monospace" }} />
-              <ReferenceLine x={5.2} stroke="#14b8a6" strokeDasharray="4 3" label={{ value: "Best", position: "top", fontSize: 10, fill: "#14b8a6", fontFamily: "'IBM Plex Mono', monospace" }} />
-              <Bar dataKey="rate" radius={[0, 4, 4, 0]} label={{ position: "right", fontSize: 11, fontFamily: "'IBM Plex Mono', monospace", fill: "#5c747e", formatter: (v: unknown) => `${Number(v).toFixed(1)}%` }}>
-                {payerBars.map((entry, i) => (
-                  <Cell key={i} fill={entry.color} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+          <PayerDenialChart data={payerBars} />
         </div>
       </div>
 

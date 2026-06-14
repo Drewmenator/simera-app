@@ -9,8 +9,13 @@ import {
   ChevronDown,
   RefreshCw,
 } from "lucide-react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import dynamic from "next/dynamic";
 import { useCompliance, type ComplianceTask, type BreachAlert } from "@/lib/use-compliance";
+
+// Recharts code-split into its own chunk (out of First Load JS).
+const ProgressDonutChart = dynamic(() => import("@/components/charts/ProgressDonutChart"), {
+  ssr: false, loading: () => null,
+});
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
@@ -111,31 +116,9 @@ function KpiCard({
 // ─── Progress donut ───────────────────────────────────────────────────────────
 
 function ProgressDonut({ pct }: { pct: number }) {
-  const data = [
-    { value: pct },
-    { value: 100 - pct },
-  ];
   return (
     <div style={{ position: "relative", width: "100%", height: 180 }}>
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie
-            data={data}
-            cx="50%"
-            cy="50%"
-            innerRadius={58}
-            outerRadius={78}
-            startAngle={90}
-            endAngle={-270}
-            dataKey="value"
-            strokeWidth={0}
-          >
-            <Cell fill="#0c8174" />
-            <Cell fill="rgba(11,39,52,0.07)" />
-          </Pie>
-          <Tooltip formatter={(v) => [`${v}%`]} />
-        </PieChart>
-      </ResponsiveContainer>
+      <ProgressDonutChart pct={pct} />
       {/* Center label */}
       <div
         style={{
