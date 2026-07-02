@@ -286,7 +286,7 @@ export function AuditHistoryPanel({
                       {formatPeriod(audit.period_start, audit.period_end)}
                     </span>
 
-                    <span style={{ fontSize: 11.5, color: "#8aa0a8" }}>
+                    <span style={{ fontSize: 11.5, color: "#5c747e" }}>
                       {formatUploadDate(audit.created_at)}
                     </span>
                   </button>

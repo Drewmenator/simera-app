@@ -378,7 +378,7 @@ function NotificationsTab() {
         <p className="text-xs text-muted-foreground mt-1">Separate multiple addresses with commas</p>
       </div>
 
-      <p style={{ fontSize: 12, color: "#8aa0a8", marginTop: 12, lineHeight: 1.5, fontStyle: "italic" }}>
+      <p style={{ fontSize: 12, color: "#5c747e", marginTop: 12, lineHeight: 1.5, fontStyle: "italic" }}>
         Notification preferences are saved but email delivery is not yet active. You&apos;ll receive alerts once this feature launches.
       </p>
 

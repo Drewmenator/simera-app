@@ -1,4 +1,4 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkClient, clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 const isPublicRoute = createRouteMatcher([
@@ -8,21 +8,48 @@ const isPublicRoute = createRouteMatcher([
   "/waitlist(.*)",
   "/trust(.*)",
   "/book-demo(.*)",
+  // Lead-capture API for the public book-demo form. Without this entry the
+  // middleware redirected anonymous POSTs to sign-in — every inbound demo
+  // request silently failed. Exact path only; rate-limited in the handler.
+  "/api/demo-request",
 ]);
 
-// Beta allowlist — emails that can access the app.
-// Add addresses here or set ALLOWED_EMAILS env var as comma-separated list.
+// Beta allowlist — emails that can access the app. Env-only (no hardcoded
+// fallback): set SEED_ALLOWED_EMAILS and/or ALLOWED_EMAILS in Vercel as
+// comma-separated lists. An empty allowlist denies everyone (fail closed).
 function getAllowedEmails(): Set<string> {
-  const envList = process.env.ALLOWED_EMAILS ?? "";
-  const fromEnv = envList
-    .split(",")
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-  // Hardcoded seed list — always allowed
-  // Seed list from env var — set SEED_ALLOWED_EMAILS in Vercel env settings
-  const seedEnv = process.env.SEED_ALLOWED_EMAILS ?? "andrewesiri@gmail.com,drew@simera.health";
-  const seed = seedEnv.split(",").map((e) => e.trim().toLowerCase()).filter(Boolean);
-  return new Set([...seed, ...fromEnv]);
+  const parse = (v: string | undefined) =>
+    (v ?? "").split(",").map((e) => e.trim().toLowerCase()).filter(Boolean);
+  return new Set([
+    ...parse(process.env.SEED_ALLOWED_EMAILS),
+    ...parse(process.env.ALLOWED_EMAILS),
+  ]);
+}
+
+// userId → primary email, resolved via Clerk's backend API when the session
+// token carries no email claim. Default Clerk session tokens don't include
+// one, so relying on the claim alone let every fresh sign-up straight through.
+// Module-scope cache is best-effort per isolate; avoids an API call per request.
+const emailCache = new Map<string, { email: string; at: number }>();
+const EMAIL_CACHE_TTL_MS = 5 * 60 * 1000;
+
+async function resolveEmail(userId: string): Promise<string> {
+  const cached = emailCache.get(userId);
+  if (cached && Date.now() - cached.at < EMAIL_CACHE_TTL_MS) return cached.email;
+  try {
+    const client = await clerkClient();
+    const user = await client.users.getUser(userId);
+    const email = (
+      user.primaryEmailAddress?.emailAddress ??
+      user.emailAddresses[0]?.emailAddress ??
+      ""
+    ).toLowerCase();
+    emailCache.set(userId, { email, at: Date.now() });
+    return email;
+  } catch {
+    // Unresolvable identity = not allowlisted (fail closed).
+    return "";
+  }
 }
 
 const CANONICAL_HOST = "app.simerahealth.org";
@@ -51,20 +78,22 @@ export default clerkMiddleware(async (auth, request) => {
     return redirectToSignIn({ returnBackUrl: request.url });
   }
 
-  // Check allowlist for app routes
+  // Check allowlist for app routes. Prefer the session claim (free); fall
+  // back to Clerk's backend API when the token has no email claim. Deny on
+  // anything unresolvable — the previous claim-only check silently admitted
+  // every session without an email claim.
   const { sessionClaims } = await auth();
-  const email: string =
+  const claimEmail: string = (
     (sessionClaims?.email as string) ??
     (sessionClaims?.["https://clerk.com/email"] as string) ??
-    "";
+    ""
+  ).toLowerCase();
 
   const allowed = getAllowedEmails();
-  // Default-deny: a known email that isn't on the allowlist is sent to the
-  // waitlist, even if the list were ever misconfigured to empty (SEC-L5). The
-  // seed list above always contains the owner, so this can't lock you out.
-  // (Sessions without an email claim are allowed through — Clerk JWT templates
-  // don't always expose email — so we never deny based on a missing claim.)
-  if (email && !allowed.has(email.toLowerCase())) {
+  if (claimEmail && allowed.has(claimEmail)) return;
+
+  const resolvedEmail = claimEmail || (await resolveEmail(userId));
+  if (!resolvedEmail || !allowed.has(resolvedEmail)) {
     return NextResponse.redirect(new URL("/waitlist", request.url));
   }
 });

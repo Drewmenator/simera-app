@@ -27,7 +27,7 @@ function Stage({
 }: { label: string; value: string; sub: string; hero?: boolean }) {
   return (
     <div style={{ flex: 1, minWidth: 110 }}>
-      <p style={{ fontSize: 10, fontWeight: 700, color: "#8aa0a8", textTransform: "uppercase", letterSpacing: "0.07em", margin: 0 }}>
+      <p style={{ fontSize: 10, fontWeight: 700, color: "#5c747e", textTransform: "uppercase", letterSpacing: "0.07em", margin: 0 }}>
         {label}
       </p>
       <p style={{
@@ -36,7 +36,7 @@ function Stage({
       }}>
         {value}
       </p>
-      <p style={{ fontSize: 11, color: "#8aa0a8", margin: "1px 0 0" }}>{sub}</p>
+      <p style={{ fontSize: 11, color: "#5c747e", margin: "1px 0 0" }}>{sub}</p>
     </div>
   );
 }
@@ -90,7 +90,7 @@ export function RecoveryFunnel({ identifiedCount, identifiedRecoverable, identif
           <div style={{ height: "100%", width: `${recoveryRate}%`, background: "#14b8a6", borderRadius: 4, transition: "width 0.5s ease" }} />
         </div>
         {totalWon === 0 && (
-          <p style={{ fontSize: 11, color: "#8aa0a8", margin: "8px 0 0" }}>
+          <p style={{ fontSize: 11, color: "#5c747e", margin: "8px 0 0" }}>
             No recovered dollars yet — work the top of your queue, then log the outcome to start banking cash here.
           </p>
         )}

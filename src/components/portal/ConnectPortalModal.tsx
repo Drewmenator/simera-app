@@ -101,14 +101,14 @@ export function ConnectPortalModal({ open, onClose, onSaved }: ConnectPortalModa
         {/* Header */}
         <div style={{ padding: "20px 24px 0", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
-            <p style={{ fontSize: 11, fontFamily: "var(--font-ibm-plex-mono), monospace", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8", marginBottom: 4 }}>
+            <p style={{ fontSize: 11, fontFamily: "var(--font-ibm-plex-mono), monospace", letterSpacing: "0.12em", textTransform: "uppercase", color: "#5c747e", marginBottom: 4 }}>
               Sprint 2 · Portal Navigator
             </p>
             <h2 style={{ fontSize: 18, fontWeight: 700, color: "#0b2734", margin: 0 }}>
               Connect Payer Portal
             </h2>
           </div>
-          <button onClick={resetAndClose} style={{ background: "none", border: "none", cursor: "pointer", color: "#8aa0a8", padding: 4 }}>
+          <button onClick={resetAndClose} style={{ background: "none", border: "none", cursor: "pointer", color: "#5c747e", padding: 4 }}>
             <X style={{ width: 18, height: 18 }} />
           </button>
         </div>
@@ -147,7 +147,7 @@ export function ConnectPortalModal({ open, onClose, onSaved }: ConnectPortalModa
                         </div>
                         <div>
                           <div style={{ fontWeight: 600, fontSize: 14, color: "#0b2734" }}>{portal.label}</div>
-                          <div style={{ fontSize: 12, color: "#8aa0a8", marginTop: 2 }}>{portal.description}</div>
+                          <div style={{ fontSize: 12, color: "#5c747e", marginTop: 2 }}>{portal.description}</div>
                         </div>
                         {portalType === portal.value && (
                           <CheckCircle2 style={{ width: 18, height: 18, color: "#0c8174", marginLeft: "auto", flexShrink: 0 }} />
@@ -170,7 +170,7 @@ export function ConnectPortalModal({ open, onClose, onSaved }: ConnectPortalModa
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18 }}>
                     <button
                       onClick={() => setStep("choose")}
-                      style={{ background: "none", border: "none", cursor: "pointer", color: "#8aa0a8", fontSize: 13 }}
+                      style={{ background: "none", border: "none", cursor: "pointer", color: "#5c747e", fontSize: 13 }}
                     >
                       ← Back
                     </button>
@@ -223,7 +223,7 @@ export function ConnectPortalModal({ open, onClose, onSaved }: ConnectPortalModa
                         <button
                           type="button"
                           onClick={() => setShowPassword(s => !s)}
-                          style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#8aa0a8" }}
+                          style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#5c747e" }}
                         >
                           {showPassword ? <EyeOff style={{ width: 16, height: 16 }} /> : <Eye style={{ width: 16, height: 16 }} />}
                         </button>

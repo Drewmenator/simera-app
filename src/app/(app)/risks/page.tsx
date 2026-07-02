@@ -26,7 +26,7 @@ function KpiCard({ label, value, accent }: { label: string; value: string | numb
   return (
     <div style={{ ...CARD, padding: "20px 22px 18px", position: "relative", overflow: "hidden" }}>
       <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, background: accent }} />
-      <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10.5, letterSpacing: "0.13em", textTransform: "uppercase", color: "#8aa0a8" }}>{label}</span>
+      <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10.5, letterSpacing: "0.13em", textTransform: "uppercase", color: "#5c747e" }}>{label}</span>
       <div style={{ fontSize: 38, fontWeight: 800, letterSpacing: "-0.035em", lineHeight: 1, marginTop: 14, color: accent, fontVariantNumeric: "tabular-nums" }}>{value}</div>
     </div>
   );
@@ -133,13 +133,13 @@ export default function RisksPage() {
                 </div>
                 <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
                   <span style={{ fontSize: 11.5, color: "#5c747e" }}>
-                    <span style={{ color: "#8aa0a8" }}>CARCs: </span>
+                    <span style={{ color: "#5c747e" }}>CARCs: </span>
                     {row.topCARCs.map((c) => (
                       <span key={c} style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, fontWeight: 600, background: "#f6f8f8", padding: "1px 5px", borderRadius: 4, marginRight: 4 }}>{c}</span>
                     ))}
                   </span>
                   <span style={{ fontSize: 11.5, color: "#5c747e" }}>
-                    <span style={{ color: "#8aa0a8" }}>Prevention: </span>{row.prevention}
+                    <span style={{ color: "#5c747e" }}>Prevention: </span>{row.prevention}
                   </span>
                 </div>
               </div>
@@ -148,7 +148,7 @@ export default function RisksPage() {
                 <div style={{ fontSize: 19, fontWeight: 800, color: row.recoveryRate > 60 ? "#0c8174" : row.recoveryRate < 15 ? "#c2553d" : "#bd852f", fontVariantNumeric: "tabular-nums" }}>
                   {row.recoveryRate}%
                 </div>
-                <div style={{ fontSize: 10.5, color: "#8aa0a8", whiteSpace: "nowrap" }}>recovery</div>
+                <div style={{ fontSize: 10.5, color: "#5c747e", whiteSpace: "nowrap" }}>recovery</div>
               </div>
             </div>
           ))}
@@ -167,13 +167,13 @@ export default function RisksPage() {
                   <div>
                     <div style={{ fontSize: 13.5, fontWeight: 700, color: "#0b2734" }}>{row.payer}</div>
                     {row.note && <div style={{ fontSize: 11.5, color: "#c2553d", fontWeight: 600, marginTop: 2 }}>{row.note}</div>}
-                    <div style={{ fontSize: 11.5, color: "#8aa0a8", marginTop: 1 }}>Appeal rate: {row.appealRate}</div>
+                    <div style={{ fontSize: 11.5, color: "#5c747e", marginTop: 1 }}>Appeal rate: {row.appealRate}</div>
                   </div>
                   <div style={{ textAlign: "right", flexShrink: 0 }}>
                     <div style={{ fontSize: 22, fontWeight: 800, color: row.overturnRate >= 70 ? "#0c8174" : "#bd852f", fontVariantNumeric: "tabular-nums" }}>
                       {row.overturnRate}%
                     </div>
-                    <div style={{ fontSize: 10.5, color: "#8aa0a8" }}>overturned</div>
+                    <div style={{ fontSize: 10.5, color: "#5c747e" }}>overturned</div>
                   </div>
                 </div>
                 <div style={{ height: 4, borderRadius: 4, background: "rgba(11,39,52,0.07)", marginTop: 7, overflow: "hidden" }}>
@@ -202,7 +202,7 @@ export default function RisksPage() {
               <div key={item.label} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid rgba(11,39,52,0.06)", gap: 12 }}>
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 600, color: "#0b2734" }}>{item.label}</div>
-                  <div style={{ fontSize: 11.5, color: "#8aa0a8", marginTop: 2 }}>{item.sub}</div>
+                  <div style={{ fontSize: 11.5, color: "#5c747e", marginTop: 2 }}>{item.sub}</div>
                 </div>
                 <div style={{ fontSize: 18, fontWeight: 800, color: item.accent, fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>{item.value}</div>
               </div>
@@ -524,7 +524,7 @@ export default function RisksPage() {
         })}
 
         {filtered.length === 0 && (
-          <p style={{ textAlign: "center", color: "#8aa0a8", padding: "48px 0", fontSize: 14 }}>
+          <p style={{ textAlign: "center", color: "#5c747e", padding: "48px 0", fontSize: 14 }}>
             No {filter} risks.
           </p>
         )}

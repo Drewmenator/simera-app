@@ -18,7 +18,7 @@ const MONO: React.CSSProperties = {
   fontSize: 10.5,
   letterSpacing: "0.13em",
   textTransform: "uppercase" as const,
-  color: "#8aa0a8",
+  color: "#5c747e",
 };
 
 // Use unified pricing config. For ROI calculator, show example prices.
@@ -152,7 +152,7 @@ export default function ROIPage() {
               <b style={{ fontSize: 15, fontWeight: 800, color: "#0b2734" }}>${formatInput(monthlyCollections)}</b>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 10, height: 50, padding: "0 16px", borderRadius: 12, border: "1px solid rgba(11,39,52,0.10)", background: "#f6f8f8" }}>
-              <span style={{ color: "#8aa0a8", fontSize: 17 }}>$</span>
+              <span style={{ color: "#5c747e", fontSize: 17 }}>$</span>
               <input
                 type="text"
                 value={formatInput(monthlyCollections)}
@@ -166,7 +166,7 @@ export default function ROIPage() {
               onChange={(e) => setMonthlyCollections(Number(e.target.value))}
               style={{ width: "100%", height: 6, borderRadius: 4, margin: "10px 0 4px", cursor: "pointer", accentColor: "#0b2734" }}
             />
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#8aa0a8", fontFamily: "var(--font-ibm-plex-mono), monospace" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#5c747e", fontFamily: "var(--font-ibm-plex-mono), monospace" }}>
               <span>$20K</span><span>$2M</span>
             </div>
             {/* MGMA specialty benchmark callout */}
@@ -210,7 +210,7 @@ export default function ROIPage() {
               onChange={(e) => setDenialRate(Number(e.target.value))}
               style={{ width: "100%", height: 6, borderRadius: 4, margin: "0 0 4px", cursor: "pointer", accentColor: "#c2553d" }}
             />
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#8aa0a8", fontFamily: "var(--font-ibm-plex-mono), monospace" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#5c747e", fontFamily: "var(--font-ibm-plex-mono), monospace" }}>
               <span>5% (best-in-class)</span><span>30%</span>
             </div>
             {/* Claim count context */}
@@ -270,7 +270,7 @@ export default function ROIPage() {
             <div key={item.label} style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", padding: "7px 0", borderBottom: "1px solid rgba(11,39,52,0.06)", gap: 12 }}>
               <div>
                 <div style={{ fontSize: 13, color: "#0b2734", fontWeight: 500 }}>{item.label}</div>
-                <div style={{ fontSize: 11, color: "#8aa0a8", marginTop: 1 }}>{item.source}</div>
+                <div style={{ fontSize: 11, color: "#5c747e", marginTop: 1 }}>{item.source}</div>
               </div>
               <div style={{ fontSize: 14, fontWeight: 800, color: "#0b2734", flexShrink: 0, fontVariantNumeric: "tabular-nums" }}>{item.value}</div>
             </div>

@@ -679,6 +679,11 @@ function Step3Ehr({ onContinue, onSkip }: { onContinue: () => void; onSkip: () =
         >
           <strong style={{ color: C.navy }}>Manual upload mode:</strong> You&apos;ll upload 835 ERA files
           directly in the next step. Export them from your practice management system as .835, .edi, or .txt files.
+          <span style={{ display: "block", marginTop: 6, fontSize: 12 }}>
+            <strong style={{ color: C.navy }}>Pro tip:</strong> after your first audit, upload your payer
+            fee schedules on the <strong>Contracts</strong> page — underpayment detection then uses your
+            contracted rates instead of benchmark estimates.
+          </span>
         </div>
       )}
 

@@ -20,7 +20,7 @@ export default function BaaPage() {
   return (
     <article>
       <H1>Business Associate Agreement</H1>
-      <p style={{ fontSize: 13, color: "#8aa0a8", marginBottom: 16, fontFamily: "var(--font-ibm-plex-mono), monospace" }}>
+      <p style={{ fontSize: 13, color: "#5c747e", marginBottom: 16, fontFamily: "var(--font-ibm-plex-mono), monospace" }}>
         Template version 1.0 · Effective upon execution
       </p>
 

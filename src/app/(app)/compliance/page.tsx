@@ -32,7 +32,7 @@ const MONO: React.CSSProperties = {
   fontSize: 10.5,
   letterSpacing: "0.13em",
   textTransform: "uppercase",
-  color: "#8aa0a8",
+  color: "#5c747e",
 };
 
 // ─── Severity config ─────────────────────────────────────────────────────────
@@ -49,7 +49,7 @@ const STATUS_CONFIG = {
   in_progress: { bg: "#f8efdd", border: "rgba(189,133,47,0.35)", color: "#9a6a1e", label: "In Progress", italic: false },
   done:        { bg: "#e4f4f1", border: "rgba(12,129,116,0.35)", color: "#0c8174", label: "Done",        italic: false },
   blocked:     { bg: "#f8e8e3", border: "rgba(194,85,61,0.35)", color: "#c2553d",  label: "Blocked",     italic: false },
-  waived:      { bg: "#f6f8f8", border: "rgba(11,39,52,0.10)", color: "#8aa0a8",  label: "Waived",      italic: true  },
+  waived:      { bg: "#f6f8f8", border: "rgba(11,39,52,0.10)", color: "#5c747e",  label: "Waived",      italic: true  },
 };
 
 // ─── KPI card ─────────────────────────────────────────────────────────────────
@@ -284,7 +284,7 @@ function TaskRow({
           style={{
             width: 16,
             height: 16,
-            color: "#8aa0a8",
+            color: "#5c747e",
             flexShrink: 0,
             transition: "transform 0.2s",
             transform: open ? "rotate(180deg)" : "none",
@@ -433,7 +433,7 @@ function BreachRow({ alert }: { alert: BreachAlert }) {
       />
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: 13.5, fontWeight: 600, color: "#0b2734" }}>{alert.type}</div>
-        <div style={{ fontSize: 11.5, color: "#8aa0a8", marginTop: 1 }}>{date}</div>
+        <div style={{ fontSize: 11.5, color: "#5c747e", marginTop: 1 }}>{date}</div>
       </div>
       <div style={{ textAlign: "right", flexShrink: 0 }}>
         <span
@@ -449,7 +449,7 @@ function BreachRow({ alert }: { alert: BreachAlert }) {
         >
           {cfg.label}
         </span>
-        <div style={{ fontSize: 11, color: "#8aa0a8", marginTop: 3 }}>{alert.event_count} events</div>
+        <div style={{ fontSize: 11, color: "#5c747e", marginTop: 3 }}>{alert.event_count} events</div>
       </div>
     </div>
   );
@@ -538,7 +538,7 @@ export default function CompliancePage() {
           border: `1px solid ${donePct >= 70 ? "rgba(12,129,116,0.25)" : donePct >= 40 ? "rgba(189,133,47,0.25)" : "rgba(194,85,61,0.25)"}`,
           flexShrink: 0,
         }}>
-          <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "#8aa0a8" }}>
+          <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "#5c747e" }}>
             Score
           </span>
           <span style={{
@@ -551,7 +551,7 @@ export default function CompliancePage() {
           }}>
             {donePct}%
           </span>
-          <span style={{ fontSize: 11, color: "#8aa0a8", marginTop: 1 }}>
+          <span style={{ fontSize: 11, color: "#5c747e", marginTop: 1 }}>
             {kpis ? `${kpis.tasks_done}/${kpis.tasks_total} done` : "—"}
           </span>
         </div>
@@ -623,7 +623,7 @@ export default function CompliancePage() {
           </div>
 
           {loading && (
-            <div style={{ padding: "40px 0", textAlign: "center", color: "#8aa0a8", fontSize: 13 }}>
+            <div style={{ padding: "40px 0", textAlign: "center", color: "#5c747e", fontSize: 13 }}>
               Loading tasks…
             </div>
           )}
@@ -644,7 +644,7 @@ export default function CompliancePage() {
           )}
 
           {!loading && !error && tasks.length === 0 && (
-            <div style={{ padding: "40px 0", textAlign: "center", color: "#8aa0a8", fontSize: 13 }}>
+            <div style={{ padding: "40px 0", textAlign: "center", color: "#5c747e", fontSize: 13 }}>
               No tasks found for this filter.
             </div>
           )}
@@ -681,7 +681,7 @@ export default function CompliancePage() {
               >
                 {[
                   { label: "Done",        value: kpis.tasks_done,                            color: "#0c8174" },
-                  { label: "Remaining",   value: kpis.tasks_total - kpis.tasks_done,          color: "#8aa0a8" },
+                  { label: "Remaining",   value: kpis.tasks_total - kpis.tasks_done,          color: "#5c747e" },
                   { label: "Critical",    value: kpis.critical_open,                          color: "#c2553d" },
                   { label: "BAAs",        value: kpis.baa_count,                              color: "#0b2734" },
                 ].map((item) => (
@@ -766,7 +766,7 @@ export default function CompliancePage() {
             )}
 
             {loading && (
-              <div style={{ fontSize: 13, color: "#8aa0a8", padding: "16px 0" }}>Loading alerts…</div>
+              <div style={{ fontSize: 13, color: "#5c747e", padding: "16px 0" }}>Loading alerts…</div>
             )}
 
             {!loading && breachAlerts.length === 0 && (
@@ -902,12 +902,12 @@ export default function CompliancePage() {
           </div>
         ))}
 
-        <p style={{ fontSize: 12, color: "#8aa0a8", marginTop: 8, marginBottom: 12 }}>
+        <p style={{ fontSize: 12, color: "#5c747e", marginTop: 8, marginBottom: 12 }}>
           Click items to mark them complete. Progress is saved locally.
         </p>
 
         <div style={{ padding: "12px 16px", borderRadius: 10, background: "#f6f8f8", border: "1px solid rgba(11,39,52,0.08)", marginTop: 4 }}>
-          <p style={{ fontSize: 12, color: "#8aa0a8", lineHeight: 1.55 }}>
+          <p style={{ fontSize: 12, color: "#5c747e", lineHeight: 1.55 }}>
             Sources: HIPAA Security Rule 2025 Update · OIG General Compliance Program Guidance (2024) · CMS-4201-F Medicare Advantage Rule ·
             CMS-0057-F Interoperability and Prior Authorization Final Rule · FTC AI Accountability Guidance · HHS HIPAA Civil Monetary Penalties (Aug 2024)
           </p>
@@ -949,7 +949,7 @@ export default function CompliancePage() {
             }}>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <p style={{ fontSize: 13.5, fontWeight: 600, color: "#0b2734", margin: 0 }}>{v.name}</p>
-                <p style={{ fontSize: 11.5, color: "#8aa0a8", margin: "2px 0 0" }}>{v.role}</p>
+                <p style={{ fontSize: 11.5, color: "#5c747e", margin: "2px 0 0" }}>{v.role}</p>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
                 {v.email && v.status === "pending" && (

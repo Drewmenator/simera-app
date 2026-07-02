@@ -96,6 +96,18 @@ export default function AdminPage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18, maxWidth: 1340, margin: "0 auto" }}>
 
+      {/* Preview notice — this console is a design preview, not live data */}
+      <div style={{
+        display: "flex", alignItems: "center", gap: 8, padding: "9px 14px",
+        background: "#f8efdd", border: "1px solid rgba(189,133,47,0.35)", borderRadius: 10,
+      }}>
+        <AlertTriangle style={{ width: 14, height: 14, color: "#bd852f", flexShrink: 0 }} />
+        <p style={{ margin: 0, fontSize: 12.5, color: "#0b2734" }}>
+          <strong>Preview</strong> — sample practices with fictional data. The multi-practice
+          console isn&apos;t wired to live accounts yet.
+        </p>
+      </div>
+
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
         <div>
@@ -131,7 +143,7 @@ export default function AdminPage() {
           <div key={label} style={{ ...CARD, padding: "18px 20px", position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, background: accent }} />
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{label}</span>
+              <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#5c747e" }}>{label}</span>
               <div style={{ width: 24, height: 24, borderRadius: 7, background: accent + "18", color: accent, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Icon style={{ width: 13, height: 13 }} />
               </div>
@@ -158,7 +170,7 @@ export default function AdminPage() {
             <button
               key={label}
               onClick={() => col && toggleSort(col)}
-              style={{ display: "flex", alignItems: "center", gap: 4, fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8", background: "none", border: "none", cursor: col ? "pointer" : "default", padding: 0, textAlign: "left" }}
+              style={{ display: "flex", alignItems: "center", gap: 4, fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#5c747e", background: "none", border: "none", cursor: col ? "pointer" : "default", padding: 0, textAlign: "left" }}
             >
               {label}
               {col && <SortIcon col={col} />}
@@ -178,19 +190,19 @@ export default function AdminPage() {
               {/* Practice name */}
               <div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: "#0b2734" }}>{p.name}</div>
-                <div style={{ fontSize: 12, color: "#8aa0a8", marginTop: 1 }}>{p.specialty} · {p.providers} providers</div>
+                <div style={{ fontSize: 12, color: "#5c747e", marginTop: 1 }}>{p.specialty} · {p.providers} providers</div>
               </div>
 
               {/* Leakage */}
               <div>
                 <div style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 14, fontWeight: 700, color: "#c2553d" }}>{fmt(p.metrics.leakage)}</div>
-                <div style={{ fontSize: 11, color: "#8aa0a8" }}>at risk</div>
+                <div style={{ fontSize: 11, color: "#5c747e" }}>at risk</div>
               </div>
 
               {/* Recovery */}
               <div>
                 <div style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 14, fontWeight: 700, color: "#0c8174" }}>{fmt(p.metrics.recovery)}</div>
-                <div style={{ fontSize: 11, color: "#8aa0a8" }}>recoverable</div>
+                <div style={{ fontSize: 11, color: "#5c747e" }}>recoverable</div>
               </div>
 
               {/* Denial rate */}
@@ -223,7 +235,7 @@ export default function AdminPage() {
               </span>
 
               {/* Expand */}
-              <ChevronDown style={{ width: 15, height: 15, color: "#8aa0a8", transition: "transform 0.2s", transform: expandedId === p.id ? "rotate(180deg)" : "none" }} />
+              <ChevronDown style={{ width: 15, height: 15, color: "#5c747e", transition: "transform 0.2s", transform: expandedId === p.id ? "rotate(180deg)" : "none" }} />
             </div>
 
             {/* Expanded detail */}
@@ -237,9 +249,9 @@ export default function AdminPage() {
                     { label: "Status", value: "Active", sub: "subscription current", color: "#0c8174" },
                   ].map((s) => (
                     <div key={s.label} style={{ padding: "10px 14px", borderRadius: 10, background: "#fff", border: "1px solid rgba(11,39,52,0.08)" }}>
-                      <div style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8" }}>{s.label}</div>
+                      <div style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "#5c747e" }}>{s.label}</div>
                       <div style={{ fontSize: 20, fontWeight: 800, color: s.color, marginTop: 4, fontVariantNumeric: "tabular-nums" }}>{s.value}</div>
-                      <div style={{ fontSize: 11, color: "#8aa0a8", marginTop: 2 }}>{s.sub}</div>
+                      <div style={{ fontSize: 11, color: "#5c747e", marginTop: 2 }}>{s.sub}</div>
                     </div>
                   ))}
                 </div>
@@ -261,7 +273,7 @@ export default function AdminPage() {
       </div>
 
       {/* Footer note */}
-      <p style={{ fontSize: 11.5, color: "#8aa0a8", textAlign: "center" }}>
+      <p style={{ fontSize: 11.5, color: "#5c747e", textAlign: "center" }}>
         Admin view — visible to Simera team only · Practice data is isolated by RLS
       </p>
     </div>

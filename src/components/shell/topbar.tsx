@@ -216,7 +216,7 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
                 border: "1px solid rgba(11,39,52,0.10)",
                 borderRadius: 5,
                 padding: "2px 6px",
-                color: "#8aa0a8",
+                color: "#5c747e",
               }}
             >
               ⌘K
@@ -321,14 +321,14 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
                       onClick={handleDownloadPDF}
                       style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", fontSize: 14, color: "#0b2734", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
                     >
-                      <Download style={{ width: 14, height: 14, color: "#8aa0a8" }} />
+                      <Download style={{ width: 14, height: 14, color: "#5c747e" }} />
                       Download PDF
                     </button>
                     <button
                       onClick={() => { setExportMenuOpen(false); setEmailOpen(true); }}
                       style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", fontSize: 14, color: "#0b2734", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
                     >
-                      <Mail style={{ width: 14, height: 14, color: "#8aa0a8" }} />
+                      <Mail style={{ width: 14, height: 14, color: "#5c747e" }} />
                       Email report
                     </button>
                   </motion.div>
@@ -423,7 +423,7 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <p style={{ fontSize: 13, fontWeight: n.read ? 500 : 700, color: "#0b2734" }}>{n.title}</p>
                             <p style={{ fontSize: 12, color: "#5c747e", marginTop: 2 }}>{n.body}</p>
-                            <p style={{ fontSize: 11, color: "#8aa0a8", marginTop: 4 }}>{n.time}</p>
+                            <p style={{ fontSize: 11, color: "#5c747e", marginTop: 4 }}>{n.time}</p>
                           </div>
                           {!n.read && <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#14b8a6", flexShrink: 0, marginTop: 6 }} />}
                         </div>
@@ -487,7 +487,7 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
                       onClick={() => { setUserMenuOpen(false); router.push("/settings"); }}
                       style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 16px", fontSize: 14, color: "#0b2734", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
                     >
-                      <User style={{ width: 14, height: 14, color: "#8aa0a8" }} />
+                      <User style={{ width: 14, height: 14, color: "#5c747e" }} />
                       Account settings
                     </button>
                     <div style={{ borderTop: "1px solid rgba(11,39,52,0.10)", paddingTop: 4 }}>
@@ -535,7 +535,7 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
               }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", borderBottom: "1px solid rgba(11,39,52,0.10)" }}>
-                <Search style={{ width: 16, height: 16, color: "#8aa0a8", flexShrink: 0 }} />
+                <Search style={{ width: 16, height: 16, color: "#5c747e", flexShrink: 0 }} />
                 <input
                   ref={searchRef}
                   value={searchQuery}
@@ -543,13 +543,13 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
                   placeholder="Search pages, actions, ask Simera…"
                   style={{ flex: 1, background: "transparent", border: "none", outline: "none", fontSize: 14, color: "#0b2734" }}
                 />
-                <button onClick={() => setSearchOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "#8aa0a8" }}>
+                <button onClick={() => setSearchOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "#5c747e" }}>
                   <X style={{ width: 16, height: 16 }} />
                 </button>
               </div>
               <div style={{ padding: "6px 0", maxHeight: 320, overflowY: "auto" }}>
                 {filtered.length === 0 ? (
-                  <p style={{ fontSize: 14, color: "#8aa0a8", padding: "24px 16px", textAlign: "center" }}>No results for "{searchQuery}"</p>
+                  <p style={{ fontSize: 14, color: "#5c747e", padding: "24px 16px", textAlign: "center" }}>No results for "{searchQuery}"</p>
                 ) : (
                   Object.entries(
                     filtered.reduce((acc, item) => {
@@ -558,7 +558,7 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
                     }, {} as Record<string, typeof SEARCH_ITEMS>)
                   ).map(([category, items]) => (
                     <div key={category}>
-                      <p style={{ fontSize: 10, color: "#8aa0a8", textTransform: "uppercase", letterSpacing: "0.12em", padding: "6px 16px", fontFamily: "var(--font-ibm-plex-mono), monospace" }}>
+                      <p style={{ fontSize: 10, color: "#5c747e", textTransform: "uppercase", letterSpacing: "0.12em", padding: "6px 16px", fontFamily: "var(--font-ibm-plex-mono), monospace" }}>
                         {category}
                       </p>
                       {items.map((item) => (
@@ -568,14 +568,14 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
                           style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 16px", fontSize: 14, color: "#0b2734", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
                         >
                           <span>{item.label}</span>
-                          <ArrowRight style={{ width: 14, height: 14, color: "#8aa0a8" }} />
+                          <ArrowRight style={{ width: 14, height: 14, color: "#5c747e" }} />
                         </button>
                       ))}
                     </div>
                   ))
                 )}
               </div>
-              <div style={{ borderTop: "1px solid rgba(11,39,52,0.10)", padding: "8px 16px", display: "flex", gap: 16, fontSize: 11, color: "#8aa0a8", fontFamily: "var(--font-ibm-plex-mono), monospace" }}>
+              <div style={{ borderTop: "1px solid rgba(11,39,52,0.10)", padding: "8px 16px", display: "flex", gap: 16, fontSize: 11, color: "#5c747e", fontFamily: "var(--font-ibm-plex-mono), monospace" }}>
                 <span><kbd>↑↓</kbd> navigate</span>
                 <span><kbd>↵</kbd> select</span>
                 <span><kbd>esc</kbd> close</span>

@@ -13,7 +13,7 @@ function CustomAreaTooltip({ active, payload, label }: { active?: boolean; paylo
   if (!active || !payload?.length) return null;
   return (
     <div style={{ background: "#fff", border: "1px solid rgba(11,39,52,0.10)", borderRadius: 10, padding: "10px 14px", boxShadow: "0 4px 16px rgba(11,39,52,0.12)", fontSize: 13 }}>
-      <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.1em", color: "#8aa0a8", textTransform: "uppercase", marginBottom: 4 }}>{label}</p>
+      <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.1em", color: "#5c747e", textTransform: "uppercase", marginBottom: 4 }}>{label}</p>
       <p style={{ color: "#c2553d", fontWeight: 700 }}>{fmt(payload[0].value)}</p>
     </div>
   );

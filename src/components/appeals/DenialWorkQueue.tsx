@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   AlertCircle, CheckCircle2, ChevronDown, ChevronRight,
   FileText, Clipboard, ExternalLink, AlertTriangle, Info, Printer, Send,
@@ -155,15 +155,24 @@ export function DenialWorkQueue({ findings, practiceName }: DenialWorkQueueProps
   const [loggedId, setLoggedId] = useState<string | null>(null); // which finding was just logged
   const { addSubmission } = useAppealSubmissions();
 
-  // Only show denial-type findings (not undercoding/underpayment — those have different workflows)
-  const denialFindings = findings.filter(f =>
-    ["unworked_denial", "wrong_writeoff", "timely_filing"].includes(f.category)
-  );
+  // Windowed rendering: a large practice's 835 can produce hundreds of
+  // expandable cards; mounting them all tanks INP/scroll. Render 50, load more.
+  const [visibleCount, setVisibleCount] = useState(50);
 
-  // Triage: rank winnable denials by expected recovery; separate the unwinnable.
-  const ranked = rankDenials(denialFindings);
-  const active = ranked.filter(r => r.tier !== "skip");
-  const skipped = ranked.filter(r => r.tier === "skip");
+  // Triage is O(n log n) over every finding — memoize so it doesn't re-run on
+  // each expand/collapse/copy state change (PERF-L1).
+  const { active, skipped } = useMemo(() => {
+    // Only denial-type findings (not undercoding/underpayment — different workflows)
+    const denialFindings = findings.filter(f =>
+      ["unworked_denial", "wrong_writeoff", "timely_filing"].includes(f.category)
+    );
+    // Rank winnable denials by expected recovery; separate the unwinnable.
+    const ranked = rankDenials(denialFindings);
+    return {
+      active: ranked.filter(r => r.tier !== "skip"),
+      skipped: ranked.filter(r => r.tier === "skip"),
+    };
+  }, [findings]);
 
   const openAppeal = (f: AuditFinding) => {
     setAppealFinding(f);
@@ -328,6 +337,14 @@ export function DenialWorkQueue({ findings, practiceName }: DenialWorkQueueProps
                     {finding.recovery_confidence === "network_estimate" && (
                       <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-blue-100 text-blue-700 border border-blue-200">🌐 Network</span>
                     )}
+                    {(finding.recovery_confidence === "industry_estimate" || !finding.recovery_confidence) && (
+                      <span
+                        className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-slate-100 text-slate-500 border border-slate-200"
+                        title="Industry-average estimate — upgrades to your own verified win rate as you record appeal outcomes"
+                      >
+                        Industry est.
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div>
@@ -442,7 +459,7 @@ export function DenialWorkQueue({ findings, practiceName }: DenialWorkQueueProps
     );
   };
 
-  if (denialFindings.length === 0) {
+  if (active.length === 0 && skipped.length === 0) {
     return (
       <div className="rounded-xl border border-border bg-card p-8 text-center space-y-2">
         <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto" />
@@ -454,7 +471,16 @@ export function DenialWorkQueue({ findings, practiceName }: DenialWorkQueueProps
 
   return (
     <div className="space-y-3">
-      {active.map((r, i) => renderItem(r, `a${i}`))}
+      {active.slice(0, visibleCount).map((r, i) => renderItem(r, `a${i}`))}
+
+      {active.length > visibleCount && (
+        <button
+          onClick={() => setVisibleCount(c => c + 50)}
+          className="w-full rounded-xl border border-dashed border-border bg-secondary/30 p-3 text-xs font-semibold text-muted-foreground hover:text-foreground"
+        >
+          Show {Math.min(50, active.length - visibleCount)} more ({active.length - visibleCount} remaining)
+        </button>
+      )}
 
       {skipped.length > 0 && (
         <div className="rounded-xl border border-dashed border-border bg-secondary/30 overflow-hidden">

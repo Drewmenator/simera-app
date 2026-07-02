@@ -94,7 +94,7 @@ export function ValidatorStep({ fileName, result, onProceed, onBack }: Validator
                 borderRight: i % 2 === 0 ? "1px solid rgba(11,39,52,0.07)" : "none",
                 borderTop: i >= 2 ? "1px solid rgba(11,39,52,0.07)" : "none",
               }}>
-                <p style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "#8aa0a8", margin: "0 0 3px" }}>
+                <p style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "#5c747e", margin: "0 0 3px" }}>
                   {label}
                 </p>
                 <p style={{ fontSize: 13, fontWeight: 700, color: "#0b2734", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -148,7 +148,7 @@ export function ValidatorStep({ fileName, result, onProceed, onBack }: Validator
               <StatusIcon status={c.status} />
               <div style={{ flex: 1 }}>
                 <p style={{ fontSize: 12, fontWeight: 500, color: statusColor(c.status), margin: 0 }}>{c.label}</p>
-                {c.detail && <p style={{ fontSize: 11, color: "#8aa0a8", margin: "1px 0 0" }}>{c.detail}</p>}
+                {c.detail && <p style={{ fontSize: 11, color: "#5c747e", margin: "1px 0 0" }}>{c.detail}</p>}
               </div>
             </div>
           ))}

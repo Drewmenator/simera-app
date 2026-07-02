@@ -92,7 +92,7 @@ function GetStartedScreen({
             See a live audit on sample data first
           </button>
 
-          <p style={{ textAlign: "center", fontSize: 11, color: "#8aa0a8", margin: "2px 0 0" }}>
+          <p style={{ textAlign: "center", fontSize: 11, color: "#5c747e", margin: "2px 0 0" }}>
             Sample uses Riverview Family Medicine — a fictional practice. No PHI.
           </p>
         </div>
@@ -220,7 +220,7 @@ function FeatureTour({ onDismiss, practiceName, leakage, recovery }: {
     <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, background: "rgba(11,39,52,0.60)", backdropFilter: "blur(4px)" }}>
       <div style={{ background: "#fff", borderRadius: 18, boxShadow: "0 24px 64px -8px rgba(11,39,52,0.28)", width: "100%", maxWidth: 380, overflow: "hidden", position: "relative" }}>
 
-        <button onClick={onDismiss} aria-label="Skip tour" style={{ position: "absolute", top: 14, right: 14, background: "none", border: "none", cursor: "pointer", color: "#8aa0a8", padding: 4, borderRadius: 6, display: "flex" }}>
+        <button onClick={onDismiss} aria-label="Skip tour" style={{ position: "absolute", top: 14, right: 14, background: "none", border: "none", cursor: "pointer", color: "#5c747e", padding: 4, borderRadius: 6, display: "flex" }}>
           <X style={{ width: 16, height: 16 }} />
         </button>
 
@@ -281,7 +281,7 @@ function FeatureTour({ onDismiss, practiceName, leakage, recovery }: {
         </div>
 
         <div style={{ paddingBottom: 16, textAlign: "center" }}>
-          <button onClick={onDismiss} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, color: "#8aa0a8" }}>
+          <button onClick={onDismiss} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 12, color: "#5c747e" }}>
             Skip tour
           </button>
         </div>
