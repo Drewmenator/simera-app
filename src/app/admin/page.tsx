@@ -96,6 +96,18 @@ export default function AdminPage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18, maxWidth: 1340, margin: "0 auto" }}>
 
+      {/* Preview notice — this console is a design preview, not live data */}
+      <div style={{
+        display: "flex", alignItems: "center", gap: 8, padding: "9px 14px",
+        background: "#f8efdd", border: "1px solid rgba(189,133,47,0.35)", borderRadius: 10,
+      }}>
+        <AlertTriangle style={{ width: 14, height: 14, color: "#bd852f", flexShrink: 0 }} />
+        <p style={{ margin: 0, fontSize: 12.5, color: "#0b2734" }}>
+          <strong>Preview</strong> — sample practices with fictional data. The multi-practice
+          console isn&apos;t wired to live accounts yet.
+        </p>
+      </div>
+
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
         <div>

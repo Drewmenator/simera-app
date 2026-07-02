@@ -8,6 +8,10 @@ const isPublicRoute = createRouteMatcher([
   "/waitlist(.*)",
   "/trust(.*)",
   "/book-demo(.*)",
+  // Lead-capture API for the public book-demo form. Without this entry the
+  // middleware redirected anonymous POSTs to sign-in — every inbound demo
+  // request silently failed. Exact path only; rate-limited in the handler.
+  "/api/demo-request",
 ]);
 
 // Beta allowlist — emails that can access the app. Env-only (no hardcoded
