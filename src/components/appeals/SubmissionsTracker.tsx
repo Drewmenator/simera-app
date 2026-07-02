@@ -448,6 +448,10 @@ export function SubmissionsTracker() {
   const pending = submissions.filter((s) => s.status === "pending");
   const resolved = submissions.filter((s) => s.status !== "pending");
 
+  // Windowed rendering past 50 rows per table (large practices).
+  const [pendingCount, setPendingCount] = useState(50);
+  const [resolvedCount, setResolvedCount] = useState(50);
+
   if (totalSubmitted === 0) {
     return (
       <div style={{
@@ -497,9 +501,17 @@ export function SubmissionsTracker() {
               </span>
             ))}
           </div>
-          {pending.map((sub) => (
+          {pending.slice(0, pendingCount).map((sub) => (
             <SubmissionRow key={sub.id} sub={sub} onUpdateStatus={updateStatus} onDelete={deleteSubmission} />
           ))}
+          {pending.length > pendingCount && (
+            <button
+              onClick={() => setPendingCount((c) => c + 50)}
+              style={{ width: "100%", padding: "10px 16px", background: "#f8fafc", border: "none", borderTop: "1px solid rgba(11,39,52,0.06)", fontSize: 12, fontWeight: 600, color: "#5c747e", cursor: "pointer" }}
+            >
+              Show {Math.min(50, pending.length - pendingCount)} more ({pending.length - pendingCount} remaining)
+            </button>
+          )}
         </div>
       )}
 
@@ -522,9 +534,17 @@ export function SubmissionsTracker() {
               </span>
             ))}
           </div>
-          {resolved.map((sub) => (
+          {resolved.slice(0, resolvedCount).map((sub) => (
             <SubmissionRow key={sub.id} sub={sub} onUpdateStatus={updateStatus} onDelete={deleteSubmission} />
           ))}
+          {resolved.length > resolvedCount && (
+            <button
+              onClick={() => setResolvedCount((c) => c + 50)}
+              style={{ width: "100%", padding: "10px 16px", background: "#f8fafc", border: "none", borderTop: "1px solid rgba(11,39,52,0.06)", fontSize: 12, fontWeight: 600, color: "#5c747e", cursor: "pointer" }}
+            >
+              Show {Math.min(50, resolved.length - resolvedCount)} more ({resolved.length - resolvedCount} remaining)
+            </button>
+          )}
         </div>
       )}
     </div>
