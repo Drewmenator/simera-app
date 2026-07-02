@@ -36,7 +36,7 @@ function KpiCard({ label, value, sub, accent, icon: Icon }: { label: string; val
     <div style={{ ...CARD, padding: "20px 22px 18px", position: "relative", overflow: "hidden" }}>
       <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, background: accent }} />
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, letterSpacing: "0.13em", textTransform: "uppercase", color: "#8aa0a8" }}>{label}</span>
+        <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10.5, letterSpacing: "0.13em", textTransform: "uppercase", color: "#8aa0a8" }}>{label}</span>
         <div style={{ width: 26, height: 26, borderRadius: 8, background: iconBg, color: accent, display: "flex", alignItems: "center", justifyContent: "center" }}>
           <Icon style={{ width: 15, height: 15 }} />
         </div>
@@ -132,7 +132,7 @@ export default function RevenuePage() {
           ))}
         </div>
         <div style={{ background: "#fff", border: "1px solid rgba(11,39,52,0.10)", borderRadius: 16, height: 240, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: "#8aa0a8" }}>Loading findings…</span>
+          <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 12, color: "#8aa0a8" }}>Loading findings…</span>
         </div>
       </div>
     );
@@ -250,7 +250,7 @@ export default function RevenuePage() {
                 { label: "Leakage", value: revenueByMonth[0].leakage, color: "#c2553d" },
               ].map((item) => (
                 <div key={item.label} style={{ textAlign: "center" }}>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8", marginBottom: 6 }}>{item.label}</div>
+                  <div style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8", marginBottom: 6 }}>{item.label}</div>
                   <div style={{ fontSize: 32, fontWeight: 800, color: item.color, letterSpacing: "-0.03em", fontVariantNumeric: "tabular-nums" }}>{fmt(item.value)}</div>
                 </div>
               ))}
@@ -295,7 +295,7 @@ export default function RevenuePage() {
                 { label: "Your Exposure", value: `$${Math.round(underpaymentExposure / 1000)}K`, sub: "estimated annual" },
               ].map((s) => (
                 <div key={s.label} style={{ textAlign: "center" }}>
-                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9.5, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{s.label}</div>
+                  <div style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 9.5, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{s.label}</div>
                   <div style={{ fontSize: 20, fontWeight: 800, color: "#0c8174", fontVariantNumeric: "tabular-nums", lineHeight: 1.2, marginTop: 3 }}>{s.value}</div>
                   <div style={{ fontSize: 11, color: "#8aa0a8" }}>{s.sub}</div>
                 </div>
@@ -355,7 +355,7 @@ export default function RevenuePage() {
                   }}
                 >
                   {chip.label}
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, opacity: 0.7 }}>{count}</span>
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, opacity: 0.7 }}>{count}</span>
                 </button>
               );
             })}
@@ -368,7 +368,7 @@ export default function RevenuePage() {
           <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 540 }}>
             <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", gap: "0 16px", padding: "8px 16px 10px", borderBottom: "1px solid rgba(11,39,52,0.08)" }}>
               {["Pattern / Code", "Payer", "Claims", "At Risk", "Priority"].map((h) => (
-                <span key={h} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{h}</span>
+                <span key={h} style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{h}</span>
               ))}
             </div>
             {data.denialPatterns.map((d, i) => {
@@ -378,15 +378,15 @@ export default function RevenuePage() {
                 <div key={i} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", gap: "0 16px", padding: "14px 16px", borderBottom: "1px solid rgba(11,39,52,0.06)", alignItems: "center" }}>
                   <div>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, fontWeight: 700, color: "#0b2734" }}>{d.code}</span>
+                      <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 12, fontWeight: 700, color: "#0b2734" }}>{d.code}</span>
                       <span style={{ fontSize: 13, fontWeight: 600, color: "#0b2734" }}>{d.description}</span>
                     </div>
                     <span style={{ fontSize: 11.5, color: "#8aa0a8" }}>{d.category}</span>
                   </div>
                   <span style={{ fontSize: 13, color: "#5c747e" }}>{d.payer}</span>
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: "#0b2734", fontWeight: 600 }}>{d.claims}</span>
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: "#c2553d", fontWeight: 700 }}>{fmt(d.atRisk)}</span>
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 999, background: priorityBg, color: priorityColor, textTransform: "capitalize", display: "inline-block" }}>{d.priority}</span>
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 13, color: "#0b2734", fontWeight: 600 }}>{d.claims}</span>
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 13, color: "#c2553d", fontWeight: 700 }}>{fmt(d.atRisk)}</span>
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 999, background: priorityBg, color: priorityColor, textTransform: "capitalize", display: "inline-block" }}>{d.priority}</span>
                 </div>
               );
             })}
@@ -400,7 +400,7 @@ export default function RevenuePage() {
           <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 540 }}>
             <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", gap: "0 16px", padding: "8px 16px 10px", borderBottom: "1px solid rgba(11,39,52,0.08)" }}>
               {["Payer", "Claims", "Denial Rate", "Grade", "Net Collection"].map((h) => (
-                <span key={h} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{h}</span>
+                <span key={h} style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{h}</span>
               ))}
             </div>
             {data.payerScorecard.map((p, i) => {
@@ -409,15 +409,15 @@ export default function RevenuePage() {
               return (
                 <div key={i} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", gap: "0 16px", padding: "14px 16px", borderBottom: "1px solid rgba(11,39,52,0.06)", alignItems: "center" }}>
                   <span style={{ fontSize: 14, fontWeight: 700, color: "#0b2734" }}>{p.payer}</span>
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: "#5c747e" }}>{p.claims.toLocaleString()}</span>
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 13, color: "#5c747e" }}>{p.claims.toLocaleString()}</span>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <div style={{ flex: 1, height: 6, background: "#f0f4f4", borderRadius: 3, maxWidth: 80 }}>
                       <div style={{ height: "100%", width: `${Math.min((p.denialRate / 30) * 100, 100)}%`, background: gradeColor, borderRadius: 3 }} />
                     </div>
-                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, fontWeight: 700, color: gradeColor }}>{p.denialRate.toFixed(1)}%</span>
+                    <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 12, fontWeight: 700, color: gradeColor }}>{p.denialRate.toFixed(1)}%</span>
                   </div>
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 14, fontWeight: 800, padding: "4px 12px", borderRadius: 8, background: gradeBg, color: gradeColor, display: "inline-block", textAlign: "center", maxWidth: 44 }}>{p.grade}</span>
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: "#0b2734", fontWeight: 600 }}>{p.netCollection.toFixed(1)}%</span>
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 14, fontWeight: 800, padding: "4px 12px", borderRadius: 8, background: gradeBg, color: gradeColor, display: "inline-block", textAlign: "center", maxWidth: 44 }}>{p.grade}</span>
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 13, color: "#0b2734", fontWeight: 600 }}>{p.netCollection.toFixed(1)}%</span>
                 </div>
               );
             })}
@@ -448,15 +448,15 @@ export default function RevenuePage() {
             <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 540 }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr 1fr 1fr 1fr", gap: "0 16px", padding: "8px 16px 10px", borderBottom: "1px solid rgba(11,39,52,0.08)" }}>
                 {["CPT Code", "Description", "Findings", "Est. at Risk", "Payers Affected"].map((h) => (
-                  <span key={h} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{h}</span>
+                  <span key={h} style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{h}</span>
                 ))}
               </div>
               {rows.map((r, i) => (
                 <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 2fr 1fr 1fr 1fr", gap: "0 16px", padding: "14px 16px", borderBottom: "1px solid rgba(11,39,52,0.06)", alignItems: "center" }}>
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, fontWeight: 700, color: "#0b2734" }}>{r.code}</span>
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 13, fontWeight: 700, color: "#0b2734" }}>{r.code}</span>
                   <span style={{ fontSize: 13, color: "#5c747e" }}>{cptDesc[r.code] ?? "—"}</span>
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, color: "#5c747e" }}>{r.count}</span>
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, fontWeight: 700, color: "#c2553d" }}>{fmt(r.atRisk)}</span>
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 13, color: "#5c747e" }}>{r.count}</span>
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 13, fontWeight: 700, color: "#c2553d" }}>{fmt(r.atRisk)}</span>
                   <span style={{ fontSize: 12.5, color: "#5c747e" }}>{[...r.payers].join(", ")}</span>
                 </div>
               ))}
@@ -523,18 +523,18 @@ export default function RevenuePage() {
                     textAlign: "left",
                   }}
                 >
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, fontWeight: 600, color: "#8aa0a8", width: 16, flexShrink: 0, marginTop: 2 }}>
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 13, fontWeight: 600, color: "#8aa0a8", width: 16, flexShrink: 0, marginTop: 2 }}>
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     {/* Title + tags */}
                     <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                       <span style={{ fontSize: 15, fontWeight: 700, color: "#0b2734" }}>{f.label}</span>
-                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 600, padding: "3px 9px", borderRadius: 999, background: "#f6f8f8", border: "1px solid rgba(11,39,52,0.10)", color: "#5c747e" }}>
+                      <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, fontWeight: 600, padding: "3px 9px", borderRadius: 999, background: "#f6f8f8", border: "1px solid rgba(11,39,52,0.10)", color: "#5c747e" }}>
                         {f.payer}
                       </span>
                       {currentStatus !== "open" && (
-                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 600, padding: "3px 9px", borderRadius: 999, background: statusCfg.bg, border: `1px solid ${statusCfg.border}`, color: statusCfg.color }}>
+                        <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, fontWeight: 600, padding: "3px 9px", borderRadius: 999, background: statusCfg.bg, border: `1px solid ${statusCfg.border}`, color: statusCfg.color }}>
                           {statusCfg.label}
                         </span>
                       )}
@@ -547,11 +547,11 @@ export default function RevenuePage() {
                       style={{ display: "flex", alignItems: "center", gap: 20, marginTop: 12, flexWrap: "wrap" }}
                     >
                       <div>
-                        <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9.5, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8" }}>At Risk</p>
+                        <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 9.5, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8" }}>At Risk</p>
                         <p style={{ fontSize: 16, fontWeight: 800, color: "#c2553d", fontVariantNumeric: "tabular-nums", marginTop: 2 }}>{fmt(f.dollarAmount)}</p>
                       </div>
                       <div>
-                        <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9.5, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8" }}>Recovery</p>
+                        <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 9.5, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8" }}>Recovery</p>
                         <p style={{ fontSize: 16, fontWeight: 800, color: "#0c8174", fontVariantNumeric: "tabular-nums", marginTop: 2 }}>{fmt(f.expectedRecovery)}</p>
                       </div>
                       <span
@@ -559,7 +559,7 @@ export default function RevenuePage() {
                           display: "inline-flex",
                           alignItems: "center",
                           gap: 6,
-                          fontFamily: "'IBM Plex Mono', monospace",
+                          fontFamily: "var(--font-ibm-plex-mono), monospace",
                           fontSize: 11,
                           fontWeight: 600,
                           padding: "4px 10px",
@@ -592,7 +592,7 @@ export default function RevenuePage() {
                   <div className="finding-body" style={{ padding: "0 18px 18px" }}>
                     {/* Status row */}
                     <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: currentStatus === "resolved" ? 10 : 20, flexWrap: "wrap" }}>
-                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>
+                      <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>
                         Status
                       </span>
                       {(Object.keys(STATUS_CONFIG) as FindingStatus[]).map((s) => {
@@ -646,13 +646,13 @@ export default function RevenuePage() {
                             Save
                           </button>
                           {existing > 0 && (
-                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "#0c8174" }}>Saved: ${existing.toLocaleString()}</span>
+                            <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, color: "#0c8174" }}>Saved: ${existing.toLocaleString()}</span>
                           )}
                         </div>
                       );
                     })()}
 
-                    <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8", marginBottom: 8 }}>
+                    <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8", marginBottom: 8 }}>
                       Recommended Action
                     </p>
                     <div style={{ display: "flex", gap: 24, alignItems: "flex-start" }}>
@@ -660,12 +660,12 @@ export default function RevenuePage() {
                         <p style={{ fontSize: 13.5, color: "#5c747e", lineHeight: 1.6, maxWidth: "70ch" }}>{f.action}</p>
                         {f.denialCodes.length > 0 && (
                           <>
-                            <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8", marginTop: 14, marginBottom: 8 }}>
+                            <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8", marginTop: 14, marginBottom: 8 }}>
                               Denial Codes
                             </p>
                             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                               {f.denialCodes.map((c) => (
-                                <span key={c} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 600, padding: "4px 10px", borderRadius: 999, background: "#f6f8f8", border: "1px solid rgba(11,39,52,0.10)", color: "#5c747e" }}>
+                                <span key={c} style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, fontWeight: 600, padding: "4px 10px", borderRadius: 999, background: "#f6f8f8", border: "1px solid rgba(11,39,52,0.10)", color: "#5c747e" }}>
                                   {c}
                                 </span>
                               ))}
@@ -684,7 +684,7 @@ export default function RevenuePage() {
                           border: "1px solid rgba(12,129,116,0.2)",
                         }}
                       >
-                        <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9.5, letterSpacing: "0.1em", textTransform: "uppercase", color: "#0c8174" }}>Recovery Estimate</p>
+                        <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 9.5, letterSpacing: "0.1em", textTransform: "uppercase", color: "#0c8174" }}>Recovery Estimate</p>
                         <p style={{ fontSize: 26, fontWeight: 800, color: "#0c8174", letterSpacing: "-0.03em", marginTop: 4, fontVariantNumeric: "tabular-nums" }}>{fmt(f.expectedRecovery)}</p>
                         <p style={{ fontSize: 11.5, color: "#5c747e", marginTop: 3 }}>{Math.round(f.recoveryProbability * 100)}% probability-weighted</p>
                       </div>

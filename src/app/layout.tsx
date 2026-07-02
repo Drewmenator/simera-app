@@ -1,6 +1,18 @@
 import type { Metadata } from "next";
+import { Hanken_Grotesk, IBM_Plex_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
+
+const hanken = Hanken_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-hanken",
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-ibm-plex-mono",
+});
 
 export const metadata: Metadata = {
   title: "Simera Health — Get paid what you earned.",
@@ -15,18 +27,10 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className="h-full">
-        <head>
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-          <link
-            href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
-            rel="stylesheet"
-          />
-        </head>
+      <html lang="en" className={`h-full ${hanken.variable} ${ibmPlexMono.variable}`}>
         <body
           className="min-h-full antialiased"
-          style={{ fontFamily: "'Hanken Grotesk', system-ui, sans-serif" }}
+          style={{ fontFamily: "var(--font-hanken), system-ui, sans-serif" }}
         >
           {children}
         </body>

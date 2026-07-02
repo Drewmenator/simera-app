@@ -8,8 +8,8 @@ export const metadata: Metadata = {
 
 // ── Primitives ────────────────────────────────────────────────────────────────
 
-const F = "'Hanken Grotesk', system-ui, sans-serif";
-const MONO = "'IBM Plex Mono', monospace";
+const F = "var(--font-hanken), system-ui, sans-serif";
+const MONO = "var(--font-ibm-plex-mono), monospace";
 const NAVY = "#0b2734";
 const TEAL = "#14b8a6";
 const TEAL_DARK = "#0c8174";

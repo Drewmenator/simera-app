@@ -227,15 +227,15 @@ export default function ContractsPage() {
                       <div style={{ fontSize: 12, color: "#8aa0a8" }}>Uploaded {c.uploadedAt}</div>
                     </div>
                     {c.status === "processing" && (
-                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "#bd852f", background: "#f8efdd", padding: "3px 10px", borderRadius: 999 }}>Parsing…</span>
+                      <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, color: "#bd852f", background: "#f8efdd", padding: "3px 10px", borderRadius: 999 }}>Parsing…</span>
                     )}
                     {c.status === "parsed" && (
-                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "#0c8174", background: "#e4f4f1", padding: "3px 10px", borderRadius: 999 }}>
+                      <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, color: "#0c8174", background: "#e4f4f1", padding: "3px 10px", borderRadius: 999 }}>
                         {c.ratesFound} rates found
                       </span>
                     )}
                     {c.status === "error" && (
-                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "#c2553d", background: "#f8e8e3", padding: "3px 10px", borderRadius: 999 }}>Error</span>
+                      <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, color: "#c2553d", background: "#f8e8e3", padding: "3px 10px", borderRadius: 999 }}>Error</span>
                     )}
                     <button onClick={() => {
                       const updated = contracts.filter((x) => x.id !== c.id);
@@ -318,15 +318,15 @@ export default function ContractsPage() {
               <div style={{ marginTop: 8 }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr 1fr auto", gap: "0 12px", padding: "6px 12px 8px", borderBottom: "1px solid rgba(11,39,52,0.08)" }}>
                   {["Payer", "CPT", "Description", "Rate", ""].map((h) => (
-                    <span key={h} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8" }}>{h}</span>
+                    <span key={h} style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8" }}>{h}</span>
                   ))}
                 </div>
                 {manualRates.map((r) => (
                   <div key={r.id} style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr 1fr auto", gap: "0 12px", padding: "10px 12px", borderBottom: "1px solid rgba(11,39,52,0.06)", alignItems: "center" }}>
                     <span style={{ fontSize: 13, fontWeight: 600, color: "#0b2734" }}>{r.payer}</span>
-                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: "#0b2734" }}>{r.cptCode}</span>
+                    <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 12, color: "#0b2734" }}>{r.cptCode}</span>
                     <span style={{ fontSize: 12.5, color: "#5c747e" }}>{r.description}</span>
-                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, fontWeight: 700, color: "#0c8174" }}>${parseFloat(r.contractedRate).toFixed(2)}</span>
+                    <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 13, fontWeight: 700, color: "#0c8174" }}>${parseFloat(r.contractedRate).toFixed(2)}</span>
                     <button onClick={() => {
                       const updated = manualRates.filter((x) => x.id !== r.id);
                       setManualRates(updated);
@@ -375,7 +375,7 @@ export default function ContractsPage() {
                     { label: "CPT Codes", value: new Set(manualRates.map((r) => r.cptCode)).size, color: "#bd852f" },
                   ].map((s) => (
                     <div key={s.label} style={{ padding: "12px 18px", borderRadius: 10, background: "#f6f8f8", border: "1px solid rgba(11,39,52,0.08)" }}>
-                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{s.label}</div>
+                      <div style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{s.label}</div>
                       <div style={{ fontSize: 26, fontWeight: 800, color: s.color, marginTop: 4, fontVariantNumeric: "tabular-nums" }}>{s.value}</div>
                     </div>
                   ))}

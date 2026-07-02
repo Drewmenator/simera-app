@@ -97,7 +97,7 @@ export function Sidebar({ onUploadClick }: SidebarProps) {
           <div
             style={{
               display: "block",
-              fontFamily: "'IBM Plex Mono', monospace",
+              fontFamily: "var(--font-ibm-plex-mono), monospace",
               fontSize: 10,
               fontWeight: 500,
               letterSpacing: "0.18em",
@@ -135,7 +135,7 @@ export function Sidebar({ onUploadClick }: SidebarProps) {
       >
         <div
           style={{
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "var(--font-ibm-plex-mono), monospace",
             fontSize: 9.5,
             letterSpacing: "0.16em",
             color: "#5d7c86",
@@ -207,7 +207,7 @@ export function Sidebar({ onUploadClick }: SidebarProps) {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontFamily: "var(--font-ibm-plex-mono), monospace",
                   }}
                 >
                   {criticalCount}
@@ -236,7 +236,7 @@ export function Sidebar({ onUploadClick }: SidebarProps) {
             display: "flex",
             alignItems: "center",
             gap: 6,
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "var(--font-ibm-plex-mono), monospace",
             fontSize: 9.5,
             letterSpacing: "0.16em",
             color: "#e7a999",
@@ -347,7 +347,7 @@ export function Sidebar({ onUploadClick }: SidebarProps) {
         <span
           style={{
             marginLeft: "auto",
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "var(--font-ibm-plex-mono), monospace",
             fontSize: 9.5,
             letterSpacing: "0.1em",
             color: "#14b8a6",

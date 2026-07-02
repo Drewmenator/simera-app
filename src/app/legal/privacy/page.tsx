@@ -20,7 +20,7 @@ export default function PrivacyPage() {
   return (
     <article>
       <H1>Privacy Policy</H1>
-      <p style={{ fontSize: 13, color: "#8aa0a8", marginBottom: 48, fontFamily: "'IBM Plex Mono', monospace" }}>
+      <p style={{ fontSize: 13, color: "#8aa0a8", marginBottom: 48, fontFamily: "var(--font-ibm-plex-mono), monospace" }}>
         Last updated: June 1, 2026 · Effective: June 1, 2026
       </p>
 

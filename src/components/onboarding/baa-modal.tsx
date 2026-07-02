@@ -128,7 +128,7 @@ export function BaaModal({ open, onAccept, onClose, organization }: BaaModalProp
             <span
               style={{
                 color: "#ffffff",
-                fontFamily: "'IBM Plex Mono', monospace",
+                fontFamily: "var(--font-ibm-plex-mono), monospace",
                 fontSize: 13,
                 letterSpacing: "0.08em",
                 fontWeight: 600,
@@ -198,7 +198,7 @@ export function BaaModal({ open, onAccept, onClose, organization }: BaaModalProp
                   margin: "2px 0 0",
                   fontSize: 12,
                   color: "#64748b",
-                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontFamily: "var(--font-ibm-plex-mono), monospace",
                   letterSpacing: "0.04em",
                 }}
               >
@@ -235,7 +235,7 @@ export function BaaModal({ open, onAccept, onClose, organization }: BaaModalProp
               style={{
                 margin: "0 0 12px",
                 fontSize: 11,
-                fontFamily: "'IBM Plex Mono', monospace",
+                fontFamily: "var(--font-ibm-plex-mono), monospace",
                 letterSpacing: "0.06em",
                 color: "#64748b",
                 fontWeight: 600,
@@ -265,7 +265,7 @@ export function BaaModal({ open, onAccept, onClose, organization }: BaaModalProp
               borderBottom: "1px solid #e2e8f0",
               display: "flex", alignItems: "center", justifyContent: "space-between",
             }}>
-              <p style={{ margin: 0, fontSize: 11, fontFamily: "'IBM Plex Mono', monospace", letterSpacing: "0.06em", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>
+              <p style={{ margin: 0, fontSize: 11, fontFamily: "var(--font-ibm-plex-mono), monospace", letterSpacing: "0.06em", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>
                 Subprocessor BAA Status
               </p>
               <a href="/trust" target="_blank" rel="noopener noreferrer"
@@ -401,7 +401,7 @@ export function BaaModal({ open, onAccept, onClose, organization }: BaaModalProp
               fontSize: 11,
               color: "#94a3b8",
               textAlign: "center",
-              fontFamily: "'IBM Plex Mono', monospace",
+              fontFamily: "var(--font-ibm-plex-mono), monospace",
             }}
           >
             Questions? Email{" "}

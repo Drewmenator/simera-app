@@ -13,7 +13,7 @@ function CustomAreaTooltip({ active, payload, label }: { active?: boolean; paylo
   if (!active || !payload?.length) return null;
   return (
     <div style={{ background: "#fff", border: "1px solid rgba(11,39,52,0.10)", borderRadius: 10, padding: "10px 14px", boxShadow: "0 4px 16px rgba(11,39,52,0.12)", fontSize: 13 }}>
-      <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.1em", color: "#8aa0a8", textTransform: "uppercase", marginBottom: 4 }}>{label}</p>
+      <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.1em", color: "#8aa0a8", textTransform: "uppercase", marginBottom: 4 }}>{label}</p>
       <p style={{ color: "#c2553d", fontWeight: 700 }}>{fmt(payload[0].value)}</p>
     </div>
   );
@@ -30,8 +30,8 @@ export default function LeakageTrendChart({ data }: { data: { month: string; lea
           </linearGradient>
         </defs>
         <CartesianGrid vertical={false} stroke="rgba(11,39,52,0.06)" />
-        <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fill: "#8aa0a8" }} />
-        <YAxis axisLine={false} tickLine={false} tick={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fill: "#8aa0a8" }} tickFormatter={(v) => `$${v / 1000}K`} />
+        <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, fill: "#8aa0a8" }} />
+        <YAxis axisLine={false} tickLine={false} tick={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, fill: "#8aa0a8" }} tickFormatter={(v) => `$${v / 1000}K`} />
         <Tooltip content={<CustomAreaTooltip />} />
         <Area type="monotone" dataKey="leakage" stroke="#c2553d" strokeWidth={2.5} fill="url(#leakGrad)" dot={{ fill: "#fff", stroke: "#c2553d", strokeWidth: 2, r: 4 }} activeDot={{ r: 5 }} />
       </AreaChart>

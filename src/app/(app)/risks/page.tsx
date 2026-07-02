@@ -26,7 +26,7 @@ function KpiCard({ label, value, accent }: { label: string; value: string | numb
   return (
     <div style={{ ...CARD, padding: "20px 22px 18px", position: "relative", overflow: "hidden" }}>
       <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, background: accent }} />
-      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, letterSpacing: "0.13em", textTransform: "uppercase", color: "#8aa0a8" }}>{label}</span>
+      <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10.5, letterSpacing: "0.13em", textTransform: "uppercase", color: "#8aa0a8" }}>{label}</span>
       <div style={{ fontSize: 38, fontWeight: 800, letterSpacing: "-0.035em", lineHeight: 1, marginTop: 14, color: accent, fontVariantNumeric: "tabular-nums" }}>{value}</div>
     </div>
   );
@@ -124,7 +124,7 @@ export default function RisksPage() {
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5 }}>
                   <span style={{ fontSize: 13.5, fontWeight: 700, color: "#0b2734" }}>{row.category}</span>
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, fontWeight: 700, padding: "2px 8px", borderRadius: 999, background: `${row.color}14`, color: row.color }}>
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10.5, fontWeight: 700, padding: "2px 8px", borderRadius: 999, background: `${row.color}14`, color: row.color }}>
                     {row.pctOfDenials}% of denials
                   </span>
                 </div>
@@ -135,7 +135,7 @@ export default function RisksPage() {
                   <span style={{ fontSize: 11.5, color: "#5c747e" }}>
                     <span style={{ color: "#8aa0a8" }}>CARCs: </span>
                     {row.topCARCs.map((c) => (
-                      <span key={c} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 600, background: "#f6f8f8", padding: "1px 5px", borderRadius: 4, marginRight: 4 }}>{c}</span>
+                      <span key={c} style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, fontWeight: 600, background: "#f6f8f8", padding: "1px 5px", borderRadius: 4, marginRight: 4 }}>{c}</span>
                     ))}
                   </span>
                   <span style={{ fontSize: 11.5, color: "#5c747e" }}>
@@ -353,7 +353,7 @@ export default function RisksPage() {
             >
               {chip.dot && <span style={{ width: 8, height: 8, borderRadius: "50%", background: chip.dot, display: "inline-block" }} />}
               {chip.label}
-              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, opacity: 0.7 }}>{count}</span>
+              <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, opacity: 0.7 }}>{count}</span>
             </button>
           );
         })}
@@ -386,7 +386,7 @@ export default function RisksPage() {
               }}
             >
               {chip.label}
-              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, opacity: 0.7 }}>{count}</span>
+              <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, opacity: 0.7 }}>{count}</span>
             </button>
           );
         })}
@@ -424,15 +424,15 @@ export default function RisksPage() {
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
                     <h3 style={{ fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em", color: "#0b2734", margin: 0 }}>{risk.title}</h3>
-                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 600, padding: "4px 10px", borderRadius: 999, background: sev.tagBg, color: sev.tagColor }}>
+                    <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, fontWeight: 600, padding: "4px 10px", borderRadius: 999, background: sev.tagBg, color: sev.tagColor }}>
                       {sev.label}
                     </span>
-                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 600, padding: "4px 10px", borderRadius: 999, background: "#f6f8f8", border: "1px solid rgba(11,39,52,0.10)", color: "#5c747e" }}>
+                    <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, fontWeight: 600, padding: "4px 10px", borderRadius: 999, background: "#f6f8f8", border: "1px solid rgba(11,39,52,0.10)", color: "#5c747e" }}>
                       {risk.category}
                     </span>
                     {currentStatus !== "open" && (
                       <span style={{
-                        fontFamily: "'IBM Plex Mono', monospace",
+                        fontFamily: "var(--font-ibm-plex-mono), monospace",
                         fontSize: 11,
                         fontWeight: 600,
                         padding: "4px 10px",

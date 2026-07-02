@@ -49,7 +49,7 @@ function KpiCard({
       {/* Left rail */}
       <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, background: accent, opacity: 0.9 }} />
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6 }}>
-        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9.5, letterSpacing: "0.08em", textTransform: "uppercase", color: "#8aa0a8", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+        <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 9.5, letterSpacing: "0.08em", textTransform: "uppercase", color: "#8aa0a8", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
           {label}
         </span>
         <div style={{ width: 22, height: 22, borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center", background: iconBg, color: accent, flexShrink: 0 }}>
@@ -130,7 +130,7 @@ export default function HomePage() {
           ))}
         </div>
         <div style={{ ...CARD_STYLE, height: 260, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: "#8aa0a8", letterSpacing: "0.08em" }}>
+          <div style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 12, color: "#8aa0a8", letterSpacing: "0.08em" }}>
             Loading your audit data…
           </div>
         </div>
@@ -312,7 +312,7 @@ export default function HomePage() {
           <div>
             {topOpps.map((f, i) => (
               <div key={f.label} style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 0", borderBottom: i < topOpps.length - 1 ? "1px solid rgba(11,39,52,0.06)" : "none" }}>
-                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, fontWeight: 600, color: "#8aa0a8", width: 16, flexShrink: 0 }}>
+                <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 12, fontWeight: 600, color: "#8aa0a8", width: 16, flexShrink: 0 }}>
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -367,7 +367,7 @@ export default function HomePage() {
             <thead>
               <tr>
                 {["Payer", "Denial Rate", "Grade", "At Risk"].map((h, i) => (
-                  <th key={h} style={{ textAlign: i === 0 ? "left" : "right", fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8", fontWeight: 500, padding: "0 0 12px", borderBottom: "1px solid rgba(11,39,52,0.10)" }}>
+                  <th key={h} style={{ textAlign: i === 0 ? "left" : "right", fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10.5, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8", fontWeight: 500, padding: "0 0 12px", borderBottom: "1px solid rgba(11,39,52,0.10)" }}>
                     {h}
                   </th>
                 ))}
@@ -409,7 +409,7 @@ export default function HomePage() {
               </h2>
             </div>
             <span style={{
-              fontFamily: "'IBM Plex Mono', monospace",
+              fontFamily: "var(--font-ibm-plex-mono), monospace",
               fontSize: 11,
               fontWeight: 700,
               padding: "3px 9px",
@@ -454,7 +454,7 @@ export default function HomePage() {
                     <div style={{
                       display: "inline-flex",
                       alignItems: "center",
-                      fontFamily: "'IBM Plex Mono', monospace",
+                      fontFamily: "var(--font-ibm-plex-mono), monospace",
                       fontSize: 10,
                       fontWeight: 700,
                       letterSpacing: "0.1em",

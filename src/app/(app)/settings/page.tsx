@@ -327,7 +327,7 @@ function NotificationsTab() {
         <span style={{
           display: "inline-flex",
           alignItems: "center",
-          fontFamily: "'IBM Plex Mono', monospace",
+          fontFamily: "var(--font-ibm-plex-mono), monospace",
           fontSize: 9.5,
           fontWeight: 700,
           letterSpacing: "0.12em",

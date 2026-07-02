@@ -106,7 +106,7 @@ function LogoMark({ size = 32 }: { size?: number }) {
         </div>
         <div
           style={{
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "var(--font-ibm-plex-mono), monospace",
             fontSize: 9,
             fontWeight: 500,
             letterSpacing: "0.18em",
@@ -158,7 +158,7 @@ function StepBar({ current }: { current: number }) {
                       fontSize: 11,
                       fontWeight: 700,
                       color: active ? C.tealBright : C.muted,
-                      fontFamily: "'IBM Plex Mono', monospace",
+                      fontFamily: "var(--font-ibm-plex-mono), monospace",
                     }}
                   >
                     {i + 1}
@@ -170,7 +170,7 @@ function StepBar({ current }: { current: number }) {
                   fontSize: 10,
                   fontWeight: active ? 700 : 500,
                   color: active ? C.navy : done ? C.teal : C.muted,
-                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontFamily: "var(--font-ibm-plex-mono), monospace",
                   letterSpacing: "0.05em",
                   whiteSpace: "nowrap",
                 }}
@@ -207,7 +207,7 @@ function Label({ children }: { children: React.ReactNode }) {
         fontWeight: 600,
         color: C.navy,
         marginBottom: 6,
-        fontFamily: "'IBM Plex Mono', monospace",
+        fontFamily: "var(--font-ibm-plex-mono), monospace",
         letterSpacing: "0.05em",
         textTransform: "uppercase",
       }}
@@ -290,7 +290,7 @@ function Step1Baa({
           <h2 style={{ margin: 0, fontSize: 20, fontWeight: 800, color: C.navy, letterSpacing: "-0.02em" }}>
             Business Associate Agreement
           </h2>
-          <p style={{ margin: "2px 0 0", fontSize: 12, color: C.muted, fontFamily: "'IBM Plex Mono', monospace", letterSpacing: "0.04em" }}>
+          <p style={{ margin: "2px 0 0", fontSize: 12, color: C.muted, fontFamily: "var(--font-ibm-plex-mono), monospace", letterSpacing: "0.04em" }}>
             HIPAA REQUIRED — BEFORE UPLOAD
           </p>
         </div>
@@ -311,7 +311,7 @@ function Step1Baa({
           marginBottom: 20,
         }}
       >
-        <p style={{ margin: "0 0 12px", fontSize: 11, fontFamily: "'IBM Plex Mono', monospace", letterSpacing: "0.06em", color: C.muted, fontWeight: 600, textTransform: "uppercase" }}>
+        <p style={{ margin: "0 0 12px", fontSize: 11, fontFamily: "var(--font-ibm-plex-mono), monospace", letterSpacing: "0.06em", color: C.muted, fontWeight: 600, textTransform: "uppercase" }}>
           Agreement Summary
         </p>
         <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
@@ -381,7 +381,7 @@ function Step1Baa({
         {!saving && <ChevronRight size={16} />}
       </button>
 
-      <p style={{ margin: "12px 0 0", fontSize: 11, color: C.muted, textAlign: "center", fontFamily: "'IBM Plex Mono', monospace" }}>
+      <p style={{ margin: "12px 0 0", fontSize: 11, color: C.muted, textAlign: "center", fontFamily: "var(--font-ibm-plex-mono), monospace" }}>
         Questions?{" "}
         <a href="mailto:compliance@simera.health" style={{ color: C.tealBright, textDecoration: "none" }}>
           compliance@simera.health
@@ -1093,7 +1093,7 @@ export default function OnboardingPage() {
             marginTop: 20,
             fontSize: 11,
             color: "#94a3b8",
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "var(--font-ibm-plex-mono), monospace",
             letterSpacing: "0.04em",
           }}
         >

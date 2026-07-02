@@ -74,7 +74,7 @@ function OutcomeModal({
         {/* Header */}
         <div style={{ background: "#0b2734", padding: "16px 20px" }}>
           <p style={{ color: "#fff", fontWeight: 700, fontSize: 15, margin: 0 }}>Update Appeal Outcome</p>
-          <p style={{ color: "#14b8a6", fontSize: 11.5, marginTop: 4, fontFamily: "'IBM Plex Mono', monospace" }}>
+          <p style={{ color: "#14b8a6", fontSize: 11.5, marginTop: 4, fontFamily: "var(--font-ibm-plex-mono), monospace" }}>
             {submission.payer} · {submission.denialCode ? `CARC ${submission.denialCode}` : "Dispute"}
           </p>
         </div>

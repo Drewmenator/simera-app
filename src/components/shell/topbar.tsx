@@ -210,7 +210,7 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
             <span style={{ flex: 1 }}>Search</span>
             <kbd
               style={{
-                fontFamily: "'IBM Plex Mono', monospace",
+                fontFamily: "var(--font-ibm-plex-mono), monospace",
                 fontSize: 11,
                 background: "#f6f8f8",
                 border: "1px solid rgba(11,39,52,0.10)",
@@ -558,7 +558,7 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
                     }, {} as Record<string, typeof SEARCH_ITEMS>)
                   ).map(([category, items]) => (
                     <div key={category}>
-                      <p style={{ fontSize: 10, color: "#8aa0a8", textTransform: "uppercase", letterSpacing: "0.12em", padding: "6px 16px", fontFamily: "'IBM Plex Mono', monospace" }}>
+                      <p style={{ fontSize: 10, color: "#8aa0a8", textTransform: "uppercase", letterSpacing: "0.12em", padding: "6px 16px", fontFamily: "var(--font-ibm-plex-mono), monospace" }}>
                         {category}
                       </p>
                       {items.map((item) => (
@@ -575,7 +575,7 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
                   ))
                 )}
               </div>
-              <div style={{ borderTop: "1px solid rgba(11,39,52,0.10)", padding: "8px 16px", display: "flex", gap: 16, fontSize: 11, color: "#8aa0a8", fontFamily: "'IBM Plex Mono', monospace" }}>
+              <div style={{ borderTop: "1px solid rgba(11,39,52,0.10)", padding: "8px 16px", display: "flex", gap: 16, fontSize: 11, color: "#8aa0a8", fontFamily: "var(--font-ibm-plex-mono), monospace" }}>
                 <span><kbd>↑↓</kbd> navigate</span>
                 <span><kbd>↵</kbd> select</span>
                 <span><kbd>esc</kbd> close</span>

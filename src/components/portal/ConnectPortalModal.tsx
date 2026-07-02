@@ -101,7 +101,7 @@ export function ConnectPortalModal({ open, onClose, onSaved }: ConnectPortalModa
         {/* Header */}
         <div style={{ padding: "20px 24px 0", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
-            <p style={{ fontSize: 11, fontFamily: "'IBM Plex Mono', monospace", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8", marginBottom: 4 }}>
+            <p style={{ fontSize: 11, fontFamily: "var(--font-ibm-plex-mono), monospace", letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8", marginBottom: 4 }}>
               Sprint 2 · Portal Navigator
             </p>
             <h2 style={{ fontSize: 18, fontWeight: 700, color: "#0b2734", margin: 0 }}>

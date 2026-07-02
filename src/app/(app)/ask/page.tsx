@@ -74,7 +74,7 @@ function renderLine(line: string, i: number) {
     return <p key={i} style={{ fontWeight: 700, color: "#0b2734", marginTop: 8 }}>{line.slice(2, -2)}</p>;
   }
   if (line.startsWith("| ")) {
-    return <p key={i} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "#5c747e", lineHeight: 1.6 }}>{line}</p>;
+    return <p key={i} style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, color: "#5c747e", lineHeight: 1.6 }}>{line}</p>;
   }
   if (/^\d+\./.test(line)) {
     const hasDollar = lineHasDollar(line);
@@ -358,7 +358,7 @@ function AskPageInner() {
         {/* Suggestions */}
         {isEmpty && !isStreaming && (
           <div style={{ paddingTop: 4 }}>
-            <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "#8aa0a8", margin: "30px 0 14px", textAlign: "center" }}>
+            <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "#8aa0a8", margin: "30px 0 14px", textAlign: "center" }}>
               Suggested Questions
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -424,7 +424,7 @@ function AskPageInner() {
               border: "none",
               outline: "none",
               background: "transparent",
-              fontFamily: "'Hanken Grotesk', system-ui, sans-serif",
+              fontFamily: "var(--font-hanken), system-ui, sans-serif",
               fontSize: 15,
               color: "#0b2734",
               resize: "none",
@@ -454,7 +454,7 @@ function AskPageInner() {
             <ArrowUp style={{ width: 19, height: 19 }} />
           </button>
         </div>
-        <p style={{ textAlign: "center", fontSize: 11.5, color: "#8aa0a8", marginTop: 12, fontFamily: "'IBM Plex Mono', monospace", letterSpacing: "0.02em" }}>
+        <p style={{ textAlign: "center", fontSize: 11.5, color: "#8aa0a8", marginTop: 12, fontFamily: "var(--font-ibm-plex-mono), monospace", letterSpacing: "0.02em" }}>
           Simera analyzes your actual 835 data · Not financial advice · Verify before acting
         </p>
       </div>

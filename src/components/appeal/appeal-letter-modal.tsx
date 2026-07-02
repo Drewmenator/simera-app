@@ -224,7 +224,7 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
             {state === "ready" && subjectLine && (
               <p
                 style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontFamily: "var(--font-ibm-plex-mono), monospace",
                   fontSize: 11.5,
                   color: "#14b8a6",
                   marginTop: 5,
@@ -385,7 +385,7 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
               </p>
               <p
                 style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontFamily: "var(--font-ibm-plex-mono), monospace",
                   fontSize: 12,
                   color: "#8aa0a8",
                 }}
@@ -411,7 +411,7 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
               </p>
               <p
                 style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontFamily: "var(--font-ibm-plex-mono), monospace",
                   fontSize: 12,
                   color: "#8aa0a8",
                   maxWidth: "40ch",
@@ -461,7 +461,7 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
               )}
               <pre
                 style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontFamily: "var(--font-ibm-plex-mono), monospace",
                   fontSize: 13,
                   lineHeight: 1.7,
                   color: "#0b2734",
@@ -522,7 +522,7 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
                 <ShieldCheck style={{ width: 12, height: 12, color: "#0c8174" }} />
-                <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, color: "#8aa0a8", lineHeight: 1.4, margin: 0 }}>
+                <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, color: "#8aa0a8", lineHeight: 1.4, margin: 0 }}>
                   No patient PHI in letter · Aggregate denial pattern only
                 </p>
               </div>

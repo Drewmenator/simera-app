@@ -131,7 +131,7 @@ export default function AdminPage() {
           <div key={label} style={{ ...CARD, padding: "18px 20px", position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, background: accent }} />
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{label}</span>
+              <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{label}</span>
               <div style={{ width: 24, height: 24, borderRadius: 7, background: accent + "18", color: accent, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Icon style={{ width: 13, height: 13 }} />
               </div>
@@ -158,7 +158,7 @@ export default function AdminPage() {
             <button
               key={label}
               onClick={() => col && toggleSort(col)}
-              style={{ display: "flex", alignItems: "center", gap: 4, fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8", background: "none", border: "none", cursor: col ? "pointer" : "default", padding: 0, textAlign: "left" }}
+              style={{ display: "flex", alignItems: "center", gap: 4, fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8", background: "none", border: "none", cursor: col ? "pointer" : "default", padding: 0, textAlign: "left" }}
             >
               {label}
               {col && <SortIcon col={col} />}
@@ -183,22 +183,22 @@ export default function AdminPage() {
 
               {/* Leakage */}
               <div>
-                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 14, fontWeight: 700, color: "#c2553d" }}>{fmt(p.metrics.leakage)}</div>
+                <div style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 14, fontWeight: 700, color: "#c2553d" }}>{fmt(p.metrics.leakage)}</div>
                 <div style={{ fontSize: 11, color: "#8aa0a8" }}>at risk</div>
               </div>
 
               {/* Recovery */}
               <div>
-                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 14, fontWeight: 700, color: "#0c8174" }}>{fmt(p.metrics.recovery)}</div>
+                <div style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 14, fontWeight: 700, color: "#0c8174" }}>{fmt(p.metrics.recovery)}</div>
                 <div style={{ fontSize: 11, color: "#8aa0a8" }}>recoverable</div>
               </div>
 
               {/* Denial rate */}
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 13, fontWeight: 700, color: GRADE_COLOR[p.metrics.grade] }}>
+                <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 13, fontWeight: 700, color: GRADE_COLOR[p.metrics.grade] }}>
                   {p.metrics.denialRate}%
                 </span>
-                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 6, background: GRADE_BG[p.metrics.grade], color: GRADE_COLOR[p.metrics.grade] }}>
+                <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 6, background: GRADE_BG[p.metrics.grade], color: GRADE_COLOR[p.metrics.grade] }}>
                   {p.metrics.grade}
                 </span>
               </div>
@@ -218,7 +218,7 @@ export default function AdminPage() {
               </div>
 
               {/* Plan */}
-              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 999, background: "#f6f8f8", color: PLAN_COLOR[p.plan] ?? "#5c747e", textTransform: "capitalize" }}>
+              <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 999, background: "#f6f8f8", color: PLAN_COLOR[p.plan] ?? "#5c747e", textTransform: "capitalize" }}>
                 {p.plan}
               </span>
 
@@ -237,7 +237,7 @@ export default function AdminPage() {
                     { label: "Status", value: "Active", sub: "subscription current", color: "#0c8174" },
                   ].map((s) => (
                     <div key={s.label} style={{ padding: "10px 14px", borderRadius: 10, background: "#fff", border: "1px solid rgba(11,39,52,0.08)" }}>
-                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8" }}>{s.label}</div>
+                      <div style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8" }}>{s.label}</div>
                       <div style={{ fontSize: 20, fontWeight: 800, color: s.color, marginTop: 4, fontVariantNumeric: "tabular-nums" }}>{s.value}</div>
                       <div style={{ fontSize: 11, color: "#8aa0a8", marginTop: 2 }}>{s.sub}</div>
                     </div>

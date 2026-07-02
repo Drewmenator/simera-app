@@ -40,7 +40,7 @@ const CARD: React.CSSProperties = {
 };
 
 const MONO: React.CSSProperties = {
-  fontFamily: "'IBM Plex Mono', monospace",
+  fontFamily: "var(--font-ibm-plex-mono), monospace",
   fontSize: 10.5,
   letterSpacing: "0.13em",
   textTransform: "uppercase" as const,
@@ -89,7 +89,7 @@ function BmRow({ name, percentile, practiceVal, medianVal, bestVal, good }: BmRo
         <div style={{ position: "absolute", left: "50%", top: -4, bottom: -4, width: 2, background: "#8aa0a8", borderRadius: 2 }} />
         <div style={{ position: "absolute", left: `${percentile}%`, top: "50%", width: 16, height: 16, borderRadius: "50%", background: dotColor, transform: "translate(-50%, -50%)", border: "3px solid #fff", boxShadow: "0 1px 4px rgba(11,39,52,0.3)" }} />
       </div>
-      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#8aa0a8", marginTop: 9, fontFamily: "'IBM Plex Mono', monospace" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#8aa0a8", marginTop: 9, fontFamily: "var(--font-ibm-plex-mono), monospace" }}>
         <span>Worst</span>
         <span>Best</span>
       </div>
@@ -107,7 +107,7 @@ function TierCell({ value, isHeader }: { value: string; isHeader?: boolean }) {
       fontSize: isHeader ? 10.5 : 13,
       fontWeight: isHeader ? 600 : 500,
       color: isHeader ? "#8aa0a8" : "#0b2734",
-      fontFamily: isHeader ? "'IBM Plex Mono', monospace" : "inherit",
+      fontFamily: isHeader ? "var(--font-ibm-plex-mono), monospace" : "inherit",
       letterSpacing: isHeader ? "0.1em" : undefined,
       textTransform: isHeader ? "uppercase" as const : undefined,
       borderBottom: "1px solid rgba(11,39,52,0.06)",
@@ -243,7 +243,7 @@ export default function BenchmarksPage() {
                 <div key={row.specialty} style={{ marginBottom: 10 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
                     <span style={{ fontSize: 12.5, fontWeight: 600, color: "#0b2734" }}>{row.specialty}</span>
-                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, color: "#5c747e" }}>
+                    <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, color: "#5c747e" }}>
                       ${(row.annualRevenue / 1000000).toFixed(1)}M
                     </span>
                   </div>
@@ -267,12 +267,12 @@ export default function BenchmarksPage() {
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ background: "#f6f8f8" }}>
-                <th style={{ padding: "12px 14px", textAlign: "left", fontSize: 10.5, fontWeight: 600, fontFamily: "'IBM Plex Mono', monospace", letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8", borderBottom: "1px solid rgba(11,39,52,0.10)", whiteSpace: "nowrap" }}>KPI</th>
-                <th style={{ padding: "12px 14px", textAlign: "left", fontSize: 10.5, fontWeight: 600, fontFamily: "'IBM Plex Mono', monospace", letterSpacing: "0.1em", textTransform: "uppercase", color: "#0c8174", borderBottom: "1px solid rgba(11,39,52,0.10)", whiteSpace: "nowrap" }}>Best-in-Class</th>
-                <th style={{ padding: "12px 14px", textAlign: "left", fontSize: 10.5, fontWeight: 600, fontFamily: "'IBM Plex Mono', monospace", letterSpacing: "0.1em", textTransform: "uppercase", color: "#0b2734", borderBottom: "1px solid rgba(11,39,52,0.10)", whiteSpace: "nowrap" }}>MGMA Benchmark</th>
-                <th style={{ padding: "12px 14px", textAlign: "left", fontSize: 10.5, fontWeight: 600, fontFamily: "'IBM Plex Mono', monospace", letterSpacing: "0.1em", textTransform: "uppercase", color: "#bd852f", borderBottom: "1px solid rgba(11,39,52,0.10)", whiteSpace: "nowrap" }}>Industry Avg</th>
-                <th style={{ padding: "12px 14px", textAlign: "left", fontSize: 10.5, fontWeight: 600, fontFamily: "'IBM Plex Mono', monospace", letterSpacing: "0.1em", textTransform: "uppercase", color: "#c2553d", borderBottom: "1px solid rgba(11,39,52,0.10)", whiteSpace: "nowrap" }}>Red Flag</th>
-                <th style={{ padding: "12px 14px", textAlign: "left", fontSize: 10.5, fontWeight: 600, fontFamily: "'IBM Plex Mono', monospace", letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8", borderBottom: "1px solid rgba(11,39,52,0.10)" }}>Key Insight</th>
+                <th style={{ padding: "12px 14px", textAlign: "left", fontSize: 10.5, fontWeight: 600, fontFamily: "var(--font-ibm-plex-mono), monospace", letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8", borderBottom: "1px solid rgba(11,39,52,0.10)", whiteSpace: "nowrap" }}>KPI</th>
+                <th style={{ padding: "12px 14px", textAlign: "left", fontSize: 10.5, fontWeight: 600, fontFamily: "var(--font-ibm-plex-mono), monospace", letterSpacing: "0.1em", textTransform: "uppercase", color: "#0c8174", borderBottom: "1px solid rgba(11,39,52,0.10)", whiteSpace: "nowrap" }}>Best-in-Class</th>
+                <th style={{ padding: "12px 14px", textAlign: "left", fontSize: 10.5, fontWeight: 600, fontFamily: "var(--font-ibm-plex-mono), monospace", letterSpacing: "0.1em", textTransform: "uppercase", color: "#0b2734", borderBottom: "1px solid rgba(11,39,52,0.10)", whiteSpace: "nowrap" }}>MGMA Benchmark</th>
+                <th style={{ padding: "12px 14px", textAlign: "left", fontSize: 10.5, fontWeight: 600, fontFamily: "var(--font-ibm-plex-mono), monospace", letterSpacing: "0.1em", textTransform: "uppercase", color: "#bd852f", borderBottom: "1px solid rgba(11,39,52,0.10)", whiteSpace: "nowrap" }}>Industry Avg</th>
+                <th style={{ padding: "12px 14px", textAlign: "left", fontSize: 10.5, fontWeight: 600, fontFamily: "var(--font-ibm-plex-mono), monospace", letterSpacing: "0.1em", textTransform: "uppercase", color: "#c2553d", borderBottom: "1px solid rgba(11,39,52,0.10)", whiteSpace: "nowrap" }}>Red Flag</th>
+                <th style={{ padding: "12px 14px", textAlign: "left", fontSize: 10.5, fontWeight: 600, fontFamily: "var(--font-ibm-plex-mono), monospace", letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8", borderBottom: "1px solid rgba(11,39,52,0.10)" }}>Key Insight</th>
               </tr>
             </thead>
             <tbody>
@@ -298,7 +298,7 @@ export default function BenchmarksPage() {
       <div style={{ ...CARD, padding: 0, overflow: "hidden" }}>
         <div style={{ background: "#0b2734", padding: "18px 22px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
           <div>
-            <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "#14b8a6", margin: "0 0 5px" }}>
+            <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "#14b8a6", margin: "0 0 5px" }}>
               Simera Network Intelligence
             </p>
             <h2 style={{ fontSize: 17, fontWeight: 700, color: "#eaf2f3", letterSpacing: "-0.02em", margin: "0 0 4px" }}>
@@ -346,11 +346,11 @@ export default function BenchmarksPage() {
                     <tr key={i} style={{ background: i % 2 === 0 ? "#fff" : "#fafbfb", borderBottom: "1px solid rgba(11,39,52,0.06)" }}>
                       <td style={{ padding: "12px 14px", fontWeight: 600, color: "#0b2734" }}>{row.payer}</td>
                       <td style={{ padding: "12px 14px" }}>
-                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, background: "rgba(11,39,52,0.07)", padding: "2px 7px", borderRadius: 5, color: "#0b2734" }}>
+                        <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 12, background: "rgba(11,39,52,0.07)", padding: "2px 7px", borderRadius: 5, color: "#0b2734" }}>
                           {row.code}
                         </span>
                       </td>
-                      <td style={{ padding: "12px 14px", fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: "#5c747e" }}>{row.n.toLocaleString()}</td>
+                      <td style={{ padding: "12px 14px", fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 12, color: "#5c747e" }}>{row.n.toLocaleString()}</td>
                       <td style={{ padding: "12px 14px" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                           <div style={{ width: 52, height: 6, borderRadius: 3, background: "rgba(11,39,52,0.08)", overflow: "hidden" }}>

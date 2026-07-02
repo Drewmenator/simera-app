@@ -14,7 +14,7 @@ const CARD: React.CSSProperties = {
 };
 
 const MONO: React.CSSProperties = {
-  fontFamily: "'IBM Plex Mono', monospace",
+  fontFamily: "var(--font-ibm-plex-mono), monospace",
   fontSize: 10.5,
   letterSpacing: "0.13em",
   textTransform: "uppercase" as const,
@@ -157,7 +157,7 @@ export default function ROIPage() {
                 type="text"
                 value={formatInput(monthlyCollections)}
                 onChange={(e) => handleMoneyInput(e.target.value)}
-                style={{ flex: 1, border: "none", outline: "none", background: "transparent", fontFamily: "'IBM Plex Mono', monospace", fontSize: 19, fontWeight: 600, color: "#0b2734" }}
+                style={{ flex: 1, border: "none", outline: "none", background: "transparent", fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 19, fontWeight: 600, color: "#0b2734" }}
               />
             </div>
             <input
@@ -166,7 +166,7 @@ export default function ROIPage() {
               onChange={(e) => setMonthlyCollections(Number(e.target.value))}
               style={{ width: "100%", height: 6, borderRadius: 4, margin: "10px 0 4px", cursor: "pointer", accentColor: "#0b2734" }}
             />
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#8aa0a8", fontFamily: "'IBM Plex Mono', monospace" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#8aa0a8", fontFamily: "var(--font-ibm-plex-mono), monospace" }}>
               <span>$20K</span><span>$2M</span>
             </div>
             {/* MGMA specialty benchmark callout */}
@@ -197,7 +197,7 @@ export default function ROIPage() {
               <span style={MONO}>Current Denial Rate{prefilled ? " ↑ from your 835" : ""}</span>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 {isAboveMedian && (
-                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 999, background: "#f8e8e3", color: "#c2553d" }}>
+                  <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 999, background: "#f8e8e3", color: "#c2553d" }}>
                     above {industryBenchmarkDenial}% median
                   </span>
                 )}
@@ -210,7 +210,7 @@ export default function ROIPage() {
               onChange={(e) => setDenialRate(Number(e.target.value))}
               style={{ width: "100%", height: 6, borderRadius: 4, margin: "0 0 4px", cursor: "pointer", accentColor: "#c2553d" }}
             />
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#8aa0a8", fontFamily: "'IBM Plex Mono', monospace" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "#8aa0a8", fontFamily: "var(--font-ibm-plex-mono), monospace" }}>
               <span>5% (best-in-class)</span><span>30%</span>
             </div>
             {/* Claim count context */}
@@ -286,14 +286,14 @@ export default function ROIPage() {
           <div style={{ position: "absolute", right: -100, top: -100, width: 320, height: 320, borderRadius: "50%", background: "radial-gradient(circle, rgba(20,184,166,0.16), transparent 65%)", pointerEvents: "none" }} />
           <div className="flex items-start justify-between flex-wrap" style={{ gap: 28, position: "relative", zIndex: 1 }}>
             <div style={{ minWidth: 0 }}>
-              <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "#14b8a6" }}>Expected Annual Return</p>
+              <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "#14b8a6" }}>Expected Annual Return</p>
               <p className="text-[36px] md:text-[48px]" style={{ fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1, marginTop: 10, color: "#14b8a6", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
                 {formatMoney(roi.annualReturn)}
               </p>
               <p style={{ fontSize: 13.5, color: "#8fabb5", marginTop: 8 }}>vs. {formatMoney(roi.annualCost)}/year cost</p>
             </div>
             <div style={{ textAlign: "right", flexShrink: 0 }}>
-              <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "#14b8a6", whiteSpace: "nowrap" }}>ROI</p>
+              <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "#14b8a6", whiteSpace: "nowrap" }}>ROI</p>
               <p className="text-[36px] md:text-[48px]" style={{ fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1, marginTop: 10, color: "#fff", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
                 {roi.roiPct > 999 ? "999+%" : `${roi.roiPct}%`}
               </p>

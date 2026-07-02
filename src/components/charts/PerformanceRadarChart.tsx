@@ -10,7 +10,7 @@ export default function PerformanceRadarChart({ data }: { data: { metric: string
         <PolarGrid stroke="rgba(11,39,52,0.10)" />
         <PolarAngleAxis
           dataKey="metric"
-          tick={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9.5, fill: "#8aa0a8", letterSpacing: "0.04em" }}
+          tick={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 9.5, fill: "#8aa0a8", letterSpacing: "0.04em" }}
         />
         <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
         <Radar name="Median" dataKey="median" stroke="#8aa0a8" fill="#8aa0a8" fillOpacity={0.12} strokeWidth={1.5} dot={{ fill: "#8aa0a8", r: 3 }} />

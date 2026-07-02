@@ -29,7 +29,7 @@ function GetStartedScreen({
             </div>
             <div>
               <div style={{ fontSize: 18, fontWeight: 800, letterSpacing: "-0.02em", color: "#eaf2f3" }}>simera</div>
-              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9, fontWeight: 500, letterSpacing: "0.18em", color: "#14b8a6", textTransform: "uppercase", marginTop: 2 }}>health</div>
+              <div style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 9, fontWeight: 500, letterSpacing: "0.18em", color: "#14b8a6", textTransform: "uppercase", marginTop: 2 }}>health</div>
             </div>
           </div>
           <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: "-0.02em", color: "#eaf2f3", margin: "0 0 8px" }}>
@@ -243,11 +243,11 @@ function FeatureTour({ onDismiss, practiceName, leakage, recovery }: {
           {step === 0 && (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 16 }}>
               <div style={{ background: "#f8e8e3", borderRadius: 10, padding: "12px 14px" }}>
-                <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9.5, letterSpacing: "0.12em", textTransform: "uppercase", color: "#c2553d", margin: "0 0 4px" }}>Leakage found</p>
+                <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 9.5, letterSpacing: "0.12em", textTransform: "uppercase", color: "#c2553d", margin: "0 0 4px" }}>Leakage found</p>
                 <p style={{ fontSize: 20, fontWeight: 800, color: "#0b2734", margin: 0, fontVariantNumeric: "tabular-nums" }}>{fmt(leakage)}</p>
               </div>
               <div style={{ background: "#e4f4f1", borderRadius: 10, padding: "12px 14px" }}>
-                <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 9.5, letterSpacing: "0.12em", textTransform: "uppercase", color: "#0c8174", margin: "0 0 4px" }}>Recoverable</p>
+                <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 9.5, letterSpacing: "0.12em", textTransform: "uppercase", color: "#0c8174", margin: "0 0 4px" }}>Recoverable</p>
                 <p style={{ fontSize: 20, fontWeight: 800, color: "#0b2734", margin: 0, fontVariantNumeric: "tabular-nums" }}>{fmt(recovery)}</p>
               </div>
             </div>

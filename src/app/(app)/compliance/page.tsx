@@ -28,7 +28,7 @@ const CARD: React.CSSProperties = {
 };
 
 const MONO: React.CSSProperties = {
-  fontFamily: "'IBM Plex Mono', monospace",
+  fontFamily: "var(--font-ibm-plex-mono), monospace",
   fontSize: 10.5,
   letterSpacing: "0.13em",
   textTransform: "uppercase",
@@ -158,7 +158,7 @@ function SevBadge({ sev }: { sev: ComplianceTask["severity"] }) {
         display: "inline-flex",
         alignItems: "center",
         gap: 5,
-        fontFamily: "'IBM Plex Mono', monospace",
+        fontFamily: "var(--font-ibm-plex-mono), monospace",
         fontSize: 10.5,
         fontWeight: 600,
         padding: "3px 9px",
@@ -189,7 +189,7 @@ function StatusBadge({ status }: { status: ComplianceTask["status"] }) {
   return (
     <span
       style={{
-        fontFamily: "'IBM Plex Mono', monospace",
+        fontFamily: "var(--font-ibm-plex-mono), monospace",
         fontSize: 10.5,
         fontWeight: 600,
         padding: "3px 9px",
@@ -438,7 +438,7 @@ function BreachRow({ alert }: { alert: BreachAlert }) {
       <div style={{ textAlign: "right", flexShrink: 0 }}>
         <span
           style={{
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "var(--font-ibm-plex-mono), monospace",
             fontSize: 10.5,
             fontWeight: 700,
             padding: "3px 9px",
@@ -538,7 +538,7 @@ export default function CompliancePage() {
           border: `1px solid ${donePct >= 70 ? "rgba(12,129,116,0.25)" : donePct >= 40 ? "rgba(189,133,47,0.25)" : "rgba(194,85,61,0.25)"}`,
           flexShrink: 0,
         }}>
-          <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "#8aa0a8" }}>
+          <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "#8aa0a8" }}>
             Score
           </span>
           <span style={{
@@ -856,7 +856,7 @@ export default function CompliancePage() {
         ].map((phase) => (
           <div key={phase.phase} style={{ marginBottom: 22 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10.5, fontWeight: 700, padding: "4px 12px", borderRadius: 999, background: phase.bg, color: phase.color, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+              <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10.5, fontWeight: 700, padding: "4px 12px", borderRadius: 999, background: phase.bg, color: phase.color, letterSpacing: "0.08em", textTransform: "uppercase" }}>
                 {phase.phase}
               </span>
               <span style={{ fontSize: 13, color: "#5c747e", fontWeight: 500 }}>{phase.label}</span>

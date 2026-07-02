@@ -12,7 +12,7 @@ const S = {
   page: {
     minHeight: "100vh",
     background: "#f6f8f8",
-    fontFamily: "'Hanken Grotesk', system-ui, sans-serif",
+    fontFamily: "var(--font-hanken), system-ui, sans-serif",
   } as React.CSSProperties,
 
   inner: {
@@ -32,7 +32,7 @@ const S = {
   } as React.CSSProperties,
 
   eyebrow: {
-    fontFamily: "'IBM Plex Mono', monospace",
+    fontFamily: "var(--font-ibm-plex-mono), monospace",
     fontSize: 11,
     letterSpacing: "0.14em",
     textTransform: "uppercase" as const,
@@ -436,7 +436,7 @@ export default function TrustPage() {
                 display: "flex", alignItems: "center", justifyContent: "center",
                 flexShrink: 0,
               }}>
-                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 700, color: "#14b8a6" }}>{step}</span>
+                <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, fontWeight: 700, color: "#14b8a6" }}>{step}</span>
               </div>
               <div>
                 <p style={{ fontSize: 14, fontWeight: 700, color: "#0b2734", margin: "0 0 4px" }}>{title}</p>
@@ -465,7 +465,7 @@ export default function TrustPage() {
           padding: "32px 28px",
           textAlign: "center",
         }}>
-          <p style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "#14b8a6", marginBottom: 12 }}>
+          <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "#14b8a6", marginBottom: 12 }}>
             Ready to see it in action?
           </p>
           <h3 style={{ fontSize: 22, fontWeight: 800, color: "#eaf2f3", letterSpacing: "-0.02em", margin: "0 0 10px" }}>
