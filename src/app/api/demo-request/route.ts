@@ -3,14 +3,14 @@
  *
  * Receives book-demo form submissions and relays them to the backend's
  * /internal/notify-demo-request endpoint, which emails the team inbox.
- * Never fails the user — lead capture must not depend on notification infra.
+ * Never fails the user. Lead capture must not depend on notification infra.
  *
  * Environment variables:
  *   INTERNAL_NOTIFY_TOKEN   Shared secret for the backend relay (must match
  *                           the ECS task env). Absent → dev-mode log only.
  *   NEXT_PUBLIC_API_URL     Backend base URL.
  *
- * Public route (declared in src/proxy.ts) — hardened accordingly:
+ * Public route (declared in src/proxy.ts). Hardened accordingly:
  * per-IP rate limit + CR/LF stripped from every interpolated field.
  */
 
@@ -26,7 +26,7 @@ interface DemoRequestBody {
 }
 
 // Best-effort per-IP rate limit. Serverless instances are ephemeral, so this
-// is per-instance — good enough to stop naive form spam, not a security
+// is per-instance, good enough to stop naive form spam, not a security
 // boundary (the backend relay has its own limit + shared-secret gate).
 const RATE_LIMIT = 5;
 const RATE_WINDOW_MS = 60 * 60 * 1000;
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
       req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
     if (rateLimited(ip)) {
       return NextResponse.json(
-        { error: "Too many requests — please try again later." },
+        { error: "Too many requests. Please try again later." },
         { status: 429 },
       );
     }
@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    const subject = `[Demo Request] ${practice} — ${specialty}`;
+    const subject = `[Demo Request] ${practice}. ${specialty}`;
     const text = [
       `New demo request from the Simera book-demo page.`,
       ``,
@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("[demo-request] handler error:", err);
-    // Always return 200 — never fail the user on a lead-capture endpoint
+    // Always return 200, never fail the user on a lead-capture endpoint
     return NextResponse.json({ ok: true });
   }
 }

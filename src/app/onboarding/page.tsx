@@ -46,9 +46,9 @@ const SPECIALTIES = [
 ];
 
 const PROVIDER_COUNTS = [
-  { value: "1-5", label: "1 – 5 providers" },
-  { value: "6-10", label: "6 – 10 providers" },
-  { value: "11-25", label: "11 – 25 providers" },
+  { value: "1-5", label: "1-5 providers" },
+  { value: "6-10", label: "6-10 providers" },
+  { value: "11-25", label: "11-25 providers" },
   { value: "25+", label: "25+ providers" },
 ];
 
@@ -291,7 +291,7 @@ function Step1Baa({
             Business Associate Agreement
           </h2>
           <p style={{ margin: "2px 0 0", fontSize: 12, color: C.muted, fontFamily: "var(--font-ibm-plex-mono), monospace", letterSpacing: "0.04em" }}>
-            HIPAA REQUIRED — BEFORE UPLOAD
+            HIPAA REQUIRED. BEFORE UPLOAD
           </p>
         </div>
       </div>
@@ -598,7 +598,7 @@ function Step3Ehr({ onContinue, onSkip }: { onContinue: () => void; onSkip: () =
       }
       return;
     }
-    // Other EHRs — coming soon, just proceed
+    // Other EHRs. Coming soon, just proceed
     onContinue();
   };
 
@@ -624,7 +624,7 @@ function Step3Ehr({ onContinue, onSkip }: { onContinue: () => void; onSkip: () =
             Connect your EHR
           </h2>
           <p style={{ margin: "2px 0 0", fontSize: 12, color: C.muted }}>
-            Or upload 835 files manually — your choice
+            Or upload 835 files manually. Your choice
           </p>
         </div>
       </div>
@@ -681,7 +681,7 @@ function Step3Ehr({ onContinue, onSkip }: { onContinue: () => void; onSkip: () =
           directly in the next step. Export them from your practice management system as .835, .edi, or .txt files.
           <span style={{ display: "block", marginTop: 6, fontSize: 12 }}>
             <strong style={{ color: C.navy }}>Pro tip:</strong> after your first audit, upload your payer
-            fee schedules on the <strong>Contracts</strong> page — underpayment detection then uses your
+            fee schedules on the <strong>Contracts</strong> page. Underpayment detection then uses your
             contracted rates instead of benchmark estimates.
           </span>
         </div>
@@ -703,7 +703,7 @@ function Step3Ehr({ onContinue, onSkip }: { onContinue: () => void; onSkip: () =
           <strong style={{ color: C.navy }}>OAuth integration:</strong> We&apos;ll open athenahealth&apos;s
           authorization page. After you grant access, 835 files will sync automatically.
           <span style={{ display: "block", marginTop: 4, fontSize: 12, color: "#0369a1" }}>
-            Note: Full athenahealth OAuth is coming soon — you&apos;ll be redirected to a stub page for now.
+            Note: Full athenahealth OAuth is coming soon. You&apos;ll be redirected to a stub page for now.
           </span>
         </div>
       )}
@@ -896,7 +896,7 @@ function Step4Upload({
           {files.length > 0 ? `${files.length} file${files.length > 1 ? "s" : ""} selected` : "Drop your 835 files here"}
         </p>
         <p style={{ margin: 0, fontSize: 12, color: C.muted }}>
-          .835 · .edi · .txt — or click to browse
+          .835 · .edi · .txt, or click to browse
         </p>
         <input
           id="onboarding-file-input"
@@ -945,14 +945,14 @@ function Step4Upload({
       {(step === "uploading" || step === "processing") && (
         <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", background: "#f0fdf8", borderRadius: 8, marginBottom: 16, fontSize: 13, color: C.teal }}>
           <Loader2 size={16} style={{ animation: "spin 1s linear infinite", flexShrink: 0 }} />
-          {step === "uploading" ? "Uploading files…" : "Analyzing your 835 data — usually under 30 seconds…"}
+          {step === "uploading" ? "Uploading files…" : "Analyzing your 835 data, usually under 30 seconds…"}
         </div>
       )}
 
       {step === "done" && (
         <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", background: "#f0fdf8", borderRadius: 8, marginBottom: 16, fontSize: 13, color: C.teal, fontWeight: 600 }}>
           <CheckCircle2 size={16} color={C.tealBright} />
-          Analysis complete — loading your dashboard…
+          Analysis complete. Loading your dashboard…
         </div>
       )}
 

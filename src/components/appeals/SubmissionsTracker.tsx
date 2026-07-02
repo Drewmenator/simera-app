@@ -227,7 +227,7 @@ function AnalyticsSection({ byPayer, byCode, totalWon, winRate, totalRecovered }
           {/* Summary chips */}
           <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
             <Chip label="Appeals Won" value={String(totalWon)} color="#0c8174" bg="#e4f4f1" />
-            <Chip label="Win Rate" value={winRate !== null ? `${winRate}%` : "—"} color="#0c8174" bg="#e4f4f1" />
+            <Chip label="Win Rate" value={winRate !== null ? `${winRate}%` : " - "} color="#0c8174" bg="#e4f4f1" />
             <Chip
               label="Total Recovered"
               value={`$${(totalRecovered / 1000).toFixed(1)}K`}
@@ -393,7 +393,7 @@ function SubmissionRow({
               ? `$${(sub.outcomeAmount ?? sub.expectedRecovery) >= 1000
                   ? `${((sub.outcomeAmount ?? sub.expectedRecovery) / 1000).toFixed(0)}K`
                   : (sub.outcomeAmount ?? sub.expectedRecovery).toLocaleString()}`
-              : "—"
+              : " - "
             }
           </p>
           {sub.status === "won" && outcomeDate && (

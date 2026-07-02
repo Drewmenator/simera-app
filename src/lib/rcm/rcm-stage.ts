@@ -1,5 +1,5 @@
 // ============================================================================
-// RCM stage model — TypeScript domain layer
+// RCM stage model. TypeScript domain layer
 // Mirrors 20260623_rcm_stage_model.sql (target table: public.findings).
 // Keep this as the semantic layer (labels, ordering, CARC priors) on top of
 // whatever `supabase gen types` produces for the findings row.
@@ -67,7 +67,7 @@ export interface LeakageByStageRow {
 }
 
 // ---------------------------------------------------------------------------
-// CARC priors — mirrors denial_code_stage_prior. Prior for AI attribution
+// CARC priors. Mirrors denial_code_stage_prior. Prior for AI attribution
 // against findings.denial_reason_code; human_confirmed always wins.
 // ---------------------------------------------------------------------------
 export const CARC_STAGE_PRIOR: Record<string, RcmStage> = {

@@ -159,10 +159,10 @@ export function DenialWorkQueue({ findings, practiceName }: DenialWorkQueueProps
   // expandable cards; mounting them all tanks INP/scroll. Render 50, load more.
   const [visibleCount, setVisibleCount] = useState(50);
 
-  // Triage is O(n log n) over every finding — memoize so it doesn't re-run on
+  // Triage is O(n log n) over every finding. Memoize so it doesn't re-run on
   // each expand/collapse/copy state change (PERF-L1).
   const { active, skipped } = useMemo(() => {
-    // Only denial-type findings (not undercoding/underpayment — different workflows)
+    // Only denial-type findings (not undercoding/underpayment. Different workflows)
     const denialFindings = findings.filter(f =>
       ["unworked_denial", "wrong_writeoff", "timely_filing"].includes(f.category)
     );
@@ -232,7 +232,7 @@ export function DenialWorkQueue({ findings, practiceName }: DenialWorkQueueProps
     const win = window.open("", "_blank");
     if (win) {
       win.document.write(`
-        <html><head><title>Fax Cover Sheet — ${f.payer_name}</title>
+        <html><head><title>Fax Cover Sheet. ${f.payer_name}</title>
         <style>
           body { font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.7;
                  padding: 48px; max-width: 680px; margin: 0 auto; color: #111; }
@@ -340,7 +340,7 @@ export function DenialWorkQueue({ findings, practiceName }: DenialWorkQueueProps
                     {(finding.recovery_confidence === "industry_estimate" || !finding.recovery_confidence) && (
                       <span
                         className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-slate-100 text-slate-500 border border-slate-200"
-                        title="Industry-average estimate — upgrades to your own verified win rate as you record appeal outcomes"
+                        title="Industry-average estimate. Upgrades to your own verified win rate as you record appeal outcomes"
                       >
                         Industry est.
                       </span>
@@ -369,7 +369,7 @@ export function DenialWorkQueue({ findings, practiceName }: DenialWorkQueueProps
             <div className="p-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div>
                 <h3 className="text-xs font-semibold text-foreground uppercase tracking-wide mb-3">
-                  Appeal Package — CARC {primaryCarcCode}
+                  Appeal Package. CARC {primaryCarcCode}
                 </h3>
                 <EvidenceChecklist carcCode={primaryCarcCode} />
               </div>
@@ -492,7 +492,7 @@ export function DenialWorkQueue({ findings, practiceName }: DenialWorkQueueProps
               ? <ChevronDown className="w-4 h-4 text-muted-foreground" />
               : <ChevronRight className="w-4 h-4 text-muted-foreground" />}
             <span className="text-xs font-semibold text-muted-foreground">
-              Skip these — not worth appealing ({skipped.length})
+              Skip these, not worth appealing ({skipped.length})
             </span>
             <span className="ml-auto text-[10px] text-muted-foreground hidden sm:inline">don&apos;t waste effort on unwinnable denials</span>
           </button>

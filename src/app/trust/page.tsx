@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Security & Trust — Simera Health",
+  title: "Security & Trust. Simera Health",
   description:
     "How Simera Health protects your practice's patient data: HIPAA compliance, vendor BAAs, encryption, access controls, and subprocessor transparency.",
 };
@@ -161,7 +161,7 @@ interface VendorRow {
   vendor: string;
   role: string;
   dataType: string;
-  baaStatus: "Signed" | "Pending" | "Required — contact us";
+  baaStatus: "Signed" | "Pending" | "Required. Contact us";
   link?: string;
   certifications?: string;
 }
@@ -198,7 +198,7 @@ function VendorTable({ vendors }: { vendors: VendorRow[] }) {
                   label={v.baaStatus}
                 />
               </td>
-              <td style={{ padding: "12px 14px", fontSize: 12, color: "#5c747e" }}>{v.certifications ?? "—"}</td>
+              <td style={{ padding: "12px 14px", fontSize: 12, color: "#5c747e" }}>{v.certifications ?? " - "}</td>
             </tr>
           ))}
         </tbody>
@@ -212,7 +212,7 @@ function VendorTable({ vendors }: { vendors: VendorRow[] }) {
 const VENDORS: VendorRow[] = [
   {
     vendor: "Anthropic",
-    role: "AI engine — generates appeal letters, denial insights",
+    role: "AI engine. Generates appeal letters, denial insights",
     dataType: "De-identified claim descriptions (no patient name/DOB)",
     baaStatus: "Pending",
     link: "https://www.anthropic.com",
@@ -228,7 +228,7 @@ const VENDORS: VendorRow[] = [
   },
   {
     vendor: "Supabase",
-    role: "Database — claim ledger, audit history, user settings",
+    role: "Database. Claim ledger, audit history, user settings",
     dataType: "De-identified claim tokens (HMAC), audit results",
     baaStatus: "Pending",
     link: "https://supabase.com",
@@ -237,14 +237,14 @@ const VENDORS: VendorRow[] = [
   {
     vendor: "Vercel",
     role: "Frontend hosting",
-    dataType: "No PHI — static assets and API calls only",
+    dataType: "No PHI. Static assets and API calls only",
     baaStatus: "Pending",
     link: "https://vercel.com",
     certifications: "SOC 2 Type II",
   },
   {
     vendor: "Clerk",
-    role: "Authentication — user identity, session management",
+    role: "Authentication. User identity, session management",
     dataType: "Email, name, clerk user ID (no PHI)",
     baaStatus: "Pending",
     link: "https://clerk.com",
@@ -252,9 +252,9 @@ const VENDORS: VendorRow[] = [
   },
   {
     vendor: "Stripe",
-    role: "Payment processing — subscription billing",
+    role: "Payment processing. Subscription billing",
     dataType: "Payment card data only (no PHI ever)",
-    baaStatus: "Required — contact us",
+    baaStatus: "Required. Contact us",
     link: "https://stripe.com",
     certifications: "PCI DSS Level 1, SOC 2",
   },
@@ -269,7 +269,7 @@ const SECURITY_CONTROLS: ControlCardProps[] = [
     items: [
       "TLS 1.3 in transit for all API and web traffic",
       "AES-256 encryption at rest for all database records",
-      "Portal credentials encrypted with Fernet before storage — never plaintext",
+      "Portal credentials encrypted with Fernet before storage, never plaintext",
       "Clerk JWT tokens signed with RS256; verified on every API request",
     ],
   },
@@ -279,11 +279,11 @@ const SECURITY_CONTROLS: ControlCardProps[] = [
     status: "done",
     statusLabel: "In production",
     items: [
-      "835 files processed entirely in-memory — never written to container filesystem",
+      "835 files processed entirely in-memory, never written to container filesystem",
       "PHI scrubbed from application logs with [redacted] pattern",
       "Claim identifiers stored as HMAC-SHA256 tokens; original values never persisted",
       "S3 upload bucket is private with server-side encryption; objects deleted after processing",
-      "SUPABASE_SERVICE_KEY is server-only — never exposed to browser clients",
+      "SUPABASE_SERVICE_KEY is server-only, never exposed to browser clients",
     ],
   },
   {
@@ -293,9 +293,9 @@ const SECURITY_CONTROLS: ControlCardProps[] = [
     statusLabel: "In production",
     items: [
       "Clerk-issued JWTs required for all authenticated routes",
-      "Row Level Security (RLS) enforced at the database level — users can only read their own data",
+      "Row Level Security (RLS) enforced at the database level. Users can only read their own data",
       "Supabase service-role key restricted to server-side functions only",
-      "HMAC claim tokens are scoped per practice — cross-practice claim identification is cryptographically impossible",
+      "HMAC claim tokens are scoped per practice. Cross-practice claim identification is cryptographically impossible",
     ],
   },
   {
@@ -327,7 +327,7 @@ const SECURITY_CONTROLS: ControlCardProps[] = [
     statusLabel: "In progress",
     items: [
       "HIPAA Business Associate Agreements (BAAs) required from all subprocessors before PHI enters system",
-      "SOC 2 Type II audit scheduled — Q4 2026",
+      "SOC 2 Type II audit scheduled. Q4 2026",
       "HIPAA Security Rule (45 CFR Part 164) technical safeguards implemented",
       "Workforce training and incident response plan in development",
     ],
@@ -339,7 +339,7 @@ const SECURITY_CONTROLS: ControlCardProps[] = [
     statusLabel: "In production",
     items: [
       "Self-serve account erasure: every audit run, finding, claim record, chat history, upload record, and credential is permanently deleted on request",
-      "Raw 835 files are never stored — parsed in memory and discarded; only derived results persist",
+      "Raw 835 files are never stored. Parsed in memory and discarded; only derived results persist",
       "Deliberate legal holds survive erasure: HIPAA access logs, signed BAA records, and billing records",
       "Duplicate-upload detection prevents accidental re-ingestion of previously processed remittances",
     ],
@@ -392,11 +392,11 @@ export default function TrustPage() {
               Ready to use Simera with real practice data?
             </p>
             <p style={{ fontSize: 14, color: "#8fabb5", margin: 0 }}>
-              Contact us to initiate the BAA process — we&apos;ll walk through each subprocessor agreement.
+              Contact us to initiate the BAA process. We&apos;ll walk through each subprocessor agreement.
             </p>
           </div>
           <a
-            href="mailto:security@simerahealth.org?subject=BAA Request — Simera Health"
+            href="mailto:security@simerahealth.org?subject=BAA Request. Simera Health"
             style={{
               display: "inline-flex", alignItems: "center", gap: 8,
               padding: "10px 20px", borderRadius: 9,

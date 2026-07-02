@@ -1,5 +1,5 @@
 // ============================================================================
-// LeakageByStage — dashboard panel for the leakage_by_stage view
+// LeakageByStage. Dashboard panel for the leakage_by_stage view
 // Stack: React + Tailwind. No shadcn/ui dependency, so it drops into any
 // Tailwind app. Reads the view through your Supabase client.
 //
@@ -84,7 +84,7 @@ export function LeakageByStage({ rows }: { rows: LeakageByStageRow[] }) {
   const totalBilled = rows.reduce((s, r) => s + r.billedAtRisk, 0);
   const totalFindings = rows.reduce((s, r) => s + r.findingCount, 0);
 
-  // share of open recoverable — the actionable number, not gross exposure
+  // share of open recoverable, the actionable number, not gross exposure
   const share = (r: LeakageByStageRow) =>
     totalOpen > 0 ? (r.openRecoverable / totalOpen) * 100 : 0;
 

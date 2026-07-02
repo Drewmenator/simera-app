@@ -9,12 +9,12 @@ const isPublicRoute = createRouteMatcher([
   "/trust(.*)",
   "/book-demo(.*)",
   // Lead-capture API for the public book-demo form. Without this entry the
-  // middleware redirected anonymous POSTs to sign-in — every inbound demo
+  // middleware redirected anonymous POSTs to sign-in. Every inbound demo
   // request silently failed. Exact path only; rate-limited in the handler.
   "/api/demo-request",
 ]);
 
-// Beta allowlist — emails that can access the app. Env-only (no hardcoded
+// Beta allowlist. Emails that can access the app. Env-only (no hardcoded
 // fallback): set SEED_ALLOWED_EMAILS and/or ALLOWED_EMAILS in Vercel as
 // comma-separated lists. An empty allowlist denies everyone (fail closed).
 function getAllowedEmails(): Set<string> {
@@ -80,7 +80,7 @@ export default clerkMiddleware(async (auth, request) => {
 
   // Check allowlist for app routes. Prefer the session claim (free); fall
   // back to Clerk's backend API when the token has no email claim. Deny on
-  // anything unresolvable — the previous claim-only check silently admitted
+  // anything unresolvable, the previous claim-only check silently admitted
   // every session without an email claim.
   const { sessionClaims } = await auth();
   const claimEmail: string = (

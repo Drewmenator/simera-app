@@ -274,7 +274,7 @@ export default function HomePage() {
           color: "#9a6a1e", fontSize: 13, display: "flex", alignItems: "center", gap: 10,
         }}>
           <span style={{ fontSize: 15 }}>⚡</span>
-          <span><b>Leakage estimated from denial rates</b> — exact dollar amounts weren&apos;t returned by the API. Numbers reflect your payer denial rates × average claim value. Re-upload to get precise figures.</span>
+          <span><b>Leakage estimated from denial rates</b>. Exact dollar amounts weren&apos;t returned by the API. Numbers reflect your payer denial rates × average claim value. Re-upload to get precise figures.</span>
         </div>
       )}
 
