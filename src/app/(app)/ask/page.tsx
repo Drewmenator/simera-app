@@ -213,9 +213,9 @@ function buildGreeting(totalLeakage: number, expectedRecovery: number, isLive: b
   const leakK = `**$${Math.round(totalLeakage / 1000)}K**`;
   const recovK = `**$${Math.round(expectedRecovery / 1000)}K**`;
   if (isLive) {
-    return `I've analyzed your 835 data (${dataRange}). I found ${leakK} in revenue leakage — ${recovK} is recoverable.\n\nI can explain your denial patterns, draft appeal letters, model what fixing a specific problem is worth, or compare you to industry benchmarks. What would you like to work on?`;
+    return `I've analyzed your 835 data (${dataRange}). I found ${leakK} in revenue leakage. ${recovK} is recoverable.\n\nI can explain your denial patterns, draft appeal letters, model what fixing a specific problem is worth, or compare you to industry benchmarks. What would you like to work on?`;
   }
-  return `I'm showing you demo data from a 4-physician family practice. There's ${leakK} in revenue leakage — ${recovK} is recoverable.\n\nUpload your own 835 file to see your practice's numbers. Or ask me anything — I can explain denial patterns, draft appeal letters, or model ROI for your specific situation.`;
+  return `I'm showing you demo data from a 4-physician family practice. There's ${leakK} in revenue leakage. ${recovK} is recoverable.\n\nUpload your own 835 file to see your practice's numbers. Or ask me anything. I can explain denial patterns, draft appeal letters, or model ROI for your specific situation.`;
 }
 
 function AskPageInner() {

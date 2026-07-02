@@ -114,7 +114,7 @@ export default function AppealsPage() {
         ))}
       </div>
 
-      {/* Recovery funnel — proof ledger, visible on both tabs */}
+      {/* Recovery funnel. Proof ledger, visible on both tabs */}
       {(result || dashFindings.length > 0) && (
         <RecoveryFunnel
           identifiedCount={denialFindings.length}
@@ -173,11 +173,11 @@ export default function AppealsPage() {
                 </div>
                 <div className="rounded-xl border border-border bg-card p-4">
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wide font-medium">Denial claims</p>
-                  <p className="text-2xl font-bold text-foreground mt-1 tabular-nums">{totalClaims || "—"}</p>
+                  <p className="text-2xl font-bold text-foreground mt-1 tabular-nums">{totalClaims || " - "}</p>
                 </div>
                 <div className="rounded-xl border border-border bg-card p-4">
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wide font-medium">Payers</p>
-                  <p className="text-2xl font-bold text-foreground mt-1 tabular-nums">{payersAffected || "—"}</p>
+                  <p className="text-2xl font-bold text-foreground mt-1 tabular-nums">{payersAffected || " - "}</p>
                 </div>
               </div>
 
@@ -216,7 +216,7 @@ export default function AppealsPage() {
                   <div>
                     <p className="text-xs font-semibold text-foreground">Underpayment & undercoding findings</p>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      These require a different workflow — contract analysis and coding review rather than denial appeals.
+                      These require a different workflow. Contract analysis and coding review rather than denial appeals.
                       View them in the <Link href="/revenue" className="text-primary hover:underline">Revenue tab</Link>.
                     </p>
                   </div>
@@ -235,7 +235,7 @@ export default function AppealsPage() {
               <h2 className="text-sm font-semibold text-foreground">Denial Cases</h2>
               <p className="text-xs text-muted-foreground mt-0.5">
                 Every denial as a tracked case, sorted by deadline and recoverable dollars. Advance each
-                through the recovery lifecycle — status is saved and survives reloads.
+                through the recovery lifecycle. Status is saved and survives reloads.
               </p>
             </div>
           </div>

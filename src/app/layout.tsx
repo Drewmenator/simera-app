@@ -15,7 +15,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Simera Health — Get paid what you earned.",
+  title: "Simera Health: Get paid what you earned.",
   description:
     "AI-powered revenue intelligence for independent healthcare practices.",
 };

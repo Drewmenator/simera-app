@@ -103,7 +103,7 @@ export function calculateRecoveryFee(recoveredAmount: number): number {
   return Math.max(fee, RECOVERY_PRICING.minimumMonthly); // Floor
 }
 
-// Stripe plan IDs — live production prices
+// Stripe plan IDs. Live production prices
 export const STRIPE_PLANS = {
   starter: "price_1TdaFr9P24voFtaQ1LpaSm0s",
   growth: "price_1TdaIA9P24voFtaQU5ZXkBWQ",

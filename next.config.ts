@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
-// Backend URL — where 835 files and all PHI-bearing API calls go.
+// Backend URL, where 835 files and all PHI-bearing API calls go.
 // In production this is your FastAPI server, NOT Vercel.
-// Vercel serves only HTML/JS/CSS — zero PHI touches Vercel infrastructure.
+// Vercel serves only HTML/JS/CSS. Zero PHI touches Vercel infrastructure.
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 // Extract origin from API_URL for CSP
@@ -38,9 +38,9 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://assets.calendly.com",
               // Fonts
               "font-src 'self' https://fonts.gstatic.com",
-              // Images — Calendly loads avatars/assets in its widget
+              // Images. Calendly loads avatars/assets in its widget
               "img-src 'self' data: blob: https://img.clerk.com https://*.calendly.com",
-              // API calls — backend + Clerk + Calendly (booking page only; no PHI ever sent here)
+              // API calls. Backend + Clerk + Calendly (booking page only; no PHI ever sent here)
               `connect-src 'self' ${API_ORIGIN} http://localhost:8000 http://127.0.0.1:8000 https://clerk.simerahealth.org https://*.clerk.accounts.dev https://api.clerk.dev wss://*.clerk.accounts.dev https://calendly.com https://*.calendly.com`,
               // Frames: Clerk hosted pages + Calendly booking iframe
               "frame-src 'self' https://clerk.simerahealth.org https://*.clerk.accounts.dev https://calendly.com",

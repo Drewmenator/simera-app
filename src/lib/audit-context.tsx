@@ -20,11 +20,11 @@ const AuditContext = createContext<AuditContextValue>({
 
 const PENDING_KEY = "simera_pending_audit_result";
 
-/** Call from onboarding after upload completes — dashboard picks it up instantly. */
+/** Call from onboarding after upload completes. Dashboard picks it up instantly. */
 export function stashAuditResult(result: AuditResult) {
   try {
     sessionStorage.setItem(PENDING_KEY, JSON.stringify(result));
-  } catch { /* quota or SSR — silent */ }
+  } catch { /* quota or SSR. Silent */ }
 }
 
 export function AuditProvider({ children }: { children: ReactNode }) {
@@ -37,7 +37,7 @@ export function AuditProvider({ children }: { children: ReactNode }) {
         sessionStorage.removeItem(PENDING_KEY);
         return JSON.parse(raw) as AuditResult;
       }
-    } catch { /* corrupt data — ignore */ }
+    } catch { /* corrupt data. Ignore */ }
     return null;
   });
   // If we pre-seeded from the stash, no need for a loading state
@@ -53,7 +53,7 @@ export function AuditProvider({ children }: { children: ReactNode }) {
         const latest = await getLatestAudit();
         if (!cancelled && latest) setResultState(latest);
       } catch {
-        // silent — user can still upload
+        // silent. User can still upload
       } finally {
         if (!cancelled) setIsLoading(false);
       }

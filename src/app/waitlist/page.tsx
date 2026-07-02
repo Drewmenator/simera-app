@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Simera Health — Get paid what you earned",
+  title: "Simera Health. Get paid what you earned",
   description:
-    "AI-powered revenue intelligence for independent physician practices. Find every denied claim, underpayment, and wrong write-off in your 835 ERA files — and get the exact appeals that get you paid.",
+    "AI-powered revenue intelligence for independent physician practices. Find every denied claim, underpayment, and wrong write-off in your 835 ERA files, and get the exact appeals that get you paid.",
 };
 
 // ── Primitives ────────────────────────────────────────────────────────────────
@@ -148,7 +148,7 @@ export default function WaitlistPage() {
           marginBottom: 28,
         }}>
           <span style={{ width: 6, height: 6, borderRadius: "50%", background: TEAL, display: "inline-block" }} />
-          <span style={{ fontSize: 12, fontWeight: 600, color: TEAL, letterSpacing: "0.04em" }}>Private beta — physician practices only</span>
+          <span style={{ fontSize: 12, fontWeight: 600, color: TEAL, letterSpacing: "0.04em" }}>Private beta. Physician practices only</span>
         </div>
 
         <h1 style={{
@@ -163,7 +163,7 @@ export default function WaitlistPage() {
           fontSize: 19, color: "#8fabb5", lineHeight: 1.65, maxWidth: "52ch",
           margin: "0 auto 40px",
         }}>
-          Simera finds every denied claim, underpayment, and wrong write-off in your 835 ERA files — and generates the exact appeal that gets you paid.
+          Simera finds every denied claim, underpayment, and wrong write-off in your 835 ERA files, and generates the exact appeal that gets you paid.
         </p>
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, flexWrap: "wrap" }}>
@@ -201,7 +201,7 @@ export default function WaitlistPage() {
           <Stat value="17.1%" label="Avg revenue leakage in primary care (MGMA)" />
           <Stat value="60s" label="Time to first finding from 835 upload" />
           <Stat value="3-tier" label="Win rate intelligence: empirical → network → industry" />
-          <Stat value="0 PHI" label="Stored after processing — HIPAA-compliant architecture" />
+          <Stat value="0 PHI" label="Stored after processing. HIPAA-compliant architecture" />
         </div>
       </section>
 
@@ -209,7 +209,7 @@ export default function WaitlistPage() {
       <section style={{ maxWidth: 860, margin: "0 auto", padding: "72px 32px 56px" }}>
         <div style={{ textAlign: "center", marginBottom: 40 }}>
           <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: TEAL, marginBottom: 10 }}>
-            Sample Audit — Riverview Family Medicine
+            Sample Audit. Riverview Family Medicine
           </p>
           <h2 style={{ fontSize: 32, fontWeight: 800, color: "#eaf2f3", letterSpacing: "-0.025em", margin: "0 0 10px" }}>
             Here&apos;s what Simera found in one month of claims
@@ -237,7 +237,7 @@ export default function WaitlistPage() {
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <SampleFinding payer="United Healthcare" code="CO-97" amount="$8,240" action="Resubmit 14 claims with modifier -59 · 72% network win rate" badge="🌐 Network: 72% win rate" />
           <SampleFinding payer="Aetna" code="CO-4" amount="$6,180" action="Medical necessity letters needed for 9 prior auth denials · Avg 18 days to pay" badge="✓ Your data: 68% win rate" />
-          <SampleFinding payer="BlueCross" code="CO-16" amount="$4,350" action="Missing/invalid data on 11 claims — quickest wins, fastest path to cash" badge="Industry: 66% win rate" />
+          <SampleFinding payer="BlueCross" code="CO-16" amount="$4,350" action="Missing/invalid data on 11 claims. Quickest wins, fastest path to cash" badge="Industry: 66% win rate" />
           <div style={{ textAlign: "center", padding: "12px 0" }}>
             <p style={{ fontSize: 12.5, color: "#5c747e", margin: 0 }}>+ 14 more findings · Full audit on sign-in</p>
           </div>
@@ -253,7 +253,7 @@ export default function WaitlistPage() {
           </h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
             <Step n="01" title="Upload your 835 ERA file" body="Drag and drop any .835 file from your practice management system. Simera validates the EDI structure before processing so you never get garbage output." />
-            <Step n="02" title="Simera analyzes every claim" body="Our AI engine reads every CLP, SVC, and CAS segment — matching denied claims to CARC codes, comparing paid amounts against contracted rates, and flagging wrong write-offs." />
+            <Step n="02" title="Simera analyzes every claim" body="Our AI engine reads every CLP, SVC, and CAS segment. Matching denied claims to CARC codes, comparing paid amounts against contracted rates, and flagging wrong write-offs." />
             <Step n="03" title="Get ranked findings with recovery plans" body="Each finding shows exactly how much you're owed, the probability of recovery, and the specific appeal letter or action required. Sorted by dollar impact." />
             <Step n="04" title="Generate appeals, track outcomes" body="One-click AI appeal letters with the right medical necessity arguments and documentation checklist. Track submissions and log outcomes to improve your win-rate data." />
           </div>
@@ -269,7 +269,7 @@ export default function WaitlistPage() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
           <FeatureCard icon="🔍" title="Denial intelligence" body="CARC/RARC code analysis with network-level win rates. Know before you appeal whether it's worth the effort." />
           <FeatureCard icon="💰" title="Underpayment detection" body="Automatically compare paid amounts against your contracted rates. Stop accepting less than you're owed." />
-          <FeatureCard icon="⚡" title="AI appeal letters" body="Legally-reviewed template letters personalized to the denial reason, payer, and CPT codes — reviewed by a human before sending." />
+          <FeatureCard icon="⚡" title="AI appeal letters" body="Legally-reviewed template letters personalized to the denial reason, payer, and CPT codes. Reviewed by a human before sending." />
           <FeatureCard icon="📊" title="Payer scorecards" body="Rank your payers by denial rate, average days to payment, and underpayment frequency. Know who to renegotiate with." />
           <FeatureCard icon="🌐" title="Network win rates" body="As more practices use Simera, every practice gets smarter. Aggregate denial outcomes power everyone's recovery predictions." />
           <FeatureCard icon="🛡" title="HIPAA-compliant" body="835 files processed in-memory. No PHI stored after analysis. HMAC claim tokens. BAAs with all subprocessors." />
@@ -283,7 +283,7 @@ export default function WaitlistPage() {
             Ready to find your revenue?
           </h2>
           <p style={{ fontSize: 15, color: "#8fabb5", marginBottom: 32, lineHeight: 1.6 }}>
-            30 minutes. Live audit on your own 835 file. See every dollar you&apos;re leaving on the table — and the exact path to get it back.
+            30 minutes. Live audit on your own 835 file. See every dollar you&apos;re leaving on the table, and the exact path to get it back.
           </p>
           <a
             href="/book-demo"

@@ -8,10 +8,10 @@ import { AlertTriangle, CheckCircle, Clock, User, ChevronDown, ChevronUp } from 
 // ---------------------------------------------------------------------------
 
 export type ConfidenceTier =
-  | "auto"               // >90% — automated action safe
-  | "review_recommended" // 70–90% — human review recommended
-  | "review_required"    // 50–70% — human must sign off
-  | "manual";            // <50% — manual review; model not reliable
+  | "auto"               // >90%. Automated action safe
+  | "review_recommended" // 70-90%. Human review recommended
+  | "review_required"    // 50-70%. Human must sign off
+  | "manual";            // <50%. Manual review; model not reliable
 
 export type RiskLevel = "critical" | "high" | "medium" | "low";
 
@@ -23,7 +23,7 @@ export interface ShapFactor {
 
 export interface DenialRiskPrediction {
   claimId: string;
-  denialRiskScore: number;   // 0–1
+  denialRiskScore: number;   // 0-1
   riskLevel: RiskLevel;
   confidenceTier: ConfidenceTier;
   topReasons: {
@@ -58,7 +58,7 @@ const CONFIDENCE_CONFIG: Record<
     color: "#0c8174",
     bg: "rgba(12,129,116,0.10)",
     icon: <CheckCircle size={14} />,
-    description: "Model confidence is high — automated action is appropriate.",
+    description: "Model confidence is high. Automated action is appropriate.",
   },
   review_recommended: {
     label: "Review Recommended",
@@ -79,7 +79,7 @@ const CONFIDENCE_CONFIG: Record<
     color: "#7c3aed",
     bg: "rgba(124,58,237,0.10)",
     icon: <User size={14} />,
-    description: "Low model confidence — manual review by billing specialist required.",
+    description: "Low model confidence. Manual review by billing specialist required.",
   },
 };
 
@@ -351,9 +351,9 @@ export default function DenialRiskWidget({
               }}
             >
               <CheckCircle size={13} />
-              {decision === "accept" ? "Accepted — proceeding with claim" :
+              {decision === "accept" ? "Accepted. Proceeding with claim" :
                decision === "modify" ? "Flagged for modification" :
-               "Suggestion ignored — manual review"}
+               "Suggestion ignored. Manual review"}
             </div>
           ) : (
             <div style={{ display: "flex", gap: 8 }}>

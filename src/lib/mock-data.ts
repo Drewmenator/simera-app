@@ -1,4 +1,4 @@
-// Simera mock data — realistic numbers for a 4-physician family medicine group
+// Simera mock data. Realistic numbers for a 4-physician family medicine group
 // Annual revenue ~$2.4M, denial rate 14.2% (below industry median of 11.8%)
 
 export const practiceStats = {
@@ -6,7 +6,7 @@ export const practiceStats = {
   providers: 4,
   specialty: "Family Medicine",
   lastUpdated: "May 31, 2026",
-  dataRange: "Jan 2026 – May 2026",
+  dataRange: "Jan 2026. May 2026",
 };
 
 export const headlineMetrics = {
@@ -27,7 +27,7 @@ export const leakageFindings = [
     rank: 1,
     category: "unworked_denial",
     label: "Unworked Denials",
-    description: "CO-197 prior auth denials from United Healthcare — 23 claims never reworked",
+    description: "CO-197 prior auth denials from United Healthcare-23 claims never reworked",
     dollarAmount: 31200,
     expectedRecovery: 22464,
     recoveryProbability: 0.72,
@@ -41,7 +41,7 @@ export const leakageFindings = [
     rank: 2,
     category: "underpayment",
     label: "Underpayments",
-    description: "Aetna paying below contracted rates on 99214 and 99215 — systematic 12% shortfall",
+    description: "Aetna paying below contracted rates on 99214 and 99215. Systematic 12% shortfall",
     dollarAmount: 18640,
     expectedRecovery: 14912,
     recoveryProbability: 0.8,
@@ -69,7 +69,7 @@ export const leakageFindings = [
     rank: 4,
     category: "undercoding",
     label: "Undercoding",
-    description: "E&M distribution skews low — 78% of visits coded 99213 vs 52% specialty benchmark",
+    description: "E&M distribution skews low-78% of visits coded 99213 vs 52% specialty benchmark",
     dollarAmount: 12200,
     expectedRecovery: 4880,
     recoveryProbability: 0.4,
@@ -77,13 +77,13 @@ export const leakageFindings = [
     payer: "All Payers",
     denialCodes: [],
     cptCodes: ["99213", "99214"],
-    action: "Schedule an internal coding review. Pull a random sample of 20 charts coded 99213. Use the 2021 AMA E&M guidelines — time-based coding may justify 99214 for many visits currently coded lower.",
+    action: "Schedule an internal coding review. Pull a random sample of 20 charts coded 99213. Use the 2021 AMA E&M guidelines. Time-based coding may justify 99214 for many visits currently coded lower.",
   },
   {
     rank: 5,
     category: "timely_filing",
     label: "Timely Filing Losses",
-    description: "CO-166 denials — 6 claims missed payer timely filing windows",
+    description: "CO-166 denials-6 claims missed payer timely filing windows",
     dollarAmount: 6600,
     expectedRecovery: 0,
     recoveryProbability: 0.0,
@@ -215,7 +215,7 @@ export const payerScorecard = [
   },
 ];
 
-// Monthly revenue trend (Jan–May 2026)
+// Monthly revenue trend (Jan-May 2026)
 // leakage values scaled so they sum exactly to headlineMetrics.totalLeakage ($83,440)
 // paid = billed − leakage; billed sums to revenueAnalyzed ($487,320)
 export const revenueByMonth = [
@@ -236,11 +236,11 @@ export const cptAnalysis = [
   { code: "93000", description: "Electrocardiogram, routine", billed: 134, avgPaid: 22.10, expected: 28.40, gap: 6.30, volume: "Medium" },
 ];
 
-// Benchmark comparison data — sourced from MGMA 2023-2024, HFMA, CAQH
+// Benchmark comparison data. Sourced from MGMA 2023-2024, HFMA, CAQH
 export const benchmarks = {
   denialRate: {
     practice: 14.2,
-    best: 3.0,          // best-in-class <3–5%
+    best: 3.0,          // best-in-class <3-5%
     median: 11.8,       // 2024 industry average (up from 10.2%)
     worst: 25.0,
     percentile: 22,
@@ -248,7 +248,7 @@ export const benchmarks = {
   daysInAR: {
     practice: 34.2,
     best: 22,           // best-in-class <25 days
-    median: 40,         // industry median 40–45 days
+    median: 40,         // industry median 40-45 days
     worst: 65,
     percentile: 68,
   },
@@ -276,13 +276,13 @@ export const benchmarks = {
   costToCollect: {
     practice: 4.2,      // as % of net revenue
     best: 2.0,          // best-in-class <2%
-    median: 3.5,        // industry average 3–4%
-    worst: 8.0,         // high-denial orgs 6–8%+
+    median: 3.5,        // industry average 3-4%
+    worst: 8.0,         // high-denial orgs 6-8%+
     percentile: 35,
   },
 };
 
-// Industry benchmark tiers — sourced from MGMA 2023-2024, HFMA
+// Industry benchmark tiers. Sourced from MGMA 2023-2024, HFMA
 export const benchmarkTiers = [
   {
     kpi: "Net Collection Rate",
@@ -290,7 +290,7 @@ export const benchmarkTiers = [
     higherIsBetter: true,
     bestInClass: "≥98%",
     mgmaBenchmark: "≥95%",
-    industryAvg: "90–94%",
+    industryAvg: "90-94%",
     redFlag: "<90%",
     note: "90% vs 97% NCR on $5M revenue = $350K/year lost",
   },
@@ -299,8 +299,8 @@ export const benchmarkTiers = [
     unit: "days",
     higherIsBetter: false,
     bestInClass: "<25 days",
-    mgmaBenchmark: "30–40 days",
-    industryAvg: "40–45 days",
+    mgmaBenchmark: "30-40 days",
+    industryAvg: "40-45 days",
     redFlag: ">50 days",
     note: "10-day improvement on $3M practice = $82K accelerated cash",
   },
@@ -308,8 +308,8 @@ export const benchmarkTiers = [
     kpi: "Denial Rate",
     unit: "%",
     higherIsBetter: false,
-    bestInClass: "<3–5%",
-    mgmaBenchmark: "—",
+    bestInClass: "<3-5%",
+    mgmaBenchmark: " - ",
     industryAvg: "11.8%",
     redFlag: ">15%",
     note: "MA denial rate 15.7%; commercial 13.9% (2024)",
@@ -340,9 +340,9 @@ export const benchmarkTiers = [
     higherIsBetter: false,
     bestInClass: "<2%",
     mgmaBenchmark: "2%",
-    industryAvg: "3–4%",
-    redFlag: "6–8%+",
-    note: "High-denial orgs spend 6–8% of net revenue to collect",
+    industryAvg: "3-4%",
+    redFlag: "6-8%+",
+    note: "High-denial orgs spend 6-8% of net revenue to collect",
   },
 ];
 
@@ -356,14 +356,14 @@ export const revenueBySpecialty = [
   { specialty: "Pediatrics", annualRevenue: 1050000 },
 ];
 
-// Denial taxonomy — industry-wide breakdown (MGMA / HFMA 2024)
+// Denial taxonomy. Industry-wide breakdown (MGMA / HFMA 2024)
 export const denialTaxonomy = [
   {
     category: "Coding Errors",
     pctOfDenials: 28,
     topCARCs: ["CO-97", "CO-4", "CO-16", "CO-11"],
     recoveryRate: 50,
-    recoveryNote: "40–60% with corrected resubmission",
+    recoveryNote: "40-60% with corrected resubmission",
     prevention: "NCCI scrubber + AI coding review",
     color: "#c2553d",
   },
@@ -372,7 +372,7 @@ export const denialTaxonomy = [
     pctOfDenials: 24,
     topCARCs: ["CO-27", "CO-29", "CO-31"],
     recoveryRate: 75,
-    recoveryNote: "70–80% if patient was insured",
+    recoveryNote: "70-80% if patient was insured",
     prevention: "Real-time eligibility check at scheduling",
     color: "#bd852f",
   },
@@ -381,7 +381,7 @@ export const denialTaxonomy = [
     pctOfDenials: 18,
     topCARCs: ["CO-50", "CO-57"],
     recoveryRate: 40,
-    recoveryNote: "30–50%; requires physician appeal",
+    recoveryNote: "30-50%; requires physician appeal",
     prevention: "Documentation completeness check pre-submit",
     color: "#9a6a1e",
   },
@@ -390,7 +390,7 @@ export const denialTaxonomy = [
     pctOfDenials: 13,
     topCARCs: ["CO-15"],
     recoveryRate: 82,
-    recoveryNote: "81.7% overturned on appeal — most never appealed",
+    recoveryNote: "81.7% overturned on appeal. Most never appealed",
     prevention: "PA tracking automation",
     color: "#0b2734",
   },
@@ -399,7 +399,7 @@ export const denialTaxonomy = [
     pctOfDenials: 6,
     topCARCs: ["CO-29"],
     recoveryRate: 2,
-    recoveryNote: "Near zero — essentially unrecoverable",
+    recoveryNote: "Near zero. Essentially unrecoverable",
     prevention: "Charge lag monitoring + auto-alerts",
     color: "#5c747e",
   },
@@ -408,7 +408,7 @@ export const denialTaxonomy = [
     pctOfDenials: 7,
     topCARCs: ["CO-18"],
     recoveryRate: 0,
-    recoveryNote: "100% avoidable — scrubber catch",
+    recoveryNote: "100% avoidable. Scrubber catch",
     prevention: "Duplicate claim scrubber",
     color: "#8aa0a8",
   },
@@ -425,8 +425,8 @@ export const denialTaxonomy = [
 
 // Appeal overturn rates by payer type
 export const appealOverturnRates = [
-  { payer: "Medicare Advantage", appealRate: "5–10%", overturnRate: 81.7, note: "Most never appealed" },
-  { payer: "Commercial", appealRate: "Variable", overturnRate: 50, note: "40–60% overturned" },
+  { payer: "Medicare Advantage", appealRate: "5-10%", overturnRate: 81.7, note: "Most never appealed" },
+  { payer: "Commercial", appealRate: "Variable", overturnRate: 50, note: "40-60% overturned" },
   { payer: "Medicaid MCO", appealRate: "~11%", overturnRate: 46, note: "" },
   { payer: "ACA Marketplace", appealRate: "<1%", overturnRate: 44, note: "" },
 ];
@@ -446,7 +446,7 @@ export const risks = [
   {
     id: "r2",
     severity: "critical",
-    title: "Aetna contract amendment effective Jun 1 — rate increase not reflected",
+    title: "Aetna contract amendment effective Jun 1. Rate increase not reflected",
     description: "Your 2026 Aetna contract includes a 4.2% fee schedule increase effective June 1. Your billing system still uses 2025 rates. Estimated impact: $2,100/month in lost revenue.",
     dollarAmount: 25200,
     deadline: "2026-06-15",
@@ -456,7 +456,7 @@ export const risks = [
   {
     id: "r3",
     severity: "high",
-    title: "Cigna prior auth policy change — 14 new codes require auth starting Jul 1",
+    title: "Cigna prior auth policy change-14 new codes require auth starting Jul 1",
     description: "Cigna announced new prior authorization requirements effective July 1, 2026 for 14 CPT codes you use frequently, including 93000, 94010, and G0439.",
     dollarAmount: 18400,
     deadline: "2026-07-01",
@@ -466,7 +466,7 @@ export const risks = [
   {
     id: "r4",
     severity: "high",
-    title: "Days in AR trending up — 28d → 34d over 90 days",
+    title: "Days in AR trending up-28d → 34d over 90 days",
     description: "Your average days in accounts receivable has increased by 6 days over the past 3 months. Primary driver: UHC claim processing delays. Industry median is 38 days, but your trajectory is concerning.",
     dollarAmount: 8200,
     deadline: null,
@@ -476,7 +476,7 @@ export const risks = [
   {
     id: "r5",
     severity: "medium",
-    title: "6 claims missed timely filing — workflow gap detected",
+    title: "6 claims missed timely filing. Workflow gap detected",
     description: "6 Humana claims were denied for timely filing in May. All originated from same provider (Dr. Chen) and same front desk workflow. Pattern suggests a systematic documentation gap.",
     dollarAmount: 6600,
     deadline: null,
@@ -486,7 +486,7 @@ export const risks = [
   {
     id: "r6",
     severity: "medium",
-    title: "E&M distribution outlier detected — undercoding risk",
+    title: "E&M distribution outlier detected. Undercoding risk",
     description: "78% of your E&M visits are coded at 99213, vs 52% specialty benchmark. This outlier pattern is a coding audit red flag and represents potential lost revenue of ~$2,400/month.",
     dollarAmount: 12200,
     deadline: null,
@@ -495,13 +495,13 @@ export const risks = [
   },
 ];
 
-// AI conversation starters — includes CARC-specific and benchmark questions
+// AI conversation starters. Includes CARC-specific and benchmark questions
 export const aiSuggestions = [
   "What's the fastest $10K I can recover this week?",
   "Why is United Healthcare denying so many prior auth claims?",
   "What should I focus on this month?",
   "What's a good denial rate for my specialty?",
-  "CO-50 denials from Cigna — should I appeal, and what's the success rate?",
+  "CO-50 denials from Cigna. Should I appeal, and what's the success rate?",
   "Which payer is the most profitable after denials?",
   "What does CO-97 mean and how do I fix it?",
   "How much revenue am I losing to underpayments?",

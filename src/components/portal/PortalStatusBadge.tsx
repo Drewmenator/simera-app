@@ -46,7 +46,7 @@ export function PortalStatusBadge({ onFetch835, credentialId }: PortalStatusBadg
         const data: SyncJob[] = await res.json();
         setJobs(data.slice(0, 5));
       }
-    } catch { /* silent — portal is optional */ }
+    } catch { /* silent. Portal is optional */ }
   }, [getToken]);
 
   const checkCredentials = useCallback(async () => {

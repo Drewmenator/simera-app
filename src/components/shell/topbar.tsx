@@ -9,21 +9,21 @@ import { useAuditData } from "@/lib/use-audit-data";
 import { motion, AnimatePresence } from "framer-motion";
 
 const pageTitles: Record<string, { title: string; subtitle: string }> = {
-  "/": { title: "Revenue overview", subtitle: "Jan – May 2026 · Riverview Family Medicine" },
+  "/": { title: "Revenue overview", subtitle: "Jan. May 2026 · Riverview Family Medicine" },
   "/revenue": { title: "Revenue", subtitle: "Leakage analysis · Denial patterns · Payer scorecard" },
   "/risks": { title: "Risks", subtitle: "Active alerts requiring your attention" },
-  "/appeals": { title: "Appeals", subtitle: "Denial work queue — evidence packages and appeal letters" },
+  "/appeals": { title: "Appeals", subtitle: "Denial work queue. Evidence packages and appeal letters" },
   "/benchmarks": { title: "Benchmarks", subtitle: "How you compare to 1,400+ similar practices" },
   "/ask": { title: "Ask Simera", subtitle: "AI-powered revenue intelligence, on demand" },
   "/settings": { title: "Settings", subtitle: "Practice, team, billing, and security" },
-  "/roi": { title: "ROI Calculator", subtitle: "See exactly what Simera pays back — in dollars and days" },
+  "/roi": { title: "ROI Calculator", subtitle: "See exactly what Simera pays back. In dollars and days" },
 };
 
 const SEARCH_ITEMS = [
   { label: "Revenue overview", href: "/", category: "Pages" },
   { label: "Revenue leakage analysis", href: "/revenue", category: "Pages" },
   { label: "Active risks & alerts", href: "/risks", category: "Pages" },
-  { label: "Appeals — denial work queue", href: "/appeals", category: "Pages" },
+  { label: "Appeals. Denial work queue", href: "/appeals", category: "Pages" },
   { label: "Payer benchmarks", href: "/benchmarks", category: "Pages" },
   { label: "Ask Simera AI", href: "/ask", category: "Pages" },
   { label: "ROI Calculator", href: "/roi", category: "Pages" },
@@ -35,10 +35,10 @@ const SEARCH_ITEMS = [
 ];
 
 const NOTIFICATIONS = [
-  { id: 1, type: "critical", title: "CO-197 Prior Auth Denials", body: "23 United Healthcare claims unworked — $18,240 at risk", time: "2h ago", read: false, href: "/appeals" },
+  { id: 1, type: "critical", title: "CO-197 Prior Auth Denials", body: "23 United Healthcare claims unworked. $18,240 at risk", time: "2h ago", read: false, href: "/appeals" },
   { id: 2, type: "warning", title: "Timely Filing Deadline", body: "Aetna 90-day window closes in 8 days for 6 claims", time: "5h ago", read: false, href: "/risks" },
   { id: 3, type: "info", title: "New benchmark data available", body: "Q1 2026 denial rate benchmarks updated for family medicine", time: "1d ago", read: true, href: "/benchmarks" },
-  { id: 4, type: "success", title: "Recovery opportunity found", body: "Undercoding pattern detected — potential $12K annual uplift", time: "2d ago", read: true, href: "/revenue" },
+  { id: 4, type: "success", title: "Recovery opportunity found", body: "Undercoding pattern detected. Potential $12K annual uplift", time: "2d ago", read: true, href: "/revenue" },
 ];
 
 interface TopbarProps {
@@ -137,7 +137,7 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
         }}
         className="px-4 py-3 md:px-[34px] md:py-[18px] md:gap-5"
       >
-        {/* Mobile menu button — display controlled by `md:hidden`; do NOT set `display`
+        {/* Mobile menu button. Display controlled by `md:hidden`; do NOT set `display`
             inline (it would override the class and show the hamburger on desktop,
             where the sidebar is already persistent). */}
         <button
@@ -185,7 +185,7 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
 
         {/* Right actions */}
         <div style={{ display: "flex", alignItems: "center", flexShrink: 0 }} className="gap-2 md:gap-[10px]">
-          {/* Search button — full on desktop, icon-only on mobile */}
+          {/* Search button. Full on desktop, icon-only on mobile */}
           <button
             onClick={() => setSearchOpen(true)}
             className="hidden md:flex"
@@ -223,7 +223,7 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
             </kbd>
           </button>
           {/* Search icon-only on mobile.
-              NOTE: display is controlled by the `flex md:hidden` classes — do NOT set
+              NOTE: display is controlled by the `flex md:hidden` classes. Do NOT set
               `display` inline here, as an inline style overrides `md:hidden` and the
               icon would wrongly appear next to the full search box on desktop. */}
           <button
@@ -244,7 +244,7 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
             <Search style={{ width: 16, height: 16, color: "#5c747e" }} />
           </button>
 
-          {/* History button — hidden on mobile */}
+          {/* History button. Hidden on mobile */}
           <button
             onClick={onHistoryClick}
             title="Audit history"
@@ -269,7 +269,7 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
             History
           </button>
 
-          {/* Export button — icon-only on mobile */}
+          {/* Export button. Icon-only on mobile */}
           <div style={{ position: "relative" }}>
             <button
               onClick={() => setExportMenuOpen((v) => !v)}
@@ -337,7 +337,7 @@ export function Topbar({ onMenuClick, onHistoryClick }: TopbarProps) {
             </AnimatePresence>
           </div>
 
-          {/* Bell — hidden on mobile */}
+          {/* Bell. Hidden on mobile */}
           <div className="hidden md:block" style={{ position: "relative" }}>
             <button
               onClick={() => { setBellOpen((v) => !v); setUserMenuOpen(false); }}

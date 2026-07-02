@@ -1,7 +1,7 @@
 /**
  * Client-side X12 835 EDI validator.
  *
- * Runs entirely in the browser — no PHI leaves the machine until the user
+ * Runs entirely in the browser, no PHI leaves the machine until the user
  * explicitly submits. Provides structural validation and a rich preview
  * (payer, payee, payment date, claim count, total paid) before the upload.
  *
@@ -77,7 +77,7 @@ export function parse835Text(text: string): ParseResult {
 
   // ── 2. ISA segment ─────────────────────────────────────────────────────────
   if (!raw.startsWith("ISA")) {
-    addCheck(fail("isa_start", "ISA header found", "File must begin with ISA — this may not be an X12 835"));
+    addCheck(fail("isa_start", "ISA header found", "File must begin with ISA. This may not be an X12 835"));
     return { valid: false, errorCount, warnCount, checks };
   }
 
@@ -87,14 +87,14 @@ export function parse835Text(text: string): ParseResult {
   const segTerm = raw.length > 105 ? raw[105] : undefined;
 
   if (!segTerm) {
-    addCheck(fail("isa_length", "ISA segment length (106 chars)", `ISA is only ${raw.length} chars — expected at least 106`));
+    addCheck(fail("isa_length", "ISA segment length (106 chars)", `ISA is only ${raw.length} chars. Expected at least 106`));
     return { valid: false, errorCount, warnCount, checks };
   }
   addCheck(pass("isa_start", "ISA header found", `Element delimiter: '${elemDel === "\n" ? "\\n" : elemDel}' · Segment terminator: '${segTerm === "\n" ? "\\n" : segTerm}'`));
 
   // Split into segments
   const rawSegTerm = segTerm;
-  // Segment terminator may be followed by newline — handle both
+  // Segment terminator may be followed by newline. Handle both
   let segments: string[];
   if (rawSegTerm === "\n") {
     segments = raw.split("\n").map(s => s.trim()).filter(Boolean);
@@ -107,7 +107,7 @@ export function parse835Text(text: string): ParseResult {
   // ── 3. ISA field count ─────────────────────────────────────────────────────
   const isaFields = getFields(segments[0]);
   if (isaFields.length < 16) {
-    addCheck(fail("isa_fields", "ISA has 16 fields", `Found ${isaFields.length} — expected 16`));
+    addCheck(fail("isa_fields", "ISA has 16 fields", `Found ${isaFields.length}. Expected 16`));
   } else {
     addCheck(pass("isa_fields", "ISA has 16 fields"));
     result.controlNumber = isaFields[13]?.trim();
@@ -118,7 +118,7 @@ export function parse835Text(text: string): ParseResult {
   addCheck(
     ieaSeg
       ? pass("iea", "IEA envelope close found")
-      : fail("iea", "IEA envelope close found", "Missing IEA — file may be truncated")
+      : fail("iea", "IEA envelope close found", "Missing IEA. File may be truncated")
   );
 
   // ── 5. GS/GE functional group ─────────────────────────────────────────────
@@ -131,14 +131,14 @@ export function parse835Text(text: string): ParseResult {
     const functionalIdCode = gsFields[1]?.trim();
     addCheck(
       functionalIdCode === "HP"
-        ? pass("gs", "GS functional group is 835 (HP)", `Group ID: ${result.controlNumber ?? "—"}`)
-        : warn("gs", "GS functional group is 835 (HP)", `Functional ID code is '${functionalIdCode}' — expected 'HP' for 835`)
+        ? pass("gs", "GS functional group is 835 (HP)", `Group ID: ${result.controlNumber ?? " - "}`)
+        : warn("gs", "GS functional group is 835 (HP)", `Functional ID code is '${functionalIdCode}'. Expected 'HP' for 835`)
     );
   }
   addCheck(
     geSeg
       ? pass("ge", "GE functional group close found")
-      : fail("ge", "GE functional group close found", "Missing GE — file may be truncated")
+      : fail("ge", "GE functional group close found", "Missing GE. File may be truncated")
   );
 
   // ── 6. ST 835 transaction ─────────────────────────────────────────────────
@@ -149,7 +149,7 @@ export function parse835Text(text: string): ParseResult {
   addCheck(
     stSeg
       ? pass("st835", "ST 835 transaction set found")
-      : fail("st835", "ST 835 transaction set found", "No ST*835 segment — this may not be an 835 remittance file")
+      : fail("st835", "ST 835 transaction set found", "No ST*835 segment. This may not be an 835 remittance file")
   );
 
   if (!stSeg) {
@@ -157,7 +157,7 @@ export function parse835Text(text: string): ParseResult {
     const stAny = segments.find(s => s.startsWith("ST" + elemDel));
     if (stAny) {
       const stFields = getFields(stAny);
-      addCheck(warn("st_type", "Transaction type check", `Found ST*${stFields[1]?.trim()} — expected ST*835`));
+      addCheck(warn("st_type", "Transaction type check", `Found ST*${stFields[1]?.trim()}. Expected ST*835`));
     }
     return { valid: false, errorCount, warnCount, checks, ...result };
   }
@@ -167,13 +167,13 @@ export function parse835Text(text: string): ParseResult {
   addCheck(
     seSeg
       ? pass("se", "SE transaction set close found")
-      : warn("se", "SE transaction set close found", "Missing SE — file may be truncated but still parseable")
+      : warn("se", "SE transaction set close found", "Missing SE. File may be truncated but still parseable")
   );
 
   // ── 8. BPR (payment detail) ───────────────────────────────────────────────
   const bprSeg = segments.find(s => s.startsWith("BPR" + elemDel));
   if (!bprSeg) {
-    addCheck(fail("bpr", "BPR payment detail segment found", "Missing BPR — cannot determine payment amount"));
+    addCheck(fail("bpr", "BPR payment detail segment found", "Missing BPR. Cannot determine payment amount"));
   } else {
     const bprFields = getFields(bprSeg);
     const amt = parseFloat(bprFields[2] ?? "");
@@ -195,7 +195,7 @@ export function parse835Text(text: string): ParseResult {
   addCheck(
     trnSeg
       ? pass("trn", "TRN trace/check number found")
-      : skip("trn", "TRN trace/check number found", "No TRN — check number may be missing")
+      : skip("trn", "TRN trace/check number found", "No TRN. Check number may be missing")
   );
 
   // ── 10. N1 payer / payee ──────────────────────────────────────────────────
@@ -214,16 +214,16 @@ export function parse835Text(text: string): ParseResult {
   }
   addCheck(foundPR
     ? pass("n1_pr", "Payer name (N1*PR) found", result.payerName)
-    : warn("n1_pr", "Payer name (N1*PR) found", "No payer identified — common in some ERA formats"));
+    : warn("n1_pr", "Payer name (N1*PR) found", "No payer identified. Common in some ERA formats"));
   addCheck(foundPE
     ? pass("n1_pe", "Payee/provider name (N1*PE) found", result.payeeName)
-    : skip("n1_pe", "Payee/provider name (N1*PE) found", "No payee segment — optional in many 835s"));
+    : skip("n1_pe", "Payee/provider name (N1*PE) found", "No payee segment. Optional in many 835s"));
 
   // ── 11. CLP segments (claim-level detail) ────────────────────────────────
   const clpSegs = segments.filter(s => s.startsWith("CLP" + elemDel));
   result.claimCount = clpSegs.length;
   if (clpSegs.length === 0) {
-    addCheck(fail("clp", "CLP claim segments found", "No CLP segments — no claim-level data to analyze"));
+    addCheck(fail("clp", "CLP claim segments found", "No CLP segments, no claim-level data to analyze"));
   } else {
     addCheck(pass("clp", "CLP claim segments found", `${clpSegs.length} claim${clpSegs.length !== 1 ? "s" : ""} in file`));
   }
@@ -233,7 +233,7 @@ export function parse835Text(text: string): ParseResult {
   addCheck(
     svcSegs.length > 0
       ? pass("svc", "SVC service-line segments found", `${svcSegs.length} service line${svcSegs.length !== 1 ? "s" : ""}`)
-      : warn("svc", "SVC service-line segments found", "No SVC segments — CPT-level detail unavailable; analysis will be claim-level only")
+      : warn("svc", "SVC service-line segments found", "No SVC segments. CPT-level detail unavailable; analysis will be claim-level only")
   );
 
   // ── 13. CAS (adjustment reason codes) ────────────────────────────────────
@@ -241,7 +241,7 @@ export function parse835Text(text: string): ParseResult {
   addCheck(
     casSegs.length > 0
       ? pass("cas", "CAS adjustment/denial codes found", `${casSegs.length} adjustment segment${casSegs.length !== 1 ? "s" : ""}`)
-      : warn("cas", "CAS adjustment/denial codes found", "No CAS segments — denial reason codes unavailable; leakage detection will be limited")
+      : warn("cas", "CAS adjustment/denial codes found", "No CAS segments. Denial reason codes unavailable; leakage detection will be limited")
   );
 
   // ── 14. Date validity ─────────────────────────────────────────────────────
@@ -255,10 +255,10 @@ export function parse835Text(text: string): ParseResult {
 
     if (dt > now) {
       addCheck(warn("date_future", "Payment date is not in the future",
-        `Payment date ${result.paymentDate} is in the future — verify this is correct`));
+        `Payment date ${result.paymentDate} is in the future. Verify this is correct`));
     } else if (dt < twoYearsAgo) {
       addCheck(warn("date_old", "Payment date within 2 years",
-        `Payment date ${result.paymentDate} is over 2 years ago — timely filing deadlines may apply`));
+        `Payment date ${result.paymentDate} is over 2 years ago. Timely filing deadlines may apply`));
     } else {
       const formatted = dt.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
       addCheck(pass("date_valid", "Payment date valid", formatted));
@@ -275,14 +275,14 @@ export function parse835Text(text: string): ParseResult {
 
     if (seen.includes(result.controlNumber)) {
       addCheck(warn("dup_control", "No duplicate ISA control number",
-        `Control number ${result.controlNumber} was already uploaded this session — possible duplicate`));
+        `Control number ${result.controlNumber} was already uploaded this session. Possible duplicate`));
     } else {
       addCheck(pass("dup_control", "No duplicate ISA control number", `ISA13: ${result.controlNumber}`));
       seen.push(result.controlNumber);
       try { sessionStorage.setItem(seenKey, JSON.stringify(seen.slice(-50))); } catch { /* */ }
     }
   } else {
-    addCheck(skip("dup_control", "No duplicate ISA control number", "Cannot check — control number not found"));
+    addCheck(skip("dup_control", "No duplicate ISA control number", "Cannot check. Control number not found"));
   }
 
   // ── Result ────────────────────────────────────────────────────────────────
@@ -292,7 +292,7 @@ export function parse835Text(text: string): ParseResult {
 
 /**
  * Read a File object and parse it as X12 835.
- * Returns a ParseResult — never throws.
+ * Returns a ParseResult, never throws.
  */
 export async function parse835File(file: File): Promise<ParseResult> {
   try {

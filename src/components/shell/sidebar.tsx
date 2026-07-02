@@ -44,7 +44,7 @@ export function Sidebar({ onUploadClick }: SidebarProps) {
   const firstName = user?.firstName ?? "Drew";
   const initials = user?.firstName?.[0] ?? "D";
 
-  // Show values immediately — never gate on isLoading (that caused "missing leakage").
+  // Show values immediately, never gate on isLoading (that caused "missing leakage").
   // Only hide if genuinely no data (e.g., real upload with zero leakage is impossible).
   const atRiskK = metrics.totalLeakage > 0 ? Math.round(metrics.totalLeakage / 1000) : null;
   const recovK = metrics.expectedRecovery > 0 ? Math.round(metrics.expectedRecovery / 1000) : null;
@@ -266,7 +266,7 @@ export function Sidebar({ onUploadClick }: SidebarProps) {
             fontVariantNumeric: "tabular-nums",
           }}
         >
-          {atRiskK !== null ? <>${atRiskK}<span style={{ fontSize: 18, color: "#e7a999" }}>K</span></> : <span style={{ fontSize: 20, color: "#e7a999" }}>—</span>}
+          {atRiskK !== null ? <>${atRiskK}<span style={{ fontSize: 18, color: "#e7a999" }}>K</span></> : <span style={{ fontSize: 20, color: "#e7a999" }}> - </span>}
         </div>
         <div style={{ fontSize: 12.5, color: "#8fabb5", marginTop: 3 }}>
           {recovK !== null ? `$${recovK}K recoverable this quarter` : "Upload an 835 file to start"}

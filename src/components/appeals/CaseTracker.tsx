@@ -1,13 +1,13 @@
 "use client";
 
 /**
- * CaseTracker — the persisted denial work queue (Phase 1 spine).
+ * CaseTracker, the persisted denial work queue (Phase 1 spine).
  *
  * Renders live cases from /cases, sorted by deadline / recoverable dollars, and
  * lets the user advance each case through the recovery lifecycle (writes to
  * POST /cases/{id}/status). Expanding a case loads its status-change timeline.
  *
- * Empty in pure demo mode — cases exist only after an 835 audit is persisted.
+ * Empty in pure demo mode. Cases exist only after an 835 audit is persisted.
  */
 
 import { useCallback, useEffect, useState } from "react";
@@ -111,11 +111,11 @@ function ArtifactCard({ a, onReview, onEdit }: {
       </div>
       {isLetter && Array.isArray(payload.warnings) && payload.warnings.length > 0 && (
         <div className="rounded bg-amber-50 border border-amber-200 p-1.5 text-amber-700">
-          {payload.warnings.length} warning(s) — review before approving.
+          {payload.warnings.length} warning(s). Review before approving.
         </div>
       )}
       {a.transmittable === false && a.type === "corrected_claim" && (
-        <p className="text-amber-600">Manual action needed — not electronically fileable.</p>
+        <p className="text-amber-600">Manual action needed, not electronically fileable.</p>
       )}
       {isLetter && editing && (
         <div className="space-y-1">
@@ -173,7 +173,7 @@ function ArtifactPanel({ caseId }: { caseId: string }) {
       ))}
       {requiredReady && (
         <p className="text-xs text-emerald-600 font-medium">
-          Required artifact approved — ready to submit (Phase 3).
+          Required artifact approved. Ready to submit (Phase 3).
         </p>
       )}
     </div>

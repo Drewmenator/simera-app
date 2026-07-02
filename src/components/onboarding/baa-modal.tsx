@@ -52,9 +52,9 @@ export function BaaModal({ open, onAccept, onClose, organization }: BaaModalProp
         organization: organization,
       });
     } catch {
-      // Server-side record failed — log and continue. The localStorage record
+      // Server-side record failed. Log and continue. The localStorage record
       // is the interim audit trail until migration 006 is run in Supabase.
-      console.warn("[Simera] BAA server record failed — proceeding with localStorage record only.");
+      console.warn("[Simera] BAA server record failed. Proceeding with localStorage record only.");
     } finally {
       setSaving(false);
     }
@@ -102,7 +102,7 @@ export function BaaModal({ open, onAccept, onClose, organization }: BaaModalProp
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            {/* Logo mark — teal square with notch, matching sidebar */}
+            {/* Logo mark. Teal square with notch, matching sidebar */}
             <div
               style={{
                 width: 32,
@@ -202,7 +202,7 @@ export function BaaModal({ open, onAccept, onClose, organization }: BaaModalProp
                   letterSpacing: "0.04em",
                 }}
               >
-                HIPAA REQUIRED — BEFORE UPLOAD
+                HIPAA REQUIRED. BEFORE UPLOAD
               </p>
             </div>
           </div>

@@ -5,7 +5,7 @@
  *
  * On mount, pings localhost:8000/health to check if a local Spark Agent
  * is running. If found, all API calls route to the local agent instead of
- * the cloud backend — meaning PHI never leaves the practice network.
+ * the cloud backend. Meaning PHI never leaves the practice network.
  *
  * State is cached in sessionStorage so we don't ping on every render.
  */

@@ -1,4 +1,4 @@
-export const metadata = { title: "Terms of Service — Simera Health" };
+export const metadata = { title: "Terms of Service. Simera Health" };
 
 const H1 = ({ children }: { children: React.ReactNode }) => (
   <h1 style={{ fontSize: 32, fontWeight: 800, color: "#0b2734", letterSpacing: "-0.03em", marginBottom: 8 }}>{children}</h1>

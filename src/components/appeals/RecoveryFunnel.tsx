@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * RecoveryFunnel — the proof ledger. Shows the practice's money moving from
+ * RecoveryFunnel, the proof ledger. Shows the practice's money moving from
  * Identified → Submitted → In progress → Recovered, with recovered cash as the
  * hero number. This is the figure that sells a pilot and an investor.
  *
@@ -91,7 +91,7 @@ export function RecoveryFunnel({ identifiedCount, identifiedRecoverable, identif
         </div>
         {totalWon === 0 && (
           <p style={{ fontSize: 11, color: "#5c747e", margin: "8px 0 0" }}>
-            No recovered dollars yet — work the top of your queue, then log the outcome to start banking cash here.
+            No recovered dollars yet. Work the top of your queue, then log the outcome to start banking cash here.
           </p>
         )}
       </div>

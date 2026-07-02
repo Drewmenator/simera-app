@@ -10,7 +10,7 @@ const CLOUD_API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"
 const SPARK_URL = "http://localhost:8000";
 
 /**
- * Returns the active API base URL — called fresh on every request.
+ * Returns the active API base URL. Called fresh on every request.
  * If a Spark Agent was detected (cached in sessionStorage by use-spark.ts),
  * routes to local agent instead of cloud. PHI stays on-prem.
  */
@@ -54,20 +54,20 @@ export interface AuditFinding {
   claim_ids?: string[];
   /** Total number of claims in this finding (may be larger than claim_ids if >50). */
   claim_count?: number;
-  /** ICD-10 diagnosis codes on the claim — used in appeal letter body. */
+  /** ICD-10 diagnosis codes on the claim, used in appeal letter body. */
   diagnosis_codes?: string[];
-  /** Service date strings (ISO or display) — used in appeal letter. */
+  /** Service date strings (ISO or display), used in appeal letter. */
   service_dates?: string[];
-  /** Date the denial was issued — included in the appeal letter. */
+  /** Date the denial was issued. Included in the appeal letter. */
   denial_date?: string;
-  /** Payer-assigned claim number — required for traceable appeal submissions. */
+  /** Payer-assigned claim number. Required for traceable appeal submissions. */
   payer_claim_number?: string;
   /**
    * Confidence tier for the recovery_probability figure.
-   * "empirical"        — derived from this practice's own verified outcomes (highest trust)
-   * "network_estimate" — aggregated from Simera's cross-practice denial network (tier 2)
-   * "industry_estimate"— MGMA/HFMA aggregate; no practice-specific data yet (baseline)
-   * "certain"          — mathematically fixed, e.g. timely filing = 0%
+   * "empirical"       . Derived from this practice's own verified outcomes (highest trust)
+   * "network_estimate". Aggregated from Simera's cross-practice denial network (tier 2)
+   * "industry_estimate" -  MGMA/HFMA aggregate; no practice-specific data yet (baseline)
+   * "certain"         . Mathematically fixed, e.g. timely filing = 0%
    */
   recovery_confidence?: "empirical" | "network_estimate" | "industry_estimate" | "certain";
 }
@@ -111,7 +111,7 @@ export interface AuditRunSummary {
 
 /**
  * Optional token getter from Clerk's useAuth() hook.
- * Components should pass their getToken() in for reliable auth — the
+ * Components should pass their getToken() in for reliable auth, the
  * window.Clerk global fallback is unreliable (session can be null mid-load).
  */
 export type TokenGetter = () => Promise<string | null>;
@@ -264,7 +264,7 @@ export async function uploadAuditAsync(
 
   const headers = await getAuthHeaders(getToken);
 
-  // Spark Agent is local — no Clerk auth needed (it uses its own JWT or none)
+  // Spark Agent is local, no Clerk auth needed (it uses its own JWT or none)
   const sparkActive = (() => {
     try {
       const c = typeof window !== "undefined" ? sessionStorage.getItem("simera_spark_detected") : null;
@@ -273,7 +273,7 @@ export async function uploadAuditAsync(
   })();
 
   if (!("Authorization" in headers) && !sparkActive) {
-    throw new Error("Not signed in — please refresh the page and try again.");
+    throw new Error("Not signed in. Please refresh the page and try again.");
   }
 
   const res = await fetch(`${apiUrl()}/audit/835/async`, {
@@ -310,7 +310,7 @@ export async function pollAuditJob(jobId: string, getToken?: TokenGetter): Promi
 }
 
 /**
- * Quick preview — parse a single file without full analysis.
+ * Quick preview. Parse a single file without full analysis.
  */
 export async function previewAudit(file: File): Promise<{
   payer: string;
@@ -383,7 +383,7 @@ export async function streamChat(
 }
 
 /**
- * Health check — returns true if the API is reachable.
+ * Health check. Returns true if the API is reachable.
  */
 export async function checkApiHealth(): Promise<boolean> {
   try {
@@ -407,24 +407,24 @@ export interface AppealLetterRequest {
   /** Claim reference numbers from the 835 (internal billing IDs, not PHI). Included in the letter. */
   claim_ids?: string[];
   // ── Provider identity (from Settings / localStorage) ──────────────────────
-  /** NPI number for the billing provider — required on most payer appeal forms. */
+  /** NPI number for the billing provider. Required on most payer appeal forms. */
   provider_npi?: string;
-  /** Tax ID / EIN — required on most payer appeal forms. */
+  /** Tax ID / EIN. Required on most payer appeal forms. */
   provider_tax_id?: string;
-  /** Practice street address — printed on letter header. */
+  /** Practice street address. Printed on letter header. */
   provider_address?: string;
-  /** Practice billing phone — printed on letter header. */
+  /** Practice billing phone. Printed on letter header. */
   provider_phone?: string;
-  /** Practice billing fax — printed on letter header and fax cover sheet. */
+  /** Practice billing fax. Printed on letter header and fax cover sheet. */
   provider_fax?: string;
   // ── Claim-level clinical context ──────────────────────────────────────────
-  /** ICD-10 diagnosis codes — many payers require these in the appeal body. */
+  /** ICD-10 diagnosis codes. Many payers require these in the appeal body. */
   diagnosis_codes?: string[];
   /** Date(s) of service covered by this claim. */
   service_dates?: string[];
-  /** Date the payer issued the denial — used to calculate appeal window. */
+  /** Date the payer issued the denial, used to calculate appeal window. */
   denial_date?: string;
-  /** Payer's own claim identifier — enables exact claim lookup by the reviewer. */
+  /** Payer's own claim identifier. Enables exact claim lookup by the reviewer. */
   payer_claim_number?: string;
 }
 
@@ -628,11 +628,11 @@ export interface PracticeSettings {
   provider_count?: string;
   tax_id?: string;
   timezone?: string;
-  /** Street address — written to appeal letter header. */
+  /** Street address. Written to appeal letter header. */
   address?: string;
-  /** Main billing phone — written to appeal letter header. */
+  /** Main billing phone. Written to appeal letter header. */
   phone?: string;
-  /** Billing fax number — written to appeal letter header and fax cover sheet. */
+  /** Billing fax number. Written to appeal letter header and fax cover sheet. */
   fax?: string;
 }
 
@@ -681,7 +681,7 @@ export async function linkTeamMember(practiceOwnerEmail: string): Promise<void> 
   if (!res.ok) throw new Error("Failed to link team member.");
 }
 
-// ── Appeal outcome recording — feeds the cross-practice data moat ────────────
+// ── Appeal outcome recording. Feeds the cross-practice data moat ────────────
 
 export interface AppealOutcomePayload {
   payer_name: string;
@@ -697,7 +697,7 @@ export interface AppealOutcomePayload {
  * Triggers a background cross-practice aggregation so the network
  * win-rate table is updated immediately.
  *
- * Fail-safe: never throws — a failed record doesn't block the UI.
+ * Fail-safe: never throws, a failed record doesn't block the UI.
  */
 export async function recordAppealOutcome(
   payload: AppealOutcomePayload,
@@ -711,6 +711,6 @@ export async function recordAppealOutcome(
       body: JSON.stringify(payload),
     });
   } catch {
-    // Silent — outcome recording is best-effort; don't interrupt the user
+    // Silent. Outcome recording is best-effort; don't interrupt the user
   }
 }

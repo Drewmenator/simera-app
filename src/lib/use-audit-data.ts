@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * useAuditData — returns dashboard-ready data from either:
+ * useAuditData. Returns dashboard-ready data from either:
  *   1. A live AuditResult from an uploaded 835 file (via AuditContext), or
  *   2. The static mock data (demo mode fallback)
  *
@@ -31,7 +31,7 @@ export interface DashboardMetrics {
   denialGrade: string;
   benchmarkMedian: number;
   benchmarkBest: number;
-  netCollectionRate: number; // weighted average net collection rate across payers (0–1 scale)
+  netCollectionRate: number; // weighted average net collection rate across payers (0-1 scale)
 }
 
 export interface DashboardFinding {
@@ -60,10 +60,10 @@ export interface DashboardFinding {
   payerClaimNumber?: string;
   /**
    * Confidence tier for the recovery probability.
-   * "empirical"        — derived from this practice's own verified appeal outcomes
-   * "network_estimate" — aggregated from Simera's cross-practice network
-   * "industry_estimate"— MGMA/HFMA static estimate (default when no data yet)
-   * "certain"          — mathematically fixed (e.g. timely filing = 0%)
+   * "empirical"       . Derived from this practice's own verified appeal outcomes
+   * "network_estimate". Aggregated from Simera's cross-practice network
+   * "industry_estimate" -  MGMA/HFMA static estimate (default when no data yet)
+   * "certain"         . Mathematically fixed (e.g. timely filing = 0%)
    */
   recoveryConfidence?: "empirical" | "network_estimate" | "industry_estimate" | "certain";
 }
@@ -92,7 +92,7 @@ export interface DashboardData {
   isLive: boolean;
   /**
    * true when the API parsed the 835 but returned total_leakage = 0 with no
-   * top_findings — leakage was estimated from payer scorecard denial rates.
+   * top_findings. Leakage was estimated from payer scorecard denial rates.
    * The UI shows an amber "Estimated" notice in this state.
    */
   isEstimatedLeakage: boolean;
@@ -104,7 +104,7 @@ export interface DashboardData {
   denialPatterns: DashboardDenialPattern[];
   revenueByMonth: typeof revenueByMonth;
   risks: typeof risks;
-  /** Count of critical + high severity risk items — drives the Risks nav badge */
+  /** Count of critical + high severity risk items. Drives the Risks nav badge */
   criticalCount: number;
 }
 
@@ -260,7 +260,7 @@ function fromApiResult(r: NonNullable<ReturnType<typeof useAuditContext>["result
     ? r.payer_scorecard.reduce((s, p) => s + p.net_collection_rate_pct * p.total_claims, 0) / totalClaims
     : 94.2;
 
-  // ── Step 4: payer scorecard — atRisk now uses estimated findings too ──────
+  // ── Step 4: payer scorecard. AtRisk now uses estimated findings too ──────
   const payers: DashboardPayer[] = r.payer_scorecard.map((p) => ({
     payer: p.payer_name,
     claims: p.total_claims,
@@ -332,7 +332,7 @@ function fromApiResult(r: NonNullable<ReturnType<typeof useAuditContext>["result
     isLive: true,
     isEstimatedLeakage,
     practiceName: r.practice_name,
-    dataRange: `${start} – ${end}`,
+    dataRange: `${start}. ${end}`,
     metrics: {
       revenueAnalyzed: h.total_revenue_analyzed,
       totalLeakage,
@@ -364,21 +364,21 @@ function labelFromCategory(cat: string): string {
   return map[cat] ?? cat.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-// ─── Empty state (production — no audit uploaded yet) ────────────────────────
+// ─── Empty state (production, no audit uploaded yet) ────────────────────────
 
 function emptyData(): DashboardData {
   return {
     isLive: false,
     isEstimatedLeakage: false,
     practiceName: "Your Practice",
-    dataRange: "—",
+    dataRange: " - ",
     metrics: {
       revenueAnalyzed: 0,
       totalLeakage: 0,
       expectedRecovery: 0,
       leakageRatePct: 0,
       denialRate: 0,
-      denialGrade: "—",
+      denialGrade: " - ",
       benchmarkMedian: 11.8,
       benchmarkBest: 5.2,
       netCollectionRate: 0,
@@ -417,7 +417,7 @@ export function useAuditData(): UseAuditDataResult {
     };
   }
 
-  // Always return demo data immediately — whether the API check is in-flight or done.
+  // Always return demo data immediately. Whether the API check is in-flight or done.
   // Never return emptyData() here: that caused totalLeakage = 0 during the 1-3 s API
   // round-trip, which the user perceived as "total leakage missing."
   // When a real 835 is uploaded the `if (result)` branch above takes over.
@@ -425,7 +425,7 @@ export function useAuditData(): UseAuditDataResult {
   return {
     ...data,
     practiceName: savedName || data.practiceName,
-    isLoading: false, // mock data is always ready — no reason to block render
+    isLoading: false, // mock data is always ready, no reason to block render
     hasData: true,
   };
 }

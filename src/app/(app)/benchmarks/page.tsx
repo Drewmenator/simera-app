@@ -124,7 +124,7 @@ export default function BenchmarksPage() {
 
   // When real 835 data is loaded, compute denial rate metrics from actual data.
   // All other metrics (DAR, net collection, etc.) require claims systems not available
-  // in 835 files — those rows continue to use industry-representative demo values.
+  // in 835 files. Those rows continue to use industry-representative demo values.
   const denialRatePercentile = isLive
     ? denialRateToPercentile(metrics.denialRate)
     : benchmarks.denialRate.percentile;
@@ -150,14 +150,14 @@ export default function BenchmarksPage() {
           <div>
             <h2 style={{ fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em", color: "#0b2734", margin: "0 0 4px" }}>Practice Performance Benchmark</h2>
             <p style={{ fontSize: 13.5, color: "#5c747e" }}>
-              Compared against 1,412 similar independent family-medicine practices (1–10 providers) · Source: MGMA 2023–2024, HFMA
+              Compared against 1,412 similar independent family-medicine practices (1-10 providers) · Source: MGMA 2023-2024, HFMA
             </p>
           </div>
           <GradeChip grade={metrics.denialGrade} />
         </div>
       </div>
 
-      {/* Main row — KPI bars + radar */}
+      {/* Main row. KPI bars + radar */}
       <div className="grid grid-cols-1 md:grid-cols-[1.55fr_1fr] gap-[14px] md:gap-[18px]">
         {/* Key Performance Metrics */}
         <div style={{ ...CARD, padding: "22px 24px" }}>
@@ -261,7 +261,7 @@ export default function BenchmarksPage() {
       <div style={{ ...CARD, padding: "22px 24px" }}>
         <div style={{ marginBottom: 16 }}>
           <h2 style={{ fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em", color: "#0b2734", margin: "0 0 4px" }}>Industry Benchmark Reference</h2>
-          <p style={{ fontSize: 13, color: "#5c747e" }}>MGMA 2023–2024 · HFMA · CMS data — what each KPI tier means for your practice</p>
+          <p style={{ fontSize: 13, color: "#5c747e" }}>MGMA 2023-2024 · HFMA · CMS data. What each KPI tier means for your practice</p>
         </div>
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -290,11 +290,11 @@ export default function BenchmarksPage() {
           </table>
         </div>
         <p style={{ fontSize: 11.5, color: "#5c747e", marginTop: 14 }}>
-          Sources: MGMA 2023–2024 Physician Compensation Survey · HFMA Benchmarking Initiative · CMS NHE Fact Sheet · CAQH 2023 Index
+          Sources: MGMA 2023-2024 Physician Compensation Survey · HFMA Benchmarking Initiative · CMS NHE Fact Sheet · CAQH 2023 Index
         </p>
       </div>
 
-      {/* Network Intelligence — the data moat */}
+      {/* Network Intelligence, the data moat */}
       <div style={{ ...CARD, padding: 0, overflow: "hidden" }}>
         <div style={{ background: "#0b2734", padding: "18px 22px", display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
           <div>
@@ -319,7 +319,7 @@ export default function BenchmarksPage() {
 
         <div style={{ padding: "18px 22px" }}>
           <p style={{ fontSize: 13, color: "#5c747e", marginBottom: 18, lineHeight: 1.6 }}>
-            As practices upload 835 files and confirm appeal outcomes, Simera builds payer-level denial intelligence that no single practice could compute alone. The table below shows what this looks like — win rates by payer and denial code, derived from aggregated (de-identified) outcomes across the network.
+            As practices upload 835 files and confirm appeal outcomes, Simera builds payer-level denial intelligence that no single practice could compute alone. The table below shows what this looks like. Win rates by payer and denial code, derived from aggregated (de-identified) outcomes across the network.
           </p>
 
           <div style={{ overflowX: "auto", borderRadius: 10, border: "1px solid rgba(11,39,52,0.09)" }}>
@@ -337,7 +337,7 @@ export default function BenchmarksPage() {
                   { payer: "United Healthcare", code: "CO-97", n: 612, winRate: 0.58, industry: 0.45, delta: "+13pp", action: "Resubmit with modifier -59" },
                   { payer: "Aetna",             code: "CO-45", n: 531, winRate: 0.41, industry: 0.38, delta: "+3pp",  action: "Contract rate review required" },
                   { payer: "BlueCross BlueShield", code: "CO-16", n: 489, winRate: 0.66, industry: 0.52, delta: "+14pp", action: "Missing/invalid field correction + resubmit" },
-                  { payer: "Cigna",             code: "PR-1",  n: 378, winRate: 0.31, industry: 0.30, delta: "+1pp",  action: "Patient responsibility — limited recourse" },
+                  { payer: "Cigna",             code: "PR-1",  n: 378, winRate: 0.31, industry: 0.30, delta: "+1pp",  action: "Patient responsibility. Limited recourse" },
                   { payer: "Humana",            code: "CO-4",  n: 294, winRate: 0.63, industry: 0.55, delta: "+8pp",  action: "Prior auth appeal with clinical notes" },
                 ].map((row, i) => {
                   const deltaColor = parseFloat(row.delta) > 5 ? "#0c8174" : parseFloat(row.delta) > 0 ? "#9a6a1e" : "#c2553d";
@@ -371,7 +371,7 @@ export default function BenchmarksPage() {
           <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 16, padding: "12px 16px", background: "rgba(20,184,166,0.07)", borderRadius: 10, border: "1px solid rgba(20,184,166,0.18)" }}>
             <div style={{ fontSize: 20 }}>🔒</div>
             <p style={{ fontSize: 12.5, color: "#3a6b60", margin: 0, lineHeight: 1.6 }}>
-              <strong>How the data moat works:</strong> Each practice's outcomes are de-identified (payer name + CARC code + won/lost only — no patient data) and pooled. A solo practice might have 30 CO-4 denials with United; the Simera network has 847 and knows exactly what works. The more practices use Simera, the more accurate every practice's recovery predictions become.
+              <strong>How the data moat works:</strong> Each practice's outcomes are de-identified (payer name + CARC code + won/lost only, no patient data) and pooled. A solo practice might have 30 CO-4 denials with United; the Simera network has 847 and knows exactly what works. The more practices use Simera, the more accurate every practice's recovery predictions become.
             </p>
           </div>
         </div>

@@ -74,7 +74,7 @@ const MOCK_KPIS: ComplianceKpis = {
 };
 
 const MOCK_BREACH_ALERTS: BreachAlert[] = [
-  { id: "b1", type: "Unusual bulk export — 847 records accessed in 4 min", severity: "high", event_count: 3, created_at: "2026-05-28T14:22:00Z" },
+  { id: "b1", type: "Unusual bulk export-847 records accessed in 4 min", severity: "high", event_count: 3, created_at: "2026-05-28T14:22:00Z" },
 ];
 
 const LS_KEY = "simera:compliance:statuses";
@@ -99,7 +99,7 @@ export function useCompliance(phase?: string): ComplianceState {
   const [error, setError] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
 
-  // localStorage-backed local status overrides — survive refetch
+  // localStorage-backed local status overrides. Survive refetch
   const [localStatuses, setLocalStatuses] = useState<Record<string, ComplianceTask["status"]>>(readLocalStatuses);
 
   function updateStatus(id: string, status: ComplianceTask["status"]) {
@@ -149,7 +149,7 @@ export function useCompliance(phase?: string): ComplianceState {
           setBreachAlerts(alertsData);
         }
       } catch {
-        // API unavailable — fall back to mock data for demo
+        // API unavailable. Fall back to mock data for demo
         if (!cancelled) {
           const filtered = phase && phase !== "all"
             ? MOCK_TASKS.filter((t) => t.phase === phase)

@@ -18,7 +18,7 @@ interface AppealLetterModalProps {
     description: string;
     action: string;
     cptCodes: string[];
-    /** Claim reference numbers from the 835 file — included in the letter body */
+    /** Claim reference numbers from the 835 file. Included in the letter body */
     claimIds?: string[];
     /** ICD-10 diagnosis codes on the claim */
     diagnosisCodes?: string[];
@@ -49,7 +49,7 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
     setError("");
     setIsLocalFallback(false);
 
-    // Read practice profile saved in Settings — needed for letter header
+    // Read practice profile saved in Settings. Needed for letter header
     let practiceProfile: { npi?: string; taxId?: string; address?: string; phone?: string; fax?: string } = {};
     try {
       const stored = typeof window !== "undefined" ? localStorage.getItem("simera:settings:practiceProfile") : null;
@@ -107,8 +107,8 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
           setLetter(localLetter);
           setSubjectLine(
             finding.denialCodes[0]
-              ? `Appeal — ${finding.payer} — CARC ${finding.denialCodes[0]}`
-              : `Payment Dispute — ${finding.payer} — ${finding.label}`
+              ? `Appeal. ${finding.payer}. CARC ${finding.denialCodes[0]}`
+              : `Payment Dispute. ${finding.payer}. ${finding.label}`
           );
           setIsLocalFallback(true);
           setState("ready");
@@ -218,8 +218,8 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
               {state === "generating"
                 ? (finding?.denialCodes.length === 0 ? "Generating Dispute Letter" : "Generating Appeal Letter")
                 : state === "error"
-                ? "Letter — Error"
-                : `${finding?.denialCodes.length === 0 ? "Dispute Letter" : "Appeal Letter"} — ${finding?.payer}`}
+                ? "Letter. Error"
+                : `${finding?.denialCodes.length === 0 ? "Dispute Letter" : "Appeal Letter"}. ${finding?.payer}`}
             </h2>
             {state === "ready" && subjectLine && (
               <p
@@ -291,7 +291,7 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
                     const win = window.open("", "_blank");
                     if (win) {
                       win.document.write(`
-                        <html><head><title>Appeal Letter — ${finding?.payer ?? ""}</title>
+                        <html><head><title>Appeal Letter. ${finding?.payer ?? ""}</title>
                         <style>
                           body { font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.7; padding: 48px; max-width: 720px; margin: 0 auto; color: #111; }
                           h1 { font-size: 14px; font-weight: bold; margin-bottom: 4px; }
@@ -346,7 +346,7 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
           </div>
         </div>
 
-        {/* Progress bar — generating */}
+        {/* Progress bar. Generating */}
         {state === "generating" && (
           <div style={{ height: 3, background: "rgba(11,39,52,0.08)", overflow: "hidden" }}>
             <div
@@ -456,7 +456,7 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
                   gap: 6,
                 }}>
                   <span>⚡</span>
-                  Template letter — AI generation unavailable · Personalize before sending
+                  Template letter. AI generation unavailable · Personalize before sending
                 </div>
               )}
               <pre
@@ -489,7 +489,7 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
               background: "#fff",
             }}
           >
-            {/* Human-review disclaimer — P0 compliance requirement */}
+            {/* Human-review disclaimer. P0 compliance requirement */}
             <div style={{
               margin: "0 20px",
               borderRadius: 10,

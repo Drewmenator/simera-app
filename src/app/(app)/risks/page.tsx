@@ -64,7 +64,7 @@ export default function RisksPage() {
   const [statusFilter, setStatusFilter] = useState<FindingStatus | "all">("all");
   const { getStatus, setStatus } = useFindingStatuses();
 
-  // Use headline total leakage (all categories) — same number shown in sidebar
+  // Use headline total leakage (all categories), same number shown in sidebar
   const totalAtRisk = metrics.totalLeakage;
   const critCount = risks.filter((r) => r.severity === "critical").length;
   const highCount = risks.filter((r) => r.severity === "high").length;
@@ -102,7 +102,7 @@ export default function RisksPage() {
             <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
               <div>
                 <h2 style={{ fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em", color: "#0b2734", margin: "0 0 3px" }}>Denial Taxonomy</h2>
-                <p style={{ fontSize: 12.5, color: "#5c747e" }}>Industry-wide breakdown — what&apos;s driving denials and recovery rates · MGMA / HFMA 2024</p>
+                <p style={{ fontSize: 12.5, color: "#5c747e" }}>Industry-wide breakdown. What&apos;s driving denials and recovery rates · MGMA / HFMA 2024</p>
               </div>
               <Link
                 href="/appeals"
@@ -159,7 +159,7 @@ export default function RisksPage() {
           <div style={{ ...CARD, padding: "20px 22px" }}>
             <div style={{ marginBottom: 14 }}>
               <h3 style={{ fontSize: 15, fontWeight: 700, color: "#0b2734", margin: "0 0 3px" }}>Appeal Overturn Rates</h3>
-              <p style={{ fontSize: 12, color: "#5c747e" }}>Most denials are never appealed — but most win when they are</p>
+              <p style={{ fontSize: 12, color: "#5c747e" }}>Most denials are never appealed, but most win when they are</p>
             </div>
             {appealOverturnRates.map((row) => (
               <div key={row.payer} style={{ padding: "10px 0", borderBottom: "1px solid rgba(11,39,52,0.06)" }}>
@@ -185,7 +185,7 @@ export default function RisksPage() {
               <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
                 <TrendingUp style={{ width: 15, height: 15, color: "#0c8174", flexShrink: 0, marginTop: 1 }} />
                 <p style={{ fontSize: 12.5, color: "#0c8174", lineHeight: 1.45 }}>
-                  <b>Key paradox:</b> appeal success rates are high, but 35–60% of denials are never resubmitted. Every appealed MA denial wins 4 out of 5 times.
+                  <b>Key paradox:</b> appeal success rates are high, but 35-60% of denials are never resubmitted. Every appealed MA denial wins 4 out of 5 times.
                 </p>
               </div>
             </div>
@@ -196,7 +196,7 @@ export default function RisksPage() {
             <h3 style={{ fontSize: 15, fontWeight: 700, color: "#0b2734", margin: "0 0 14px" }}>Denial Cost Intelligence</h3>
             {[
               { label: "Avg cost to rework one claim", value: "$57.23", sub: "Up 30% from $43.84 in 2022", accent: "#c2553d" },
-              { label: "Denials never resubmitted", value: "35–60%", sub: "Pure revenue abandoned", accent: "#bd852f" },
+              { label: "Denials never resubmitted", value: "35-60%", sub: "Pure revenue abandoned", accent: "#bd852f" },
               { label: "Annual denial losses (industry)", value: "$262B", sub: "$25.7B spent contesting them", accent: "#0b2734" },
             ].map((item) => (
               <div key={item.label} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid rgba(11,39,52,0.06)", gap: 12 }}>
@@ -211,7 +211,7 @@ export default function RisksPage() {
         </div>
       </div>
 
-      {/* AI Denial Risk Widget — highest-risk claim from current audit */}
+      {/* AI Denial Risk Widget. Highest-risk claim from current audit */}
       {(() => {
         const topRisk = risks.find((r) => r.severity === "critical") ?? risks[0];
         if (!topRisk) return null;
@@ -225,18 +225,18 @@ export default function RisksPage() {
 
         // CARC code → human-readable description (subset of common codes)
         const CARC_LABELS: Record<string, string> = {
-          "97": "Claim not covered by this payer/contractor — allowed to bill patient",
+          "97": "Claim not covered by this payer/contractor. Allowed to bill patient",
           "4": "Service not covered unless prior authorization obtained",
           "11": "Diagnosis inconsistent with this procedure",
           "16": "Claim lacks information needed for adjudication",
           "27": "Expenses incurred after eligibility expired",
-          "50": "Non-covered service — medical necessity not established",
+          "50": "Non-covered service. Medical necessity not established",
           "57": "Claim submitted past the contractual filing deadline",
           "15": "Claim submitted past the deadline",
           "18": "Duplicate claim",
-          "22": "Coordination of benefits — other coverage pays first",
+          "22": "Coordination of benefits. Other coverage pays first",
           "26": "Expenses incurred prior to coverage",
-          "45": "Contractual adjustment — below contracted rate",
+          "45": "Contractual adjustment. Below contracted rate",
           "29": "Time limit for filing has expired",
         };
 

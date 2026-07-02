@@ -26,7 +26,7 @@ function statusColor(status: ValidationCheck["status"]): string {
 }
 
 function fmtDate(raw?: string): string {
-  if (!raw || raw.length !== 8) return raw ?? "—";
+  if (!raw || raw.length !== 8) return raw ?? " - ";
   return `${raw.slice(4, 6)}/${raw.slice(6, 8)}/${raw.slice(0, 4)}`;
 }
 
@@ -42,7 +42,7 @@ export function ValidatorStep({ fileName, result, onProceed, onBack }: Validator
     ? result.warnCount === 0
       ? "File looks great"
       : `Valid with ${result.warnCount} advisory note${result.warnCount !== 1 ? "s" : ""}`
-    : `${result.errorCount} error${result.errorCount !== 1 ? "s" : ""} — review before submitting`;
+    : `${result.errorCount} error${result.errorCount !== 1 ? "s" : ""}. Review before submitting`;
 
   const headerBg = result.valid
     ? result.warnCount === 0
@@ -73,7 +73,7 @@ export function ValidatorStep({ fileName, result, onProceed, onBack }: Validator
           </div>
         </div>
 
-        {/* Preview stats — only shown when parseable */}
+        {/* Preview stats, only shown when parseable */}
         {(result.payerName || result.claimCount !== undefined || result.totalPaid !== undefined || result.paymentDate) && (
           <div style={{
             display: "grid",
@@ -83,11 +83,11 @@ export function ValidatorStep({ fileName, result, onProceed, onBack }: Validator
             borderTop: "1px solid rgba(11,39,52,0.07)",
           }}>
             {[
-              { label: "Payer",          value: result.payerName ?? "—" },
+              { label: "Payer",          value: result.payerName ?? " - " },
               { label: "Payment date",   value: fmtDate(result.paymentDate) },
-              { label: "Claims",         value: result.claimCount != null ? result.claimCount.toLocaleString() : "—" },
+              { label: "Claims",         value: result.claimCount != null ? result.claimCount.toLocaleString() : " - " },
               { label: "Total paid",     value: result.totalPaid != null
-                  ? `$${result.totalPaid.toLocaleString("en-US", { minimumFractionDigits: 2 })}` : "—" },
+                  ? `$${result.totalPaid.toLocaleString("en-US", { minimumFractionDigits: 2 })}` : " - " },
             ].map(({ label, value }, i) => (
               <div key={label} style={{
                 padding: "10px 14px",
@@ -106,7 +106,7 @@ export function ValidatorStep({ fileName, result, onProceed, onBack }: Validator
         )}
       </div>
 
-      {/* Issues — show fail/warn prominently */}
+      {/* Issues. Show fail/warn prominently */}
       {prominent.length > 0 && (
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           {prominent.map(c => (
@@ -126,7 +126,7 @@ export function ValidatorStep({ fileName, result, onProceed, onBack }: Validator
         </div>
       )}
 
-      {/* Collapsible — all checks */}
+      {/* Collapsible. All checks */}
       <button
         onClick={() => setExpanded(!expanded)}
         style={{

@@ -381,7 +381,7 @@ function PageFooter({ pageNum }: { pageNum: number }) {
   return (
     <View style={s.pageFooter} fixed>
       <Text style={s.pageFooterText}>
-        Confidential · simera.health · Not financial advice — verify before acting
+        Confidential · simera.health · Not financial advice. Verify before acting
       </Text>
       <Text style={s.pageFooterText}>Page {pageNum}</Text>
     </View>
@@ -420,7 +420,7 @@ export function AuditPDFDocument({ data }: { data?: Partial<DashboardData> }) {
 
   return (
     <Document
-      title={`Simera Revenue Leakage Audit — ${practice}`}
+      title={`Simera Revenue Leakage Audit. ${practice}`}
       author="Simera Health"
       subject="Revenue Leakage Audit Report"
     >
@@ -482,7 +482,7 @@ export function AuditPDFDocument({ data }: { data?: Partial<DashboardData> }) {
           {/* Footer */}
           <View style={s.coverFooter}>
             <Text style={s.coverFooterText}>
-              Confidential — prepared exclusively for {practice}
+              Confidential. Prepared exclusively for {practice}
             </Text>
             <Text style={s.coverFooterText}>
               simera.health · Get paid what you earned.
@@ -499,7 +499,7 @@ export function AuditPDFDocument({ data }: { data?: Partial<DashboardData> }) {
           {/* Alert */}
           <View style={s.alertBox}>
             <View>
-              <Text style={s.alertTitle}>⚠ ACTION REQUIRED — 38 DAYS REMAINING</Text>
+              <Text style={s.alertTitle}>⚠ ACTION REQUIRED-38 DAYS REMAINING</Text>
               <Text style={s.alertText}>
                 23 United Healthcare CO-197 (prior auth) denials totaling $31,200 have been sitting
                 unworked for 142 days. UHC's 180-day appeal window closes July 8, 2026.
@@ -563,7 +563,7 @@ export function AuditPDFDocument({ data }: { data?: Partial<DashboardData> }) {
               above the industry median of {m.benchmarkMedian}%. Best-performing practices
               achieve {m.benchmarkBest}%. Reaching even the median would recover an
               estimated <Text style={{ fontFamily: "Helvetica-Bold", color: GREEN }}>$28,400/month</Text> in
-              additional revenue — without seeing a single additional patient.
+              additional revenue, without seeing a single additional patient.
             </Text>
           </View>
         </View>
@@ -574,7 +574,7 @@ export function AuditPDFDocument({ data }: { data?: Partial<DashboardData> }) {
       <Page size="LETTER" style={s.page}>
         <PageHeader practice={practice} />
         <View style={s.body}>
-          <Text style={s.sectionTitle}>Top Recovery Opportunities — Ranked by Expected Recovery</Text>
+          <Text style={s.sectionTitle}>Top Recovery Opportunities. Ranked by Expected Recovery</Text>
 
           {/* Table header */}
           <View style={s.tableHeader}>
@@ -604,7 +604,7 @@ export function AuditPDFDocument({ data }: { data?: Partial<DashboardData> }) {
                 s.colRecovery,
                 { fontFamily: "Helvetica-Bold", color: f.expectedRecovery > 0 ? GREEN : GRAY }
               ]}>
-                {f.expectedRecovery > 0 ? `$${f.expectedRecovery.toLocaleString()}` : "—"}
+                {f.expectedRecovery > 0 ? `$${f.expectedRecovery.toLocaleString()}` : " - "}
               </Text>
               <View style={s.colDifficulty}>
                 <DifficultyBadge d={f.difficulty} />
@@ -619,13 +619,13 @@ export function AuditPDFDocument({ data }: { data?: Partial<DashboardData> }) {
       <Page size="LETTER" style={s.page}>
         <PageHeader practice={practice} />
         <View style={s.body}>
-          <Text style={s.sectionTitle}>Recommended Actions — This Week</Text>
+          <Text style={s.sectionTitle}>Recommended Actions. This Week</Text>
 
           {actionable.map((f, i) => (
             <View key={i} style={s.actionCard}>
               <View style={s.actionHeader}>
                 <Text style={s.actionTitle}>
-                  {i + 1}. {f.label} — {f.payer}
+                  {i + 1}. {f.label}. {f.payer}
                 </Text>
                 <Text style={s.actionRecovery}>
                   +${f.expectedRecovery.toLocaleString()}
@@ -649,7 +649,7 @@ export function AuditPDFDocument({ data }: { data?: Partial<DashboardData> }) {
       <Page size="LETTER" style={s.page}>
         <PageHeader practice={practice} />
         <View style={s.body}>
-          <Text style={s.sectionTitle}>Payer Scorecard — Sorted by Denial Rate</Text>
+          <Text style={s.sectionTitle}>Payer Scorecard. Sorted by Denial Rate</Text>
 
           <View style={s.tableHeader}>
             <Text style={[s.tableHeaderText, s.colPayer]}>Payer</Text>
@@ -710,11 +710,11 @@ export function AuditPDFDocument({ data }: { data?: Partial<DashboardData> }) {
         {/* CTA */}
         <View style={s.ctaBox}>
           <Text style={s.ctaTitle}>
-            Subscribe to Simera — recover ${(m.expectedRecovery / 1000).toFixed(0)}K this quarter
+            Subscribe to Simera. Recover ${(m.expectedRecovery / 1000).toFixed(0)}K this quarter
           </Text>
           <Text style={s.ctaBody}>
             This audit was run manually as part of our free audit offer.{"\n"}
-            Simera subscribers get continuous monitoring — every new 835 file analyzed automatically,
+            Simera subscribers get continuous monitoring. Every new 835 file analyzed automatically,
             appeal deadlines tracked, payer patterns detected before they become losses.{"\n\n"}
             <Text style={s.ctaHighlight}>
               Annual subscription: $7,188 · First month free · Cancel anytime.

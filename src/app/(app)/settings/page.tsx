@@ -155,7 +155,7 @@ function PracticeTab() {
       }, getToken);
       try {
         localStorage.setItem("simera:settings:practiceName", name);
-        // Full profile used by appeal letter generation — persisted for offline/fallback use
+        // Full profile used by appeal letter generation. Persisted for offline/fallback use
         localStorage.setItem("simera:settings:practiceProfile", JSON.stringify({ npi, taxId, address, phone, fax }));
       } catch { /* ignore */ }
       setSaved(true);
@@ -423,7 +423,7 @@ function IntegrationsTab() {
     },
     {
       name: "Office Ally",
-      description: "Free clearinghouse — pull ERA files automatically",
+      description: "Free clearinghouse. Pull ERA files automatically",
       status: "available",
       logo: "O",
     },
@@ -474,7 +474,7 @@ function IntegrationsTab() {
     <div>
       <h2 className="text-base font-semibold text-foreground mb-1">Integrations</h2>
       <p className="text-sm text-muted-foreground mb-6">
-        Connect your billing software so Simera automatically pulls new 835 files — no manual uploads.
+        Connect your billing software so Simera automatically pulls new 835 files, no manual uploads.
       </p>
 
       <div className="space-y-3">
@@ -602,7 +602,7 @@ function TeamTab() {
 
       {/* Member list */}
       <div className="space-y-2 mb-6">
-        {/* Current user — always first */}
+        {/* Current user, always first */}
         <div className="flex items-center gap-3 p-3 bg-card border border-border rounded-lg">
           <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-xs font-semibold text-primary flex-shrink-0">
             {userInitials}
@@ -836,7 +836,7 @@ function BillingTab() {
                 <p className="text-sm text-muted-foreground">Up to 10 providers · Unlimited uploads · $129/provider/month</p>
               )}
               {plan === "free" && (
-                <p className="text-sm text-muted-foreground">Limited access — subscribe to unlock full analysis</p>
+                <p className="text-sm text-muted-foreground">Limited access. Subscribe to unlock full analysis</p>
               )}
             </div>
 
@@ -864,7 +864,7 @@ function BillingTab() {
         )}
       </div>
 
-      {/* Plan cards — shown when on free plan or subscription is canceled */}
+      {/* Plan cards. Shown when on free plan or subscription is canceled */}
       {showPlanCards && (
         <>
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
@@ -1015,7 +1015,7 @@ export default function SettingsPage() {
       </div>
 
       <div className="flex flex-col md:flex-row gap-6">
-        {/* Sidebar nav — horizontal scroll on mobile, vertical on desktop */}
+        {/* Sidebar nav. Horizontal scroll on mobile, vertical on desktop */}
         <nav className="no-scrollbar flex md:flex-col md:w-44 md:flex-shrink-0 gap-0.5 overflow-x-auto pb-1 md:pb-0">
           {TABS.map((tab) => {
             const active = activeTab === tab.id;

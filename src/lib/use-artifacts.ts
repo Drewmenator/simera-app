@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * use-artifacts — client hook for a denial case's recovery artifacts (Phase 2).
+ * use-artifacts. Client hook for a denial case's recovery artifacts (Phase 2).
  *
  * Reads /cases/{id}/artifacts and exposes generate / regenerate / review actions
  * (the human-approval gate). Mirrors use-cases.ts auth/fetch conventions. Artifacts

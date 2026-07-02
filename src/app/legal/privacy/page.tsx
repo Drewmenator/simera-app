@@ -1,4 +1,4 @@
-export const metadata = { title: "Privacy Policy — Simera Health" };
+export const metadata = { title: "Privacy Policy. Simera Health" };
 
 const H1 = ({ children }: { children: React.ReactNode }) => (
   <h1 style={{ fontSize: 32, fontWeight: 800, color: "#0b2734", letterSpacing: "-0.03em", marginBottom: 8 }}>{children}</h1>
@@ -52,11 +52,11 @@ export default function PrivacyPage() {
       <H2>3. How We Share Your Information</H2>
       <P><strong>Service providers:</strong> We share data with vendors who help us operate the Service, all under data processing agreements:</P>
       <UL>
-        <LI>Amazon Web Services (AWS) — infrastructure, storage, logging</LI>
-        <LI>Anthropic — AI analysis (under BAA for PHI)</LI>
-        <LI>Supabase — database</LI>
-        <LI>Vercel — frontend hosting</LI>
-        <LI>Clerk — authentication</LI>
+        <LI>Amazon Web Services (AWS). Infrastructure, storage, logging</LI>
+        <LI>Anthropic. AI analysis (under BAA for PHI)</LI>
+        <LI>Supabase. Database</LI>
+        <LI>Vercel. Frontend hosting</LI>
+        <LI>Clerk. Authentication</LI>
       </UL>
       <P><strong>Legal requirements:</strong> We may disclose information if required by law, court order, or to protect the rights and safety of Simera and its users.</P>
       <P><strong>Business transfers:</strong> In the event of a merger or acquisition, your data may be transferred to the successor entity under the same privacy protections.</P>

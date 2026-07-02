@@ -69,7 +69,7 @@ export function useFindingStatuses() {
           });
         }
       } catch {
-        // Network failure — local cache already shown
+        // Network failure. Local cache already shown
       }
     })();
   }, []);
@@ -115,7 +115,7 @@ export function useFindingStatuses() {
             }),
           });
         } catch {
-          // Silently fail — localStorage already updated
+          // Silently fail. LocalStorage already updated
         }
       })();
     },

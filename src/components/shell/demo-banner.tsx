@@ -11,7 +11,7 @@ export function DemoBanner({ onUploadClick }: DemoBannerProps) {
   const spark = useSparkAgent();
 
   if (spark.detected) {
-    // Spark Agent mode — PHI never leaves this machine
+    // Spark Agent mode. PHI never leaves this machine
     return (
       <div
         style={{
@@ -30,7 +30,7 @@ export function DemoBanner({ onUploadClick }: DemoBannerProps) {
           <Cpu size={14} color="#0c8174" style={{ flexShrink: 0 }} />
           <div style={{ minWidth: 0 }}>
             <p style={{ margin: 0, fontSize: 12.5, fontWeight: 700, color: "#0b2734", lineHeight: 1.3 }}>
-              Spark Agent — on-premise mode
+              Spark Agent. On-premise mode
             </p>
             <p className="hidden md:block" style={{ margin: 0, fontSize: 11.5, color: "#5c747e", lineHeight: 1.3 }}>
               PHI never leaves this machine · AI running locally · Zero cloud exposure
@@ -88,7 +88,7 @@ export function DemoBanner({ onUploadClick }: DemoBannerProps) {
         <div style={{ minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
             <p style={{ margin: 0, fontSize: 12.5, fontWeight: 700, color: "#0b2734", lineHeight: 1.3 }}>
-              Sample Audit — Riverview Family Medicine
+              Sample Audit. Riverview Family Medicine
             </p>
             <span style={{
               display: "inline-block", padding: "1px 7px", borderRadius: 20,

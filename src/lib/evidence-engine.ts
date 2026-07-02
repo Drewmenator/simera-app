@@ -1,12 +1,12 @@
 /**
- * DEMO-ONLY — used by the in-memory DenialWorkQueue. The PRODUCT source of truth
+ * DEMO-ONLY, used by the in-memory DenialWorkQueue. The PRODUCT source of truth
  * for the records checklist is the backend `simera/engines/records_checklist.py`
  * (Phase 2). Do not wire this into the persisted /cases path; converge or retire
  * with the demo. See docs/superpowers/specs/2026-06-14-phase2-artifact-approval-design.md.
  */
 
 /**
- * Evidence Engine — maps every CARC denial code to:
+ * Evidence Engine. Maps every CARC denial code to:
  *   • The required evidence package for an appeal
  *   • The core legal/contractual argument
  *   • Payer response deadline guidance
@@ -29,7 +29,7 @@ export interface AppealStrategy {
   category: string;
   recoverable: boolean; // false = do NOT appeal (waste of time)
   appealDeadlineDays: number; // days from date of remittance to file
-  winRateLabel: string; // "High (75%+)" | "Moderate (40–60%)" | "Low (<30%)"
+  winRateLabel: string; // "High (75%+)" | "Moderate (40-60%)" | "Low (<30%)"
   coreArgument: string; // the single most important thing to say in the letter
   evidence: EvidenceItem[];
   avoidanceNote: string; // how to prevent this denial in future
@@ -48,7 +48,7 @@ const EVIDENCE_ENGINE: Record<string, AppealStrategy> = {
     coreArgument: "The services were medically distinct, performed in separate operative fields or at separate encounters. Modifier 59/XU applies. Attach documentation showing clinical distinctiveness.",
     evidence: [
       { id: "op_notes", label: "Operative / procedure notes", description: "Detailed notes showing each service was distinct and separately identifiable.", required: true },
-      { id: "modifier_justification", label: "Modifier 59 / X{ESPU} justification memo", description: "One-page explanation of why the modifier applies — different session, different site, or different injury.", required: true },
+      { id: "modifier_justification", label: "Modifier 59 / X{ESPU} justification memo", description: "One-page explanation of why the modifier applies. Different session, different site, or different injury.", required: true },
       { id: "ncci_review", label: "NCCI edit review", description: "Print the relevant NCCI edit pair from the CMS website showing the edit is not absolute.", required: true },
       { id: "encounter_note", label: "Encounter / progress note", description: "Signed physician note for the date of service.", required: false },
     ],
@@ -84,7 +84,7 @@ const EVIDENCE_ENGINE: Record<string, AppealStrategy> = {
       { id: "corrected_claim", label: "Corrected claim with corrected dx", description: "If the diagnosis code was wrong, submit corrected claim immediately.", required: false },
       { id: "icd_reference", label: "ICD-10 coding reference", description: "Cite the relevant ICD-10 coding guideline supporting the code chosen.", required: false },
     ],
-    avoidanceNote: "Use ICD-10 code-to-procedure linkage validation at charge entry. Most EHRs have this built in — ensure it is enabled.",
+    avoidanceNote: "Use ICD-10 code-to-procedure linkage validation at charge entry. Most EHRs have this built in. Ensure it is enabled.",
   },
 
   "16": {
@@ -96,9 +96,9 @@ const EVIDENCE_ENGINE: Record<string, AppealStrategy> = {
     winRateLabel: "High (75%+)",
     coreArgument: "All required information is now provided. The claim was complete and accurate at time of original submission. Please reprocess with the attached corrected documentation.",
     evidence: [
-      { id: "eob_review", label: "EOB / remittance with specific field noted", description: "Identify exactly which field the payer says is missing — then provide it.", required: true },
+      { id: "eob_review", label: "EOB / remittance with specific field noted", description: "Identify exactly which field the payer says is missing, then provide it.", required: true },
       { id: "original_submission", label: "Proof of original submission", description: "Clearinghouse acceptance report showing the claim was submitted with all required fields.", required: true },
-      { id: "corrected_info", label: "The missing information", description: "Whatever the payer said was lacking — NPI, taxonomy code, date of birth, subscriber ID, etc.", required: true },
+      { id: "corrected_info", label: "The missing information", description: "Whatever the payer said was lacking. NPI, taxonomy code, date of birth, subscriber ID, etc.", required: true },
     ],
     avoidanceNote: "CO-16 is almost always a front-end scrubbing failure. Your clearinghouse should catch missing required fields before submission.",
   },
@@ -133,7 +133,7 @@ const EVIDENCE_ENGINE: Record<string, AppealStrategy> = {
       { id: "eligibility_verification", label: "Eligibility verification showing effective date", description: "Proof that the plan effective date was on or before the date of service.", required: true },
       { id: "enrollment_letter", label: "Member enrollment letter", description: "Letter from the payer confirming when coverage began.", required: true },
     ],
-    avoidanceNote: "Verify effective dates — not just active status — at scheduling for new patients.",
+    avoidanceNote: "Verify effective dates, not just active status. At scheduling for new patients.",
   },
 
   // ─── MEDICAL NECESSITY ─────────────────────────────────────────────────────
@@ -150,10 +150,10 @@ const EVIDENCE_ENGINE: Record<string, AppealStrategy> = {
       { id: "lcd_ncd_citation", label: "LCD or NCD citation", description: "Print the relevant Local Coverage Determination or National Coverage Determination and highlight the criteria met.", required: true },
       { id: "specialist_letter", label: "Referring physician / specialist letter", description: "If applicable, a letter from a specialist supporting the necessity of the service.", required: false },
       { id: "prior_treatment", label: "Prior treatment history", description: "Documentation showing conservative treatment was attempted and failed, if required by the LCD.", required: false },
-      { id: "peer_to_peer_request", label: "Peer-to-peer review request", description: "Request a peer-to-peer review with the payer's medical director — many reversals happen here.", required: false },
+      { id: "peer_to_peer_request", label: "Peer-to-peer review request", description: "Request a peer-to-peer review with the payer's medical director. Many reversals happen here.", required: false },
     ],
     avoidanceNote: "Pull the payer's LCD for every high-risk CPT code. Documentation templates should map directly to LCD criteria before the claim is submitted.",
-    urgencyNote: "Request a peer-to-peer review within 30 days of the denial — this is your highest-probability reversal path for medical necessity denials.",
+    urgencyNote: "Request a peer-to-peer review within 30 days of the denial. This is your highest-probability reversal path for medical necessity denials.",
   },
 
   "57": {
@@ -169,7 +169,7 @@ const EVIDENCE_ENGINE: Record<string, AppealStrategy> = {
       { id: "em_guidelines", label: "CMS 2021 E/M guideline citation", description: "Reference the applicable CMS or AMA E/M documentation guidelines supporting the coded level.", required: true },
       { id: "time_documentation", label: "Total time documentation", description: "If billing by time: document total provider time including coordination, review, and counseling.", required: false },
     ],
-    avoidanceNote: "Run E/M audits monthly. If CO-57 recurs, your documentation templates need revision — the level of MDM documented does not match the level billed.",
+    avoidanceNote: "Run E/M audits monthly. If CO-57 recurs, your documentation templates need revision, the level of MDM documented does not match the level billed.",
   },
 
   // ─── PRIOR AUTHORIZATION ───────────────────────────────────────────────────
@@ -187,7 +187,7 @@ const EVIDENCE_ENGINE: Record<string, AppealStrategy> = {
       { id: "clinical_notes", label: "Clinical documentation submitted with PA", description: "The same supporting documentation that was submitted with the original PA request.", required: false },
       { id: "retroactive_pa", label: "Retroactive PA approval (if applicable)", description: "For urgent/emergent situations, request retroactive PA approval from the payer.", required: false },
     ],
-    avoidanceNote: "PA tracking automation is critical. Build PA requirement checks into your scheduling workflow — never schedule a PA-required procedure without confirmation.",
+    avoidanceNote: "PA tracking automation is critical. Build PA requirement checks into your scheduling workflow, never schedule a PA-required procedure without confirmation.",
   },
 
   // ─── TIMELY FILING ─────────────────────────────────────────────────────────
@@ -249,7 +249,7 @@ const EVIDENCE_ENGINE: Record<string, AppealStrategy> = {
     recoverable: false,
     appealDeadlineDays: 0,
     winRateLabel: "Not applicable",
-    coreArgument: "This is a contractual rate reduction, not a denial. The payer paid the contracted rate. This is NOT recoverable through appeal — it is a write-off per your contract. The recovery opportunity is at contract renegotiation, not appeal.",
+    coreArgument: "This is a contractual rate reduction, not a denial. The payer paid the contracted rate. This is NOT recoverable through appeal. It is a write-off per your contract. The recovery opportunity is at contract renegotiation, not appeal.",
     evidence: [],
     avoidanceNote: "Review your fee schedule annually. If CO-45 write-offs represent more than 35% of gross charges, your billed charges are too high OR your contracted rates are below market. Both are fixable.",
     urgencyNote: "Do not appeal CO-45. Your time and your staff's time is better spent on actual denial categories. CO-45 is a contract issue, not a billing error.",
@@ -294,7 +294,7 @@ export function generateAppealLetter(params: {
   claimIds: string[];
   cptCodes: string[];
   dollarAmount: number;
-  /** Deprecated single-date field — use serviceDates instead. */
+  /** Deprecated single-date field, use serviceDates instead. */
   dateOfService?: string;
   // ── Provider identity (from Settings / localStorage) ────────────────────
   npi?: string;
@@ -311,12 +311,12 @@ export function generateAppealLetter(params: {
   const strategy = getAppealStrategy(params.carcCode);
   const today = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
-  // Claim references — cap display at 10 IDs
+  // Claim references. Cap display at 10 IDs
   const claimList = params.claimIds.length > 0
     ? params.claimIds.slice(0, 10).join(", ") + (params.claimIds.length > 10 ? ` (and ${params.claimIds.length - 10} more)` : "")
     : "[Insert claim numbers]";
 
-  // Dates — prefer explicit service dates array, fall back to legacy dateOfService
+  // Dates. Prefer explicit service dates array, fall back to legacy dateOfService
   const serviceDateStr = params.serviceDates && params.serviceDates.length > 0
     ? params.serviceDates.join(", ")
     : (params.dateOfService ?? "[Insert date range]");
@@ -344,7 +344,7 @@ Tax ID (EIN): ${taxId}
 TO: ${params.payerName}
     Appeals Department
 
-RE: Formal Appeal — CARC ${params.carcCode} — ${params.claimIds.length || "Multiple"} Claim(s)
+RE: Formal Appeal. CARC ${params.carcCode}. ${params.claimIds.length || "Multiple"} Claim(s)
 
 Dear Appeals Reviewer,
 
@@ -355,7 +355,7 @@ CLAIM DETAILS
 ────────────────────────────────────────────
 Claim Reference(s):      ${claimList}${params.payerClaimNumber ? `\nPayer Claim Number:      ${params.payerClaimNumber}` : ""}
 Date(s) of Service:      ${serviceDateStr}${params.denialDate ? `\nDenial Date:             ${params.denialDate}` : ""}
-Denial Reason Code:      CARC ${params.carcCode} — "${strategy.carcDescription}"
+Denial Reason Code:      CARC ${params.carcCode}. "${strategy.carcDescription}"
 Procedure Code(s):       ${cptStr}${diagnosisStr ? `\nDiagnosis Code(s):       ${diagnosisStr}` : ""}
 Total Amount in Dispute: $${params.dollarAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
 ────────────────────────────────────────────
@@ -365,7 +365,7 @@ ${strategy.coreArgument}
 
 SUPPORTING DOCUMENTATION
 The following documentation is enclosed in support of this appeal:
-${strategy.evidence.filter(e => e.required).map((e, i) => `  ${i + 1}. ${e.label} — ${e.description}`).join("\n")}
+${strategy.evidence.filter(e => e.required).map((e, i) => `  ${i + 1}. ${e.label}. ${e.description}`).join("\n")}
 
 REQUESTED ACTION
 We respectfully request that ${params.payerName} review this appeal and reprocess the above claim(s) for payment in accordance with our contractual agreement and applicable coverage policies.
@@ -413,15 +413,15 @@ export function generateFaxCoverSheet(params: {
 ════════════════════════════════════════════════════
 
 DATE:          ${today}
-TO:            ${params.payerName} — Appeals Department
+TO:            ${params.payerName}. Appeals Department
 TO FAX:        ${params.payerFax || "[Payer Fax Number]"}
-FROM:          ${params.practiceName} — Billing Department
+FROM:          ${params.practiceName}. Billing Department
 FROM FAX:      ${fax}
 FROM PHONE:    ${phone}
 PAGES:         ${params.totalPages ?? "[N]"} (including this cover sheet)
 
 ────────────────────────────────────────────────────
-RE: APPEAL — CARC ${params.carcCode}
+RE: APPEAL. CARC ${params.carcCode}
 ────────────────────────────────────────────────────
 
 This fax contains a formal appeal package for the

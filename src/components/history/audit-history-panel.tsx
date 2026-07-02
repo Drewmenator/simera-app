@@ -8,7 +8,7 @@ import type { AuditResult, AuditRunSummary } from "@/lib/api";
 interface AuditHistoryPanelProps {
   open: boolean;
   onClose: () => void;
-  /** Called when user selects an audit — passes the full result, the run ID, and a human-readable period string. */
+  /** Called when user selects an audit. Passes the full result, the run ID, and a human-readable period string. */
   onSelectAudit: (result: AuditResult, auditId: string, period: string) => void;
   currentAuditId?: string;
 }
@@ -17,7 +17,7 @@ function formatPeriod(start: string | null, end: string | null): string {
   if (!start && !end) return "Period unknown";
   const fmt = (d: string) =>
     new Date(d).toLocaleDateString("en-US", { month: "short", year: "numeric" });
-  if (start && end) return `${fmt(start)} – ${fmt(end)}`;
+  if (start && end) return `${fmt(start)}. ${fmt(end)}`;
   if (start) return `From ${fmt(start)}`;
   return `Until ${fmt(end!)}`;
 }

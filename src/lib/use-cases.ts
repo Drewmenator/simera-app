@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * use-cases — client hook for the persisted denial work queue (Phase 1 spine).
+ * use-cases. Client hook for the persisted denial work queue (Phase 1 spine).
  *
  * Reads the live `/cases` API (the `findings`-as-case-record backend) and lets a
  * practice advance a case through the recovery lifecycle. Distinct from the
@@ -107,7 +107,7 @@ export function useCases(opts: { sort?: CaseSort; status?: CaseStatus } = {}) {
       if (status) params.set("status", status);
       const res = await fetch(`${API_URL}/cases?${params.toString()}`, { headers });
       if (!res.ok) {
-        // 401 in demo / signed-out, 503 if persistence unconfigured — treat as empty.
+        // 401 in demo / signed-out, 503 if persistence unconfigured. Treat as empty.
         setCases([]);
         if (res.status !== 401 && res.status !== 503) {
           setError(`Failed to load cases (${res.status})`);

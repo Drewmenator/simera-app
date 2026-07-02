@@ -56,7 +56,7 @@ vercel deploy --prod
 | Tier | Amount | Billing | Use Case |
 |---|---|---|---|
 | **Starter** | $149/month | Monthly | Solo practices (1 provider) |
-| **Growth** | $129/provider/month | Monthly | Small practices (2–10 providers) — Stripe bills per provider count |
+| **Growth** | $129/provider/month | Monthly | Small practices (2-10 providers). Stripe bills per provider count |
 | **Enterprise** | Custom | Custom | Large networks (11+), negotiated annually |
 
 ### Growth Tier Notes

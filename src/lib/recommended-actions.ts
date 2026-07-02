@@ -1,15 +1,15 @@
 /**
- * recommended-actions — single source of truth for "what should the practice do
+ * recommended-actions. Single source of truth for "what should the practice do
  * about this finding" copy. See docs/recommended-actions-voice.md for the rules.
  *
  * Voice: lead with what Simera DID (generated the appeal package), never "go to the
  * payer portal." Honest to current capability (Phase 0/1a: we build the package;
- * the practice/biller submits). Frontend/demo copy only — the backend action strings
+ * the practice/biller submits). Frontend/demo copy only, the backend action strings
  * were audited and found already recovery-oriented (no twin needed); see the voice doc.
  */
 
 // One switch to remove every "Auto-submit coming soon" teaser. Treat as a dated
-// promise — if Phase 1b (clearinghouse auto-submit) isn't underway in ~2 months, set false.
+// promise. If Phase 1b (clearinghouse auto-submit) isn't underway in ~2 months, set false.
 export const SHOW_AUTOSUBMIT_TEASER = true;
 
 const TEASER = " (Auto-submit via clearinghouse coming soon.)";
@@ -50,16 +50,16 @@ export function actionFor(category: FindingCategory, ctx: ActionContext = {}): s
       const lead = n
         ? `Work these ${n} ${payer} denial${n === 1 ? "" : "s"} in the Appeals queue`
         : `Work these ${payer} denials in the Appeals queue`;
-      return `${lead} — Simera builds the appeal letter + evidence list for each. Submit before the filing deadline.${teaser()}`;
+      return `${lead}. Simera builds the appeal letter + evidence list for each. Submit before the filing deadline.${teaser()}`;
     }
     case "wrong_writeoff":
-      return `Reopen these write-offs — Simera flags which are recoverable and generates the appeal package. Review and submit.${teaser()}`;
+      return `Reopen these write-offs. Simera flags which are recoverable and generates the appeal package. Review and submit.${teaser()}`;
     case "timely_filing":
-      return "Deadline risk — these claims are near their timely-filing window. Simera's appeal package is ready; submit now before it closes.";
+      return "Deadline risk. These claims are near their timely-filing window. Simera's appeal package is ready; submit now before it closes.";
     case "underpayment":
       return `Simera flagged ${amount || "the amount"} paid below your contracted rate. Review the line-level variance and file a payment dispute.`;
     case "undercoding":
-      return `Simera identified ${amount || "undercoded revenue"} in undercoded encounters — review the suggested codes and rebill the corrected claim.`;
+      return `Simera identified ${amount || "undercoded revenue"} in undercoded encounters. Review the suggested codes and rebill the corrected claim.`;
     default:
       return "Review this finding in the Appeals queue.";
   }

@@ -227,7 +227,7 @@ function TaskRow({
 
   async function markDone() {
     setSaving(true);
-    // Optimistic update immediately — don't wait for API
+    // Optimistic update immediately. Don't wait for API
     handleStatusChange("done");
     try {
       await fetch(`${BASE}/admin/compliance/tasks/${task.id}`, {
@@ -235,9 +235,9 @@ function TaskRow({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "done" }),
       });
-      // API success — already updated locally, nothing more to do
+      // API success. Already updated locally, nothing more to do
     } catch {
-      // API unavailable — local update already applied and persisted to localStorage
+      // API unavailable. Local update already applied and persisted to localStorage
     } finally {
       setSaving(false);
     }
@@ -552,7 +552,7 @@ export default function CompliancePage() {
             {donePct}%
           </span>
           <span style={{ fontSize: 11, color: "#5c747e", marginTop: 1 }}>
-            {kpis ? `${kpis.tasks_done}/${kpis.tasks_total} done` : "—"}
+            {kpis ? `${kpis.tasks_done}/${kpis.tasks_total} done` : " - "}
           </span>
         </div>
       </div>
@@ -561,28 +561,28 @@ export default function CompliancePage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-[14px] md:gap-[18px]">
         <KpiCard
           label="Tasks Completed"
-          value={kpis ? `${kpis.tasks_done} / ${kpis.tasks_total}` : "— / —"}
+          value={kpis ? `${kpis.tasks_done} / ${kpis.tasks_total}` : " -  /  - "}
           sub="of total compliance tasks"
           accent="#0c8174"
           icon={CheckCircle2}
         />
         <KpiCard
           label="Critical Open"
-          value={kpis ? String(kpis.critical_open) : "—"}
+          value={kpis ? String(kpis.critical_open) : " - "}
           sub="critical or blocked tasks"
           accent="#c2553d"
           icon={AlertTriangle}
         />
         <KpiCard
           label="Open Breach Alerts"
-          value={kpis ? String(kpis.open_breach_alerts) : "—"}
+          value={kpis ? String(kpis.open_breach_alerts) : " - "}
           sub="active breach signals"
           accent="#bd852f"
           icon={ShieldAlert}
         />
         <KpiCard
           label="BAA Count"
-          value={kpis ? String(kpis.baa_count) : "—"}
+          value={kpis ? String(kpis.baa_count) : " - "}
           sub="executed agreements"
           accent="#0b2734"
           icon={FileText}
@@ -592,7 +592,7 @@ export default function CompliancePage() {
       {/* Main two-column layout */}
       <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-[14px] md:gap-[18px]" style={{ alignItems: "start" }}>
 
-        {/* LEFT — Task list */}
+        {/* LEFT. Task list */}
         <div style={{ ...CARD, padding: "22px 24px" }}>
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", borderBottom: "1px solid rgba(11,39,52,0.10)", marginBottom: 20 }}>
             <div style={{ display: "flex", gap: 2 }}>
@@ -639,7 +639,7 @@ export default function CompliancePage() {
                 fontSize: 13,
               }}
             >
-              {error} — API may not be running. Showing empty state.
+              {error}. API may not be running. Showing empty state.
             </div>
           )}
 
@@ -801,7 +801,7 @@ export default function CompliancePage() {
         <div style={{ marginBottom: 20 }}>
           <h2 style={{ fontSize: 17, fontWeight: 700, letterSpacing: "-0.01em", color: "#0b2734", margin: "0 0 4px" }}>Compliance Roadmap</h2>
           <p style={{ fontSize: 13, color: "#5c747e" }}>
-            HIPAA/HITECH · FCA · OIG · CMS-0057-F requirements for AI-assisted RCM — sourced from 2024–2025 regulatory guidance
+            HIPAA/HITECH · FCA · OIG · CMS-0057-F requirements for AI-assisted RCM. Sourced from 2024-2025 regulatory guidance
           </p>
         </div>
 
@@ -812,10 +812,10 @@ export default function CompliancePage() {
             color: "#c2553d",
             bg: "#f8e8e3",
             items: [
-              { text: "Execute BAAs with all cloud infrastructure vendors (AWS/Azure/GCP) — AI model training prohibition clause required", done: false },
+              { text: "Execute BAAs with all cloud infrastructure vendors (AWS/Azure/GCP). AI model training prohibition clause required", done: false },
               { text: "TLS 1.2+ encryption in transit · AES-256 encryption at rest", done: false },
-              { text: "MFA for all employee and customer-facing system access — mandatory under 2025 HIPAA Security Rule update", done: false },
-              { text: "Inference-level audit logs for all AI suggestions — captures prompt content, response, and accept/reject decision", done: false },
+              { text: "MFA for all employee and customer-facing system access. Mandatory under 2025 HIPAA Security Rule update", done: false },
+              { text: "Inference-level audit logs for all AI suggestions. Captures prompt content, response, and accept/reject decision", done: false },
               { text: "Role-based access controls enforcing minimum necessary standard per 45 CFR § 164.502(b)", done: false },
               { text: "Designate Privacy Officer and Security Officer", done: false },
               { text: "HIPAA Security Risk Assessment (documented, required)", done: false },
@@ -826,30 +826,30 @@ export default function CompliancePage() {
           },
           {
             phase: "Near-Term",
-            label: "6–18 Months Post-Funding",
+            label: "6-18 Months Post-Funding",
             color: "#bd852f",
             bg: "#f8efdd",
             items: [
-              { text: "Initiate SOC 2 Type II audit readiness — engage qualified auditor", done: false },
+              { text: "Initiate SOC 2 Type II audit readiness. Engage qualified auditor", done: false },
               { text: "Annual penetration testing + semi-annual vulnerability scans (mandatory under 2025 Security Rule)", done: false },
               { text: "AI-specific audit reporting: per-claim accept/reject rates, coder override tracking, denial pattern anomaly detection", done: false },
               { text: "Periodic internal audits comparing AI-generated codes to manual sample (OIG compliance requirement)", done: false },
               { text: "Establish incident response plan with tabletop exercise", done: false },
-              { text: "BAA tracking register — audit annually", done: false },
+              { text: "BAA tracking register. Audit annually", done: false },
               { text: "HITRUST self-assessment (required by athenahealth Marketplace within 90 days of going GA)", done: false },
             ],
           },
           {
             phase: "Growth",
-            label: "18–36 Months",
+            label: "18-36 Months",
             color: "#0c8174",
             bg: "#e4f4f1",
             items: [
               { text: "Achieve SOC 2 Type II certification", done: false },
               { text: "Initiate HITRUST i1 assessment as enterprise pipeline develops", done: false },
-              { text: "Commission third-party bias audit of AI models — disparate impact analysis across protected class proxies (CMS-4201-F requirement)", done: false },
+              { text: "Commission third-party bias audit of AI models. Disparate impact analysis across protected class proxies (CMS-4201-F requirement)", done: false },
               { text: "Formal AI governance policy: model versioning, performance drift monitoring, human override protocols", done: false },
-              { text: "FHIR-native Prior Authorization API integrations — payers required to expose by January 1, 2027 under CMS-0057-F", done: false },
+              { text: "FHIR-native Prior Authorization API integrations. Payers required to expose by January 1, 2027 under CMS-0057-F", done: false },
               { text: "Evaluate FDA SaMD implications if any feature touches clinical decision support (not just billing/admin)", done: false },
             ],
           },
@@ -937,8 +937,8 @@ export default function CompliancePage() {
           {[
             { name: "Simera Health",        role: "Primary Business Associate",     status: "pending", email: "security@simerahealth.org" },
             { name: "Amazon Web Services",   role: "Cloud infrastructure (ECS, S3)", status: "signed",  email: null },
-            { name: "Anthropic",             role: "AI engine — appeal letters",     status: "pending", email: "privacy@anthropic.com" },
-            { name: "Supabase",              role: "Database — claim ledger",        status: "pending", email: "security@supabase.io" },
+            { name: "Anthropic",             role: "AI engine. Appeal letters",     status: "pending", email: "privacy@anthropic.com" },
+            { name: "Supabase",              role: "Database. Claim ledger",        status: "pending", email: "security@supabase.io" },
             { name: "Vercel",                role: "Frontend hosting",               status: "pending", email: "privacy@vercel.com" },
             { name: "Clerk",                 role: "Authentication",                 status: "pending", email: "privacy@clerk.com" },
           ].map((v) => (
@@ -954,7 +954,7 @@ export default function CompliancePage() {
               <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
                 {v.email && v.status === "pending" && (
                   <a
-                    href={`mailto:${v.email}?subject=BAA Request — Simera Health&body=Hi, I am reaching out on behalf of Simera Health to initiate a Business Associate Agreement. Please advise on next steps.`}
+                    href={`mailto:${v.email}?subject=BAA Request. Simera Health&body=Hi, I am reaching out on behalf of Simera Health to initiate a Business Associate Agreement. Please advise on next steps.`}
                     style={{ fontSize: 11.5, color: "#5c747e", textDecoration: "none", borderBottom: "1px dotted #b0c4ca" }}
                   >
                     Initiate BAA →
@@ -979,7 +979,7 @@ export default function CompliancePage() {
 
         <div style={{ padding: "12px 22px 18px" }}>
           <a
-            href="mailto:security@simerahealth.org?subject=BAA Initiation — All Subprocessors"
+            href="mailto:security@simerahealth.org?subject=BAA Initiation. All Subprocessors"
             style={{
               display: "inline-flex", alignItems: "center", gap: 8,
               padding: "9px 18px", borderRadius: 9,

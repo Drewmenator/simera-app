@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-// Calendly inline widget URL — configure via NEXT_PUBLIC_CALENDLY_URL env var
+// Calendly inline widget URL. Configure via NEXT_PUBLIC_CALENDLY_URL env var
 const CALENDLY_URL = process.env.NEXT_PUBLIC_CALENDLY_URL ?? "";
 
 // Declare the global Calendly embed helper that the inline widget script provides
@@ -67,7 +67,7 @@ const SPECIALTIES = [
   "Urgent Care", "Other",
 ];
 
-const PROVIDER_COUNTS = ["1", "2–5", "6–10", "11–25", "25+"];
+const PROVIDER_COUNTS = ["1", "2-5", "6-10", "11-25", "25+"];
 
 function inputSt(val: string): React.CSSProperties {
   return {
@@ -148,7 +148,7 @@ export default function BookDemoPage() {
     setSubmitting(true);
 
     try {
-      // Fire-and-forget lead notification (best effort — never blocks the UX)
+      // Fire-and-forget lead notification (best effort, never blocks the UX)
       fetch("mailto:hello@simerahealth.org", { method: "GET" }).catch(() => null);
 
       // Notify via email if a contact endpoint is available
@@ -173,7 +173,7 @@ export default function BookDemoPage() {
   return (
     <div style={{ background: NAVY, minHeight: "100vh", fontFamily: F }}>
 
-      {/* Responsive rules — page is inline-styled, so mobile overrides live here.
+      {/* Responsive rules. Page is inline-styled, so mobile overrides live here.
           Stacks the two-column grid, shrinks the hero, and tightens padding < 768px. */}
       <style dangerouslySetInnerHTML={{ __html: `
         @media (max-width: 768px) {
@@ -202,13 +202,13 @@ export default function BookDemoPage() {
 
       <div id="bd-grid" style={{ maxWidth: showCalendly ? 1080 : 1000, margin: "0 auto", padding: "56px 32px 80px", display: "grid", gridTemplateColumns: showCalendly ? "1fr" : "1fr 420px", gap: 56 }}>
 
-        {/* Left column — agenda + context (hidden once the booking widget takes over) */}
+        {/* Left column. Agenda + context (hidden once the booking widget takes over) */}
         {!showCalendly && (
         <div>
           <p style={{ fontFamily: MONO, fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: TEAL, marginBottom: 12 }}>Book a demo</p>
           <h1 id="bd-hero" style={{ fontSize: 38, fontWeight: 800, color: "#eaf2f3", letterSpacing: "-0.03em", lineHeight: 1.1, margin: "0 0 16px" }}>
             See your practice&apos;s<br />
-            <span style={{ color: TEAL }}>real numbers</span> — live.
+            <span style={{ color: TEAL }}>real numbers</span>. Live.
           </h1>
           <p style={{ fontSize: 15, color: "#8fabb5", lineHeight: 1.65, maxWidth: "42ch", marginBottom: 40 }}>
             30-minute walkthrough. We run a live audit on a sample 835 file, show you exactly where revenue is leaking, and generate your first appeal letter in real time.
@@ -226,8 +226,8 @@ export default function BookDemoPage() {
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
               <AgendaItem time="0:00" title="Your practice, your numbers" body="We pull up Simera together. You upload a real 835 (or we use a sample) and watch the audit run in under 60 seconds." />
-              <AgendaItem time="8:00" title="Finding walkthrough" body="We go through every denial cluster, underpayment, and wrong write-off found — ranked by dollar impact and recovery probability." />
-              <AgendaItem time="18:00" title="Live appeal letter" body="Pick any denial. We generate the AI appeal letter in front of you — CARC-specific arguments, documentation checklist, the works." />
+              <AgendaItem time="8:00" title="Finding walkthrough" body="We go through every denial cluster, underpayment, and wrong write-off found. Ranked by dollar impact and recovery probability." />
+              <AgendaItem time="18:00" title="Live appeal letter" body="Pick any denial. We generate the AI appeal letter in front of you. CARC-specific arguments, documentation checklist, the works." />
               <AgendaItem time="25:00" title="Q&A + pricing" body="Any questions about compliance, EHR integrations, team access, or fit for your practice. We&apos;re direct about what Simera is good at." />
             </div>
           </div>
@@ -237,7 +237,7 @@ export default function BookDemoPage() {
             {[
               { stat: "< 60s", label: "from 835 upload to first finding" },
               { stat: "$31K", label: "median monthly recovery opportunity found in beta" },
-              { stat: "0 PHI", label: "stored after processing — HIPAA-compliant" },
+              { stat: "0 PHI", label: "stored after processing. HIPAA-compliant" },
             ].map(({ stat, label }) => (
               <div key={stat} style={{ display: "flex", alignItems: "center", gap: 14 }}>
                 <div style={{ width: 5, height: 5, borderRadius: "50%", background: TEAL, flexShrink: 0 }} />
@@ -249,7 +249,7 @@ export default function BookDemoPage() {
         </div>
         )}
 
-        {/* Right column — form (or full-width booking widget once submitted) */}
+        {/* Right column. Form (or full-width booking widget once submitted) */}
         <div>
           <div style={{
             background: "rgba(255,255,255,0.05)",
@@ -275,7 +275,7 @@ export default function BookDemoPage() {
                       </svg>
                     </div>
                     <div>
-                      <p style={{ fontSize: 13, fontWeight: 700, color: "#eaf2f3", margin: 0 }}>Info received — pick a time</p>
+                      <p style={{ fontSize: 13, fontWeight: 700, color: "#eaf2f3", margin: 0 }}>Info received. Pick a time</p>
                       <p style={{ fontSize: 11, color: "#8fabb5", margin: 0 }}>Your name and email are pre-filled below</p>
                     </div>
                   </div>

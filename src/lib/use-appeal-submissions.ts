@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * useAppealSubmissions — localStorage-backed appeal submission tracker.
+ * useAppealSubmissions. LocalStorage-backed appeal submission tracker.
  *
  * Stores every submitted appeal with date, payer, denial code, dollar amount,
  * and outcome (pending / won / lost / escalated). Persists across sessions.
@@ -33,7 +33,7 @@ export interface AppealSubmission {
 
 const LS_KEY = "simera:appeals:submissions";
 
-// In-tab pub/sub so every useAppealSubmissions() instance stays in sync — e.g.
+// In-tab pub/sub so every useAppealSubmissions() instance stays in sync. E.g.
 // marking an outcome in the Tracker updates the RecoveryFunnel live, without a
 // reload. (The browser 'storage' event only fires cross-tab, not same-tab.)
 const subscribers = new Set<() => void>();
@@ -98,7 +98,7 @@ export function useAppealSubmissions() {
     setSubmissions((prev) => {
       const next = prev.map((s) => {
         if (s.id !== id) return s;
-        // Sync won/lost to backend — best-effort, no await needed
+        // Sync won/lost to backend, best-effort, no await needed
         if (status === "won" || status === "lost") {
           recordAppealOutcome({
             payer_name: s.payer,

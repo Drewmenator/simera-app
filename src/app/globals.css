@@ -215,7 +215,7 @@
 }
 
 /* ─── Mobile Responsive Overrides ─────────────────────────────────────────
-   CSS media queries beat inline style props — used here to override the
+   CSS media queries beat inline style props, used here to override the
    desktop grid layouts defined as JSX style objects.
 ──────────────────────────────────────────────────────────────────────────── */
 /* ── Revenue finding cards: right-aligned metrics on desktop ── */
@@ -242,7 +242,7 @@
 @media (max-width: 767px) {
 
   /* ── App shell layout ── */
-  /* Force full-width single column — no 268px sidebar column */
+  /* Force full-width single column, no 268px sidebar column */
   body > div, #__next > div {
     grid-template-columns: 1fr !important;
   }
@@ -259,7 +259,7 @@
     gap: 14px !important;
   }
 
-  /* ── KPI card values — smaller font so numbers don't overflow ── */
+  /* ── KPI card values. Smaller font so numbers don't overflow ── */
   .kpi-value {
     font-size: 22px !important;
   }

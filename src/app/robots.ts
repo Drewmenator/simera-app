@@ -12,7 +12,7 @@ export default function robots(): MetadataRoute.Robots {
           "/onboarding",
           "/api/",
           "/(app)/",
-          // Authenticated app routes — no indexing
+          // Authenticated app routes, no indexing
           "/revenue",
           "/appeals",
           "/benchmarks",

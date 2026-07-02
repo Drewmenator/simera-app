@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 const PORTAL_OPTIONS = [
-  { value: "availity", label: "Availity", description: "Multi-payer portal — claim status, ERAs" },
-  { value: "office_ally", label: "Office Ally", description: "Clearinghouse — 835 ERA downloads" },
-  { value: "navinet", label: "NaviNet", description: "Highmark, BCBS — eligibility + claims" },
+  { value: "availity", label: "Availity", description: "Multi-payer portal. Claim status, ERAs" },
+  { value: "office_ally", label: "Office Ally", description: "Clearinghouse-835 ERA downloads" },
+  { value: "navinet", label: "NaviNet", description: "Highmark, BCBS. Eligibility + claims" },
   { value: "change_healthcare", label: "Change Healthcare", description: "EDI clearinghouse" },
 ] as const;
 

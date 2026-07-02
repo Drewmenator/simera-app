@@ -1,4 +1,4 @@
-export const metadata = { title: "HIPAA Notice of Privacy Practices — Simera Health" };
+export const metadata = { title: "HIPAA Notice of Privacy Practices. Simera Health" };
 
 const H1 = ({ children }: { children: React.ReactNode }) => (
   <h1 style={{ fontSize: 32, fontWeight: 800, color: "#0b2734", letterSpacing: "-0.03em", marginBottom: 8 }}>{children}</h1>
@@ -56,9 +56,9 @@ export default function HipaaPage() {
       <H2>Subcontractors and Sub-BAAs</H2>
       <P>Simera uses the following subcontractors that may access PHI, each under a signed sub-BAA or equivalent data processing agreement:</P>
       <UL>
-        <LI><strong>Amazon Web Services (AWS)</strong> — cloud infrastructure, encrypted storage (us-east-1)</LI>
-        <LI><strong>Anthropic</strong> — AI analysis engine (PHI processed under BAA)</LI>
-        <LI><strong>Supabase</strong> — database (hosted on AWS infrastructure)</LI>
+        <LI><strong>Amazon Web Services (AWS)</strong>. Cloud infrastructure, encrypted storage (us-east-1)</LI>
+        <LI><strong>Anthropic</strong>. AI analysis engine (PHI processed under BAA)</LI>
+        <LI><strong>Supabase</strong>. Database (hosted on AWS infrastructure)</LI>
       </UL>
 
       <H2>Safeguards</H2>

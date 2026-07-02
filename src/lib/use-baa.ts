@@ -24,7 +24,7 @@ export function useBaa() {
         }
       })
       .catch(() => {
-        // Fail silently — localStorage is the fallback
+        // Fail silently. LocalStorage is the fallback
       });
   }, []);
 

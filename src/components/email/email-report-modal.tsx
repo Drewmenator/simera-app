@@ -23,7 +23,7 @@ type Step = "compose" | "sending" | "sent";
 
 export function EmailReportModal({ open, onClose, auditData }: EmailReportModalProps) {
   const practiceName = auditData?.practiceName ?? "Riverview Family Medicine";
-  const dataRange = auditData?.dataRange ?? "Jan 2026 – May 2026";
+  const dataRange = auditData?.dataRange ?? "Jan 2026. May 2026";
   const leakageK = Math.round((auditData?.totalLeakage ?? 83440) / 1000);
   const recoveryK = Math.round((auditData?.expectedRecovery ?? 51280) / 1000);
   const [step, setStep] = useState<Step>("compose");
@@ -69,7 +69,7 @@ export function EmailReportModal({ open, onClose, auditData }: EmailReportModalP
         const data = await res.json().catch(() => ({}));
         if (data.warning) setSendWarning(data.warning as string);
       }
-      // Always advance to "sent" — even on network errors, so the user isn't blocked
+      // Always advance to "sent". Even on network errors, so the user isn't blocked
     } catch {
       // Network error: log silently, still show success state
     }
@@ -117,7 +117,7 @@ export function EmailReportModal({ open, onClose, auditData }: EmailReportModalP
             {/* Preview */}
             <div className="px-4 py-3 bg-secondary/60 rounded-lg border border-border space-y-1">
               <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">Report Preview</p>
-              <p className="text-sm font-medium text-foreground">{practiceName} — Revenue Audit</p>
+              <p className="text-sm font-medium text-foreground">{practiceName}. Revenue Audit</p>
               <p className="text-xs text-muted-foreground">{dataRange} · ${leakageK}K leakage found · ${recoveryK}K recoverable</p>
             </div>
 
@@ -143,7 +143,7 @@ export function EmailReportModal({ open, onClose, auditData }: EmailReportModalP
               {[
                 { label: "Recovery opportunities & dollar amounts", value: includeFindings, set: setIncludeFindings },
                 { label: "Recommended actions by priority", value: includeActions, set: setIncludeActions },
-                { label: "Payer scorecard (A–F grades)", value: includePayerScorecard, set: setIncludePayerScorecard },
+                { label: "Payer scorecard (A-F grades)", value: includePayerScorecard, set: setIncludePayerScorecard },
               ].map(({ label, value, set }) => (
                 <label key={label} className="flex items-center gap-3 cursor-pointer group">
                   <button
@@ -165,7 +165,7 @@ export function EmailReportModal({ open, onClose, auditData }: EmailReportModalP
 
             {/* Footer note */}
             <p className="text-[11px] text-muted-foreground">
-              The report will be sent as a PDF attachment. No PHI is included — only aggregate financial findings.
+              The report will be sent as a PDF attachment. No PHI is included, only aggregate financial findings.
             </p>
           </div>
         )}
@@ -196,7 +196,7 @@ export function EmailReportModal({ open, onClose, auditData }: EmailReportModalP
               <ul className="space-y-0.5 mt-1">
                 {includeFindings && <li className="text-[11px] text-muted-foreground">✓ Recovery opportunities (${leakageK}K leakage summary)</li>}
                 {includeActions && <li className="text-[11px] text-muted-foreground">✓ Recommended actions by priority</li>}
-                {includePayerScorecard && <li className="text-[11px] text-muted-foreground">✓ Payer scorecard with A–F grades</li>}
+                {includePayerScorecard && <li className="text-[11px] text-muted-foreground">✓ Payer scorecard with A-F grades</li>}
                 {!sendWarning
                   ? <li className="text-[11px] text-muted-foreground">✓ Full PDF report attached</li>
                   : <li className="text-[11px] text-amber-400/70">⚠ PDF not included (sent as plain text)</li>

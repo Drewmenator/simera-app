@@ -44,9 +44,9 @@ const SPECIALTIES = [
 
 // Industry constants from research (MGMA/HFMA 2024)
 const COST_TO_REWORK = 57.23;          // avg cost per denied claim rework
-const ABANDONMENT_RATE = 0.50;         // 35–60% of denials never resubmitted; use 50%
+const ABANDONMENT_RATE = 0.50;         // 35-60% of denials never resubmitted; use 50%
 const AVG_CLAIM_VALUE = 320;           // average claim value for small practices
-const UNDERPAYMENT_RATE = 0.027;       // 2.5–3% of line items underpaid
+const UNDERPAYMENT_RATE = 0.027;       // 2.5-3% of line items underpaid
 const UNDERPAYMENT_AVG_SHORTFALL = 38; // avg $38 per underpaid line item
 const CLAIMS_PER_MILLION_REVENUE = 3125; // ~$320 avg claim → 3,125 claims/$1M revenue
 
@@ -138,7 +138,7 @@ export default function ROIPage() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-[1.55fr_1fr] gap-[14px] md:gap-[18px]" style={{ alignItems: "start" }}>
 
-      {/* Left — inputs */}
+      {/* Left. Inputs */}
       <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
 
         {/* Your Practice */}
@@ -261,10 +261,10 @@ export default function ROIPage() {
         <div style={{ ...CARD, background: "linear-gradient(160deg, rgba(11,39,52,0.03), rgba(20,184,166,0.04))" }}>
           <h3 style={{ fontSize: 14, fontWeight: 700, color: "#0b2734", margin: "0 0 12px" }}>Industry Benchmarks Used in This Model</h3>
           {[
-            { label: "Cost to rework one denied claim", value: `$${COST_TO_REWORK}`, source: "HFMA 2023 — up 30% from 2022" },
-            { label: "Denials never resubmitted", value: "50%", source: "Industry average 35–60%" },
+            { label: "Cost to rework one denied claim", value: `$${COST_TO_REWORK}`, source: "HFMA 2023. Up 30% from 2022" },
+            { label: "Denials never resubmitted", value: "50%", source: "Industry average 35-60%" },
             { label: "Avg claim value (small practice)", value: `$${AVG_CLAIM_VALUE}`, source: "CAQH 2023 Index" },
-            { label: "Underpayment rate (line items)", value: "2.7%", source: "MGMA 2024 — avg $38 shortfall" },
+            { label: "Underpayment rate (line items)", value: "2.7%", source: "MGMA 2024. Avg $38 shortfall" },
             { label: "Weighted appeal overturn rate", value: "61.5%", source: "Weighted avg across MA, commercial, Medicaid" },
           ].map((item) => (
             <div key={item.label} style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", padding: "7px 0", borderBottom: "1px solid rgba(11,39,52,0.06)", gap: 12 }}>
@@ -278,7 +278,7 @@ export default function ROIPage() {
         </div>
       </div>
 
-      {/* Right — results */}
+      {/* Right. Results */}
       <div style={{ display: "flex", flexDirection: "column", gap: 18, position: "sticky", top: 0 }}>
 
         {/* ROI Hero */}

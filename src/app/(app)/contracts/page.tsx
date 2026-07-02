@@ -12,12 +12,12 @@ const CARD: React.CSSProperties = {
 
 // Common CPT codes for contract rate entry
 const COMMON_CPTS = [
-  { code: "99213", desc: "Office visit — low/mod complexity" },
-  { code: "99214", desc: "Office visit — moderate complexity" },
-  { code: "99215", desc: "Office visit — high complexity" },
-  { code: "99203", desc: "New patient — low/mod complexity" },
-  { code: "99204", desc: "New patient — moderate complexity" },
-  { code: "99205", desc: "New patient — high complexity" },
+  { code: "99213", desc: "Office visit. Low/mod complexity" },
+  { code: "99214", desc: "Office visit. Moderate complexity" },
+  { code: "99215", desc: "Office visit. High complexity" },
+  { code: "99203", desc: "New patient. Low/mod complexity" },
+  { code: "99204", desc: "New patient. Moderate complexity" },
+  { code: "99205", desc: "New patient. High complexity" },
   { code: "G0438", desc: "Annual wellness visit (initial)" },
   { code: "G0439", desc: "Annual wellness visit (subsequent)" },
   { code: "93000", desc: "ECG with interpretation" },
@@ -149,7 +149,7 @@ export default function ContractsPage() {
           Payer Contracts
         </h1>
         <p style={{ fontSize: 13, color: "#5c747e", marginTop: 4 }}>
-          Upload contracted rates to detect underpayments — know when payers are paying you less than agreed.
+          Upload contracted rates to detect underpayments. Know when payers are paying you less than agreed.
         </p>
       </div>
 
@@ -160,10 +160,10 @@ export default function ContractsPage() {
         </div>
         <div>
           <div style={{ fontSize: 14, fontWeight: 700, color: "#0b2734", marginBottom: 4 }}>
-            Industry data: 2.5–3% of all payments are underpaid at an average of $38/line item
+            Industry data: 2.5-3% of all payments are underpaid at an average of $38/line item
           </div>
           <div style={{ fontSize: 12.5, color: "#5c747e", lineHeight: 1.6 }}>
-            Without your contracted rates, Simera uses approximate Medicare rates as a proxy. Upload your actual fee schedules to get precise underpayment detection — payer-by-payer, CPT-by-CPT.
+            Without your contracted rates, Simera uses approximate Medicare rates as a proxy. Upload your actual fee schedules to get precise underpayment detection. Payer-by-payer, CPT-by-CPT.
           </div>
         </div>
       </div>
@@ -283,7 +283,7 @@ export default function ContractsPage() {
                   style={{ width: "100%", height: 36, padding: "0 10px", border: "1px solid rgba(11,39,52,0.15)", borderRadius: 8, fontSize: 13, background: "#fff", color: "#0b2734" }}
                 >
                   <option value="">Select CPT…</option>
-                  {COMMON_CPTS.map((c) => <option key={c.code} value={c.code}>{c.code} — {c.desc}</option>)}
+                  {COMMON_CPTS.map((c) => <option key={c.code} value={c.code}>{c.code}. {c.desc}</option>)}
                 </select>
               </div>
               <div>

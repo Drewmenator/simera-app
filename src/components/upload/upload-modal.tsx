@@ -90,10 +90,10 @@ export function UploadModal({ open, onClose, onComplete }: UploadModalProps) {
     }
   };
 
-  // Step 1: validate — runs the client-side 835 parser and shows results
+  // Step 1: validate. Runs the client-side 835 parser and shows results
   const handleSubmit = async () => {
     if (!files.length) return;
-    // Skip validation for sample file — it's known-good
+    // Skip validation for sample file. It's known-good
     const isSampleRun = files[0]?.name === "riverview-sample.835";
     if (isSampleRun) {
       await handleValidatedSubmit();
@@ -106,13 +106,13 @@ export function UploadModal({ open, onClose, onComplete }: UploadModalProps) {
       setValidationResult(result);
       setStep("validated");
     } catch {
-      // Validation itself failed — still allow submit, just skip
+      // Validation itself failed, still allow submit, just skip
       setStep("validated");
       setValidationResult(null);
     }
   };
 
-  // Step 2: actually upload — called after user reviews validation results
+  // Step 2: actually upload. Called after user reviews validation results
   const handleValidatedSubmit = async () => {
     if (!files.length) return;
     setStep("uploading");
@@ -266,7 +266,7 @@ export function UploadModal({ open, onClose, onComplete }: UploadModalProps) {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-blue-800">See it in action first</p>
                 <p className="text-xs text-blue-700 mt-0.5 leading-relaxed">
-                  Run a live audit on Riverview Family Medicine — a fictional practice with realistic denial patterns. No PHI, no account required beyond your login.
+                  Run a live audit on Riverview Family Medicine, a fictional practice with realistic denial patterns. No PHI, no account required beyond your login.
                 </p>
               </div>
             </div>
@@ -278,7 +278,7 @@ export function UploadModal({ open, onClose, onComplete }: UploadModalProps) {
               {loadingSample ? (
                 <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Loading sample…</>
               ) : (
-                <><Sparkles className="w-3.5 h-3.5" /> Load Riverview sample (synthetic — no PHI)</>
+                <><Sparkles className="w-3.5 h-3.5" /> Load Riverview sample (synthetic, no PHI)</>
               )}
             </button>
           </div>
@@ -289,7 +289,7 @@ export function UploadModal({ open, onClose, onComplete }: UploadModalProps) {
           <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 flex items-center gap-2">
             <CheckCircle className="w-4 h-4 text-emerald-600 flex-shrink-0" />
             <div className="text-xs text-emerald-700">
-              <span className="font-semibold">Sample loaded — Riverview Family Medicine.</span> This is synthetic data with no real patient information. Results will look exactly like a real audit.
+              <span className="font-semibold">Sample loaded. Riverview Family Medicine.</span> This is synthetic data with no real patient information. Results will look exactly like a real audit.
             </div>
           </div>
         )}
@@ -331,11 +331,11 @@ export function UploadModal({ open, onClose, onComplete }: UploadModalProps) {
               <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
               <p className="text-sm font-medium text-foreground">Drop 835 ERA files here</p>
               <p className="text-xs text-muted-foreground mt-1">
-                .835 · .edi · .txt · Multiple files OK (upload 3–6 months for best analysis)
+                .835 · .edi · .txt · Multiple files OK (upload 3-6 months for best analysis)
               </p>
             </div>
 
-            {/* Divider with "or" — shown only when no sample and no custom files yet */}
+            {/* Divider with "or". Shown only when no sample and no custom files yet */}
             {files.length === 0 && (
               <div className="flex items-center gap-3">
                 <div className="flex-1 h-px bg-border" />
@@ -346,7 +346,7 @@ export function UploadModal({ open, onClose, onComplete }: UploadModalProps) {
           </>
         )}
 
-        {/* File list — custom files or sample */}
+        {/* File list. Custom files or sample */}
         {files.length > 0 && (
           <div className="space-y-1.5">
             <div className="space-y-1 max-h-32 overflow-y-auto">
@@ -370,7 +370,7 @@ export function UploadModal({ open, onClose, onComplete }: UploadModalProps) {
             {files.reduce((s, f) => s + f.size, 0) > 10 * 1024 * 1024 && (
               <p className="text-[11px] text-amber-600 flex items-center gap-1">
                 <span>⚠</span>
-                <span>Large upload detected — analysis will take 1–3 minutes</span>
+                <span>Large upload detected. Analysis will take 1-3 minutes</span>
               </p>
             )}
           </div>
@@ -394,17 +394,17 @@ export function UploadModal({ open, onClose, onComplete }: UploadModalProps) {
             </div>
             <p className="text-[11px] text-muted-foreground">
               {isSampleLoaded ? "Sample audit takes ~15 seconds" : files.reduce((s, f) => s + f.size, 0) > 10 * 1024 * 1024
-                ? "Large file detected — analysis may take 1–3 minutes"
+                ? "Large file detected. Analysis may take 1-3 minutes"
                 : files.reduce((s, f) => s + f.size, 0) > 2 * 1024 * 1024
-                ? "This takes 30–90 seconds for this file size"
-                : "This takes 15–30 seconds for most files"}
+                ? "This takes 30-90 seconds for this file size"
+                : "This takes 15-30 seconds for most files"}
             </p>
           </div>
         )}
         {step === "done" && (
           <div className="flex items-center gap-2 text-sm text-emerald-600">
             <CheckCircle className="w-4 h-4" />
-            Audit complete — loading your report
+            Audit complete. Loading your report
           </div>
         )}
         {step === "error" && (
@@ -414,7 +414,7 @@ export function UploadModal({ open, onClose, onComplete }: UploadModalProps) {
           </div>
         )}
 
-        {/* PHI acknowledgment — only shown when uploading real (non-sample) files */}
+        {/* PHI acknowledgment, only shown when uploading real (non-sample) files */}
         {files.length > 0 && !isSampleLoaded && step === "drop" && (
           <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 flex gap-2">
             <ShieldCheck className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />

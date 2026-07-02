@@ -1,10 +1,10 @@
 /**
- * recovery-triage — rank denial findings by expected recovery value and
+ * recovery-triage. Rank denial findings by expected recovery value and
  * separate the unwinnable ones, so a practice works the highest-value
  * appeals first and stops wasting effort on denials it can't overturn.
  *
  * Pure module (no React, no I/O) so it can be reasoned about and tested in
- * isolation. All inputs already exist on AuditFinding — no new data needed.
+ * isolation. All inputs already exist on AuditFinding, no new data needed.
  */
 import type { AuditFinding } from "@/lib/api";
 import { findingIsAppealable, getAppealStrategy } from "@/lib/evidence-engine";
@@ -93,7 +93,7 @@ export function rankDenials(findings: AuditFinding[]): RankedFinding[] {
     finding,
     rank: 0,
     tier: "skip" as const,
-    reason: "Not worth appealing — see prevention note",
+    reason: "Not worth appealing. See prevention note",
   }));
 
   return [...ranked, ...skipped];

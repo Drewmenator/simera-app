@@ -3,7 +3,7 @@
 import { useEffect, useRef, useCallback } from "react";
 import { useClerk } from "@clerk/nextjs";
 
-const IDLE_MS = 15 * 60 * 1000; // 15 minutes — HIPAA session timeout
+const IDLE_MS = 15 * 60 * 1000; // 15 minutes. HIPAA session timeout
 
 /**
  * Signs the user out after 15 minutes of inactivity.

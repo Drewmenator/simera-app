@@ -36,7 +36,7 @@ function GetStartedScreen({
             Find the revenue you&apos;re owed
           </h1>
           <p style={{ fontSize: 14, color: "#8fabb5", lineHeight: 1.5, margin: 0 }}>
-            Upload your 835 ERA files and Simera will analyze every claim, denial, and underpayment — and show you exactly how to recover it.
+            Upload your 835 ERA files and Simera will analyze every claim, denial, and underpayment, and show you exactly how to recover it.
           </p>
         </div>
 
@@ -46,7 +46,7 @@ function GetStartedScreen({
             {[
               { icon: TrendingDown, color: "#c2553d", bg: "#f8e8e3", title: "Revenue leakage detection", body: "Unworked denials, underpayments, and wrong write-offs surfaced in seconds." },
               { icon: BarChart2,    color: "#0c8174", bg: "#e4f4f1", title: "Payer-by-payer scorecard",   body: "See which insurers are your worst performers and by how much." },
-              { icon: Sparkles,    color: "#7c5cbf", bg: "#f0ebfa", title: "Ask Simera anything",          body: "\"What's the fastest $10K I can recover?\" — answered in plain English." },
+              { icon: Sparkles,    color: "#7c5cbf", bg: "#f0ebfa", title: "Ask Simera anything",          body: "\"What's the fastest $10K I can recover?\". Answered in plain English." },
             ].map(({ icon: Icon, color, bg, title, body }) => (
               <div key={title} style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
                 <div style={{ width: 36, height: 36, borderRadius: 10, background: bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -77,7 +77,7 @@ function GetStartedScreen({
             Upload your 835 file
           </button>
 
-          {/* Sample audit CTA — distinct, compelling */}
+          {/* Sample audit CTA. Distinct, compelling */}
           <button
             onClick={onSample}
             style={{
@@ -93,7 +93,7 @@ function GetStartedScreen({
           </button>
 
           <p style={{ textAlign: "center", fontSize: 11, color: "#5c747e", margin: "2px 0 0" }}>
-            Sample uses Riverview Family Medicine — a fictional practice. No PHI.
+            Sample uses Riverview Family Medicine, a fictional practice. No PHI.
           </p>
         </div>
       </div>
@@ -119,7 +119,7 @@ function SampleAuditLoading({ onReady }: { onReady: () => void }) {
       const t = setTimeout(() => setStepIdx((i) => i + 1), 480);
       return () => clearTimeout(t);
     } else {
-      // All steps done — reveal the dashboard
+      // All steps done. Reveal the dashboard
       const t = setTimeout(onReady, 600);
       return () => clearTimeout(t);
     }
@@ -134,7 +134,7 @@ function SampleAuditLoading({ onReady }: { onReady: () => void }) {
           <p style={{ fontSize: 18, fontWeight: 800, color: "#eaf2f3", margin: 0, letterSpacing: "-0.02em" }}>
             Riverview Family Medicine
           </p>
-          <p style={{ fontSize: 13, color: "#8fabb5", margin: "4px 0 0" }}>835 ERA — May 2026 · Synthetic data</p>
+          <p style={{ fontSize: 13, color: "#8fabb5", margin: "4px 0 0" }}>835 ERA. May 2026 · Synthetic data</p>
         </div>
 
         <div style={{ padding: "24px 28px" }}>
@@ -193,14 +193,14 @@ const TOUR_STEPS = [
     iconColor: "#0c8174",
     iconBg: "#e4f4f1",
     title: "Each item has an action attached",
-    body: "Not just a number — the exact appeal language, payer contact, and deadline so your billing team can act today, not next quarter.",
+    body: "Not just a number, the exact appeal language, payer contact, and deadline so your billing team can act today, not next quarter.",
   },
   {
     icon: Sparkles,
     iconColor: "#7c5cbf",
     iconBg: "#f0ebfa",
     title: "Ask Simera anything about your data",
-    body: "\"Why is UHC denying my prior auth claims?\" \"Which payer is worth negotiating?\" — Simera knows your 835 data and answers in plain English.",
+    body: "\"Why is UHC denying my prior auth claims?\" \"Which payer is worth negotiating?\". Simera knows your 835 data and answers in plain English.",
   },
 ];
 
@@ -318,7 +318,7 @@ export function WelcomeOverlay({ onUploadClick }: WelcomeOverlayProps) {
     onUploadClick();
   };
 
-  // "See a live audit on sample data" — play the fake audit animation,
+  // "See a live audit on sample data". Play the fake audit animation,
   // then reveal the dashboard (which already has mock/demo data).
   const handleSampleDemo = () => {
     setState("sample-loading");

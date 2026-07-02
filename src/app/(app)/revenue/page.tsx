@@ -231,7 +231,7 @@ export default function RevenuePage() {
         }}>
           <span style={{ fontSize: 15 }}>⚡</span>
           <span>
-            <b>Leakage estimated from denial rates</b> — your 835 was processed but denial dollar amounts weren&apos;t returned by the API. These figures are calculated from your payer-level denial rates × average claim value. Re-upload or contact support to get exact leakage amounts.
+            <b>Leakage estimated from denial rates</b>. Your 835 was processed but denial dollar amounts weren&apos;t returned by the API. These figures are calculated from your payer-level denial rates × average claim value. Re-upload or contact support to get exact leakage amounts.
           </span>
         </div>
       )}
@@ -282,10 +282,10 @@ export default function RevenuePage() {
             </div>
             <div style={{ flex: 1, minWidth: 200 }}>
               <div style={{ fontSize: 14.5, fontWeight: 700, color: "#0b2734", marginBottom: 3 }}>
-                Underpayment Detection — estimated <b style={{ color: "#0c8174" }}>${underpaymentExposure.toLocaleString()}</b> in payer shortfalls
+                Underpayment Detection. Estimated <b style={{ color: "#0c8174" }}>${underpaymentExposure.toLocaleString()}</b> in payer shortfalls
               </div>
               <div style={{ fontSize: 12.5, color: "#5c747e", lineHeight: 1.5 }}>
-                Industry data: 2.5–3% of line items are underpaid at avg $38 shortfall · ~{underpaidCount.toLocaleString()} line items affected · Upload payer contracts to verify against your contracted rates
+                Industry data: 2.5-3% of line items are underpaid at avg $38 shortfall · ~{underpaidCount.toLocaleString()} line items affected · Upload payer contracts to verify against your contracted rates
               </div>
             </div>
             <div style={{ display: "flex", gap: 20, flexWrap: "wrap", justifyContent: "flex-start" }}>
@@ -438,8 +438,8 @@ export default function RevenuePage() {
           });
           const rows = Object.values(cptMap).sort((a, b) => b.atRisk - a.atRisk);
           const cptDesc: Record<string, string> = {
-            "99213": "Office visit — low complexity", "99214": "Office visit — moderate complexity",
-            "99215": "Office visit — high complexity", "93000": "ECG with interpretation",
+            "99213": "Office visit. Low complexity", "99214": "Office visit. Moderate complexity",
+            "99215": "Office visit. High complexity", "93000": "ECG with interpretation",
             "93042": "Rhythm ECG", "94010": "Spirometry", "90834": "Psychotherapy 45 min",
             "G0439": "Annual wellness visit (est.)",
           };
@@ -454,7 +454,7 @@ export default function RevenuePage() {
               {rows.map((r, i) => (
                 <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 2fr 1fr 1fr 1fr", gap: "0 16px", padding: "14px 16px", borderBottom: "1px solid rgba(11,39,52,0.06)", alignItems: "center" }}>
                   <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 13, fontWeight: 700, color: "#0b2734" }}>{r.code}</span>
-                  <span style={{ fontSize: 13, color: "#5c747e" }}>{cptDesc[r.code] ?? "—"}</span>
+                  <span style={{ fontSize: 13, color: "#5c747e" }}>{cptDesc[r.code] ?? " - "}</span>
                   <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 13, color: "#5c747e" }}>{r.count}</span>
                   <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 13, fontWeight: 700, color: "#c2553d" }}>{fmt(r.atRisk)}</span>
                   <span style={{ fontSize: 12.5, color: "#5c747e" }}>{[...r.payers].join(", ")}</span>
@@ -541,7 +541,7 @@ export default function RevenuePage() {
                     </div>
                     <p style={{ fontSize: 12.5, color: "#5c747e", marginTop: 4 }}>{f.description}</p>
 
-                    {/* Metrics — inline on mobile (below text), absolute-right on desktop */}
+                    {/* Metrics. Inline on mobile (below text), absolute-right on desktop */}
                     <div
                       className="finding-metrics"
                       style={{ display: "flex", alignItems: "center", gap: 20, marginTop: 12, flexWrap: "wrap" }}
@@ -618,7 +618,7 @@ export default function RevenuePage() {
                       })}
                     </div>
 
-                    {/* Recovery amount input — shown when status is resolved */}
+                    {/* Recovery amount input. Shown when status is resolved */}
                     {currentStatus === "resolved" && (() => {
                       const fid = findingId(f.label, f.payer);
                       const existing = getRecoveredAmount(fid);
