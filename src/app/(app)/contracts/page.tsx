@@ -206,11 +206,11 @@ export default function ContractsPage() {
                 transition: "all 0.15s",
               }}
             >
-              <Upload style={{ width: 28, height: 28, color: "#8aa0a8", margin: "0 auto 12px" }} />
+              <Upload style={{ width: 28, height: 28, color: "#5c747e", margin: "0 auto 12px" }} />
               <p style={{ fontSize: 15, fontWeight: 600, color: "#0b2734", margin: "0 0 4px" }}>
                 Drop contract PDFs or fee schedules here
               </p>
-              <p style={{ fontSize: 12.5, color: "#8aa0a8", margin: 0 }}>
+              <p style={{ fontSize: 12.5, color: "#5c747e", margin: 0 }}>
                 PDF, Excel (.xlsx), CSV, or plain text · One file per payer
               </p>
               <input ref={fileRef} type="file" multiple accept=".pdf,.xlsx,.csv,.txt" onChange={handleFileChange} style={{ display: "none" }} />
@@ -221,10 +221,10 @@ export default function ContractsPage() {
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {contracts.map((c) => (
                   <div key={c.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", borderRadius: 10, background: "#f6f8f8", border: "1px solid rgba(11,39,52,0.08)" }}>
-                    <FileText style={{ width: 18, height: 18, color: "#8aa0a8", flexShrink: 0 }} />
+                    <FileText style={{ width: 18, height: 18, color: "#5c747e", flexShrink: 0 }} />
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 13.5, fontWeight: 600, color: "#0b2734" }}>{c.filename}</div>
-                      <div style={{ fontSize: 12, color: "#8aa0a8" }}>Uploaded {c.uploadedAt}</div>
+                      <div style={{ fontSize: 12, color: "#5c747e" }}>Uploaded {c.uploadedAt}</div>
                     </div>
                     {c.status === "processing" && (
                       <span style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, color: "#bd852f", background: "#f8efdd", padding: "3px 10px", borderRadius: 999 }}>Parsing…</span>
@@ -241,7 +241,7 @@ export default function ContractsPage() {
                       const updated = contracts.filter((x) => x.id !== c.id);
                       setContracts(updated);
                       localStorage.setItem("simera:contracts:uploads", JSON.stringify(updated));
-                    }} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: "#8aa0a8" }}>
+                    }} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, color: "#5c747e" }}>
                       <Trash2 style={{ width: 14, height: 14 }} />
                     </button>
                   </div>
@@ -249,7 +249,7 @@ export default function ContractsPage() {
               </div>
             )}
 
-            <p style={{ fontSize: 12, color: "#8aa0a8", marginTop: 4, lineHeight: 1.6 }}>
+            <p style={{ fontSize: 12, color: "#5c747e", marginTop: 4, lineHeight: 1.6 }}>
               Contract PDFs are queued. Use &ldquo;Enter Rates Manually&rdquo; to add the rates from this document.
             </p>
           </div>
@@ -318,7 +318,7 @@ export default function ContractsPage() {
               <div style={{ marginTop: 8 }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr 1fr auto", gap: "0 12px", padding: "6px 12px 8px", borderBottom: "1px solid rgba(11,39,52,0.08)" }}>
                   {["Payer", "CPT", "Description", "Rate", ""].map((h) => (
-                    <span key={h} style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "#8aa0a8" }}>{h}</span>
+                    <span key={h} style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "#5c747e" }}>{h}</span>
                   ))}
                 </div>
                 {manualRates.map((r) => (
@@ -331,7 +331,7 @@ export default function ContractsPage() {
                       const updated = manualRates.filter((x) => x.id !== r.id);
                       setManualRates(updated);
                       localStorage.setItem("simera:contracts:rates", JSON.stringify(updated));
-                    }} style={{ background: "none", border: "none", cursor: "pointer", color: "#8aa0a8", padding: 2 }}>
+                    }} style={{ background: "none", border: "none", cursor: "pointer", color: "#5c747e", padding: 2 }}>
                       <Trash2 style={{ width: 13, height: 13 }} />
                     </button>
                   </div>
@@ -350,7 +350,7 @@ export default function ContractsPage() {
             )}
 
             {manualRates.length === 0 && (
-              <div style={{ padding: "32px 0", textAlign: "center", color: "#8aa0a8", fontSize: 13 }}>
+              <div style={{ padding: "32px 0", textAlign: "center", color: "#5c747e", fontSize: 13 }}>
                 No rates added yet. Select a payer + CPT and click Add Rate.
               </div>
             )}
@@ -362,9 +362,9 @@ export default function ContractsPage() {
           <div>
             {totalRates === 0 ? (
               <div style={{ padding: "48px 0", textAlign: "center" }}>
-                <DollarSign style={{ width: 32, height: 32, color: "#8aa0a8", margin: "0 auto 12px" }} />
+                <DollarSign style={{ width: 32, height: 32, color: "#5c747e", margin: "0 auto 12px" }} />
                 <p style={{ fontSize: 15, fontWeight: 600, color: "#0b2734", marginBottom: 6 }}>No contracted rates yet</p>
-                <p style={{ fontSize: 13, color: "#8aa0a8" }}>Upload a contract PDF or enter rates manually to enable precise underpayment detection.</p>
+                <p style={{ fontSize: 13, color: "#5c747e" }}>Upload a contract PDF or enter rates manually to enable precise underpayment detection.</p>
               </div>
             ) : (
               <div>
@@ -375,7 +375,7 @@ export default function ContractsPage() {
                     { label: "CPT Codes", value: new Set(manualRates.map((r) => r.cptCode)).size, color: "#bd852f" },
                   ].map((s) => (
                     <div key={s.label} style={{ padding: "12px 18px", borderRadius: 10, background: "#f6f8f8", border: "1px solid rgba(11,39,52,0.08)" }}>
-                      <div style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8aa0a8" }}>{s.label}</div>
+                      <div style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#5c747e" }}>{s.label}</div>
                       <div style={{ fontSize: 26, fontWeight: 800, color: s.color, marginTop: 4, fontVariantNumeric: "tabular-nums" }}>{s.value}</div>
                     </div>
                   ))}

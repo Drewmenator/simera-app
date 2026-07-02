@@ -14,7 +14,7 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
   if (!active || !payload?.length) return null;
   return (
     <div style={{ background: "#fff", border: "1px solid rgba(11,39,52,0.10)", borderRadius: 10, padding: "10px 14px", boxShadow: "0 4px 16px rgba(11,39,52,0.12)", fontSize: 13 }}>
-      <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.1em", color: "#8aa0a8", textTransform: "uppercase", marginBottom: 6 }}>{label}</p>
+      <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, letterSpacing: "0.1em", color: "#5c747e", textTransform: "uppercase", marginBottom: 6 }}>{label}</p>
       {payload.map((p) => (
         <p key={p.name} style={{ color: p.color, fontWeight: 700 }}>{p.name}: {fmt(p.value)}</p>
       ))}

@@ -20,7 +20,7 @@ export default function HipaaPage() {
   return (
     <article>
       <H1>HIPAA Notice of Privacy Practices</H1>
-      <p style={{ fontSize: 13, color: "#8aa0a8", marginBottom: 16, fontFamily: "var(--font-ibm-plex-mono), monospace" }}>
+      <p style={{ fontSize: 13, color: "#5c747e", marginBottom: 16, fontFamily: "var(--font-ibm-plex-mono), monospace" }}>
         Effective: June 1, 2026
       </p>
       <div style={{ background: "#fff3cd", border: "1px solid #ffc107", borderRadius: 8, padding: "14px 18px", marginBottom: 40, fontSize: 14, color: "#856404", lineHeight: 1.6 }}>

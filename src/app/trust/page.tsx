@@ -198,7 +198,7 @@ function VendorTable({ vendors }: { vendors: VendorRow[] }) {
                   label={v.baaStatus}
                 />
               </td>
-              <td style={{ padding: "12px 14px", fontSize: 12, color: "#8aa0a8" }}>{v.certifications ?? "—"}</td>
+              <td style={{ padding: "12px 14px", fontSize: 12, color: "#5c747e" }}>{v.certifications ?? "—"}</td>
             </tr>
           ))}
         </tbody>
@@ -332,6 +332,18 @@ const SECURITY_CONTROLS: ControlCardProps[] = [
       "Workforce training and incident response plan in development",
     ],
   },
+  {
+    icon: "🗑",
+    title: "Data Retention & Deletion",
+    status: "done",
+    statusLabel: "In production",
+    items: [
+      "Self-serve account erasure: every audit run, finding, claim record, chat history, upload record, and credential is permanently deleted on request",
+      "Raw 835 files are never stored — parsed in memory and discarded; only derived results persist",
+      "Deliberate legal holds survive erasure: HIPAA access logs, signed BAA records, and billing records",
+      "Duplicate-upload detection prevents accidental re-ingestion of previously processed remittances",
+    ],
+  },
 ];
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -412,7 +424,7 @@ export default function TrustPage() {
           These are all the vendors that could potentially come into contact with PHI when Simera processes your 835 ERA files. We are actively pursuing BAAs with each vendor. No real patient data is permitted in the system until all agreements are complete.
         </p>
         <VendorTable vendors={VENDORS} />
-        <p style={{ fontSize: 13, color: "#8aa0a8", marginTop: 10, marginBottom: 0 }}>
+        <p style={{ fontSize: 13, color: "#5c747e", marginTop: 10, marginBottom: 0 }}>
           * "Pending" means BAA negotiation is in progress. "Signed" means agreement is fully executed.
         </p>
 
@@ -453,7 +465,7 @@ export default function TrustPage() {
           <a href="mailto:security@simerahealth.org" style={{ color: "#14b8a6" }}>security@simerahealth.org</a>.
           We respond to all security inquiries within 24 hours.
         </p>
-        <p style={{ ...S.p, fontSize: 13, color: "#8aa0a8" }}>
+        <p style={{ ...S.p, fontSize: 13, color: "#5c747e" }}>
           Last reviewed: June 11, 2026
         </p>
 

@@ -387,7 +387,7 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
                 style={{
                   fontFamily: "var(--font-ibm-plex-mono), monospace",
                   fontSize: 12,
-                  color: "#8aa0a8",
+                  color: "#5c747e",
                 }}
               >
                 This takes about 10 seconds
@@ -413,7 +413,7 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
                 style={{
                   fontFamily: "var(--font-ibm-plex-mono), monospace",
                   fontSize: 12,
-                  color: "#8aa0a8",
+                  color: "#5c747e",
                   maxWidth: "40ch",
                 }}
               >
@@ -522,7 +522,7 @@ export function AppealLetterModal({ open, onClose, finding, practiceName }: Appe
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
                 <ShieldCheck style={{ width: 12, height: 12, color: "#0c8174" }} />
-                <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, color: "#8aa0a8", lineHeight: 1.4, margin: 0 }}>
+                <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, color: "#5c747e", lineHeight: 1.4, margin: 0 }}>
                   No patient PHI in letter · Aggregate denial pattern only
                 </p>
               </div>

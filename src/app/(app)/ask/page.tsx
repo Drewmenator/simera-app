@@ -358,7 +358,7 @@ function AskPageInner() {
         {/* Suggestions */}
         {isEmpty && !isStreaming && (
           <div style={{ paddingTop: 4 }}>
-            <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "#8aa0a8", margin: "30px 0 14px", textAlign: "center" }}>
+            <p style={{ fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "#5c747e", margin: "30px 0 14px", textAlign: "center" }}>
               Suggested Questions
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -454,7 +454,7 @@ function AskPageInner() {
             <ArrowUp style={{ width: 19, height: 19 }} />
           </button>
         </div>
-        <p style={{ textAlign: "center", fontSize: 11.5, color: "#8aa0a8", marginTop: 12, fontFamily: "var(--font-ibm-plex-mono), monospace", letterSpacing: "0.02em" }}>
+        <p style={{ textAlign: "center", fontSize: 11.5, color: "#5c747e", marginTop: 12, fontFamily: "var(--font-ibm-plex-mono), monospace", letterSpacing: "0.02em" }}>
           Simera analyzes your actual 835 data · Not financial advice · Verify before acting
         </p>
       </div>

@@ -106,7 +106,7 @@ export function PortalStatusBadge({ onFetch835, credentialId }: PortalStatusBadg
       background: "#f4f7f8", border: "1px solid rgba(11,39,52,0.08)",
       fontSize: 12.5,
     }}>
-      <Wifi style={{ width: 14, height: 14, color: "#8aa0a8", flexShrink: 0 }} />
+      <Wifi style={{ width: 14, height: 14, color: "#5c747e", flexShrink: 0 }} />
 
       {latestJob ? (
         <>
@@ -114,14 +114,14 @@ export function PortalStatusBadge({ onFetch835, credentialId }: PortalStatusBadg
           <button
             onClick={fetchJobs}
             disabled={loading}
-            style={{ background: "none", border: "none", cursor: "pointer", color: "#8aa0a8", padding: 0, display: "flex" }}
+            style={{ background: "none", border: "none", cursor: "pointer", color: "#5c747e", padding: 0, display: "flex" }}
             title="Refresh"
           >
             <RefreshCw style={{ width: 13, height: 13 }} />
           </button>
         </>
       ) : (
-        <span style={{ color: "#8aa0a8" }}>Portal connected</span>
+        <span style={{ color: "#5c747e" }}>Portal connected</span>
       )}
 
       {credentialId && (

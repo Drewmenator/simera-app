@@ -217,8 +217,8 @@ function AnalyticsSection({ byPayer, byCode, totalWon, winRate, totalRecovered }
           </span>
         )}
         {open
-          ? <ChevronDown style={{ width: 15, height: 15, color: "#8aa0a8", flexShrink: 0 }} />
-          : <ChevronRight style={{ width: 15, height: 15, color: "#8aa0a8", flexShrink: 0 }} />
+          ? <ChevronDown style={{ width: 15, height: 15, color: "#5c747e", flexShrink: 0 }} />
+          : <ChevronRight style={{ width: 15, height: 15, color: "#5c747e", flexShrink: 0 }} />
         }
       </button>
 
@@ -240,7 +240,7 @@ function AnalyticsSection({ byPayer, byCode, totalWon, winRate, totalRecovered }
             {/* By payer */}
             {topPayers.length > 0 && (
               <div>
-                <p style={{ fontSize: 10.5, fontWeight: 700, color: "#8aa0a8", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>
+                <p style={{ fontSize: 10.5, fontWeight: 700, color: "#5c747e", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>
                   By Payer
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -254,7 +254,7 @@ function AnalyticsSection({ byPayer, byCode, totalWon, winRate, totalRecovered }
             {/* By code */}
             {topCodes.length > 0 && (
               <div>
-                <p style={{ fontSize: 10.5, fontWeight: 700, color: "#8aa0a8", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>
+                <p style={{ fontSize: 10.5, fontWeight: 700, color: "#5c747e", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>
                   By Denial Code
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -272,7 +272,7 @@ function AnalyticsSection({ byPayer, byCode, totalWon, winRate, totalRecovered }
           </div>
 
           {topPayers.length === 0 && (
-            <p style={{ fontSize: 12.5, color: "#8aa0a8", textAlign: "center", padding: "8px 0" }}>
+            <p style={{ fontSize: 12.5, color: "#5c747e", textAlign: "center", padding: "8px 0" }}>
               Mark outcomes as Won / Lost to see analytics here.
             </p>
           )}
@@ -308,7 +308,7 @@ function PayerBar({ label, won, total }: { label: string; won: number; total: nu
       <div style={{ height: 5, background: "#e9eded", borderRadius: 3, overflow: "hidden" }}>
         <div style={{ height: "100%", width: `${pct}%`, background: pct >= 60 ? "#14b8a6" : pct >= 30 ? "#bd852f" : "#c2553d", borderRadius: 3, transition: "width 0.4s ease" }} />
       </div>
-      <p style={{ fontSize: 10.5, color: "#8aa0a8", marginTop: 2 }}>{pct}% win rate</p>
+      <p style={{ fontSize: 10.5, color: "#5c747e", marginTop: 2 }}>{pct}% win rate</p>
     </div>
   );
 }
@@ -364,7 +364,7 @@ function SubmissionRow({
           <p style={{ fontSize: 13, fontWeight: 600, color: "#0b2734", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {sub.payer}
           </p>
-          <p style={{ fontSize: 11, color: "#8aa0a8", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          <p style={{ fontSize: 11, color: "#5c747e", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {sub.denialCode ? `CARC ${sub.denialCode}` : "Dispute"} · {submittedDate}
             {daysPending !== null && daysPending > 30 && (
               <span style={{ color: "#c2553d", fontWeight: 600 }}> · {daysPending}d pending</span>
@@ -379,7 +379,7 @@ function SubmissionRow({
 
         {/* At risk */}
         <div>
-          <p style={{ fontSize: 10, color: "#8aa0a8", margin: 0 }}>At risk</p>
+          <p style={{ fontSize: 10, color: "#5c747e", margin: 0 }}>At risk</p>
           <p style={{ fontSize: 13, fontWeight: 700, color: "#c2553d", margin: 0 }}>
             ${sub.dollarAmount >= 1000 ? `${(sub.dollarAmount / 1000).toFixed(0)}K` : sub.dollarAmount.toLocaleString()}
           </p>
@@ -387,7 +387,7 @@ function SubmissionRow({
 
         {/* Recovered */}
         <div>
-          <p style={{ fontSize: 10, color: "#8aa0a8", margin: 0 }}>Recovered</p>
+          <p style={{ fontSize: 10, color: "#5c747e", margin: 0 }}>Recovered</p>
           <p style={{ fontSize: 13, fontWeight: 700, color: sub.status === "won" ? "#0c8174" : "#d1dde0", margin: 0 }}>
             {sub.status === "won"
               ? `$${(sub.outcomeAmount ?? sub.expectedRecovery) >= 1000
@@ -397,7 +397,7 @@ function SubmissionRow({
             }
           </p>
           {sub.status === "won" && outcomeDate && (
-            <p style={{ fontSize: 10, color: "#8aa0a8", margin: 0 }}>{outcomeDate}</p>
+            <p style={{ fontSize: 10, color: "#5c747e", margin: 0 }}>{outcomeDate}</p>
           )}
         </div>
 
@@ -496,7 +496,7 @@ export function SubmissionsTracker() {
             background: "#f8fafc", borderBottom: "1px solid rgba(11,39,52,0.06)",
           }}>
             {["Appeal", "At Risk", "Expected", "Status", "", ""].map((h, i) => (
-              <span key={i} style={{ fontSize: 10, fontWeight: 700, color: "#8aa0a8", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+              <span key={i} style={{ fontSize: 10, fontWeight: 700, color: "#5c747e", textTransform: "uppercase", letterSpacing: "0.06em" }}>
                 {h}
               </span>
             ))}
@@ -529,7 +529,7 @@ export function SubmissionsTracker() {
             background: "#f8fafc", borderBottom: "1px solid rgba(11,39,52,0.06)",
           }}>
             {["Appeal", "At Risk", "Recovered", "Status", "", ""].map((h, i) => (
-              <span key={i} style={{ fontSize: 10, fontWeight: 700, color: "#8aa0a8", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+              <span key={i} style={{ fontSize: 10, fontWeight: 700, color: "#5c747e", textTransform: "uppercase", letterSpacing: "0.06em" }}>
                 {h}
               </span>
             ))}
