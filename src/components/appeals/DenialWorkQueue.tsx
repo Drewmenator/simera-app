@@ -328,6 +328,14 @@ export function DenialWorkQueue({ findings, practiceName }: DenialWorkQueueProps
                     {finding.recovery_confidence === "network_estimate" && (
                       <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-blue-100 text-blue-700 border border-blue-200">🌐 Network</span>
                     )}
+                    {(finding.recovery_confidence === "industry_estimate" || !finding.recovery_confidence) && (
+                      <span
+                        className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-semibold bg-slate-100 text-slate-500 border border-slate-200"
+                        title="Industry-average estimate — upgrades to your own verified win rate as you record appeal outcomes"
+                      >
+                        Industry est.
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div>

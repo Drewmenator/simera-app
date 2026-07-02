@@ -316,7 +316,18 @@ export default function HomePage() {
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: 14.5, fontWeight: 600, color: "#0b2734", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{f.label}</p>
+                  <p style={{ fontSize: 14.5, fontWeight: 600, color: "#0b2734", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {f.label}
+                    {f.category === "underpayment" && (
+                      <Link
+                        href="/contracts"
+                        title="Underpayment amounts are benchmark estimates (Medicare-multiple) until you upload your payer fee schedules. Click to add contracted rates for contract-accurate numbers."
+                        style={{ marginLeft: 8, fontFamily: "var(--font-ibm-plex-mono), monospace", fontSize: 10, fontWeight: 600, letterSpacing: "0.06em", textTransform: "uppercase", color: "#bd852f", background: "#f8efdd", padding: "2px 8px", borderRadius: 999, textDecoration: "none", verticalAlign: "middle" }}
+                      >
+                        Benchmark estimate
+                      </Link>
+                    )}
+                  </p>
                   <p style={{ fontSize: 12, color: "#5c747e", marginTop: 1 }}>{f.payer} · {f.difficulty}</p>
                 </div>
                 <div style={{ textAlign: "right", flexShrink: 0 }}>
